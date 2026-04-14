@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unidad 3 - Procesos e Hilos | Arquitectura y SO</title>
+  <style>
+    /* ============ VARIABLES ============ */
+    :root {
+      --bg-0: #060b14;
+      --bg-1: #0d1526;
+      --bg-2: #131e35;
+      --bg-3: #1b2844;
+      --bg-card: #162238;
+      --bg-hover: #1f304f;
+      --accent: #4f9eff;
+      --accent-glow: rgba(79, 158, 255, 0.15);
+      --accent-2: #10d9a8;
+      --accent-3: #f4a843;
+      --accent-4: #f87171;
+      --text-1: #e2ebff;
+      --text-2: #94a9cc;
+      --text-3: #5a7099;
+      --border: rgba(79, 158, 255, 0.15);
+      --border-hover: rgba(79, 158, 255, 0.4);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+      --shadow-glow: 0 0 20px rgba(79, 158, 255, 0.2);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --font-head: "Trebuchet MS", "Gill Sans", "Gill Sans MT", Calibri, system-ui, sans-serif;
+      --font-body: "Palatino Linotype", "Palatino", "Book Antiqua", Georgia, serif;
+      --font-mono: "Courier New", "Lucida Console", monospace;
+    }
+
+    /* ============ RESET & BASE ============ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-0);
+      color: var(--text-1);
+      font-family: var(--font-body);
+      font-size: 17px;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* ============ HEADER ============ */
+    header {
+      background: linear-gradient(135deg, var(--bg-1) 0%, #0d1f3d 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 2.5rem 2rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(ellipse at center, rgba(79, 158, 255, 0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .header-badge {
+      display: inline-block;
+      background: rgba(79, 158, 255, 0.15);
+      border: 1px solid var(--border-hover);
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.9rem;
+      border-radius: 100px;
+      margin-bottom: 1rem;
+    }
+    header h1 {
+      font-family: var(--font-head);
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-1);
+      margin-bottom: 0.5rem;
+    }
+    header h1 span { color: var(--accent); }
+    header p { color: var(--text-2); font-size: 0.95rem; font-family: var(--font-head); }
+
+    /* ============ TABS ============ */
+    .tabs-container {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(6, 11, 20, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex;
+      max-width: 1100px;
+      margin: 0 auto;
+      overflow-x: auto;
+      padding: 0 1rem;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-3);
+      font-family: var(--font-head);
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 1rem 1.2rem;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--text-2); border-bottom-color: var(--border-hover); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ============ MAIN ============ */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+    .section { display: none; animation: fadeIn 0.4s ease; }
+    .section.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .section-title {
+      font-family: var(--font-head);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 0.4rem;
+    }
+    .section-subtitle {
+      color: var(--text-3);
+      font-size: 0.88rem;
+      font-family: var(--font-head);
+      margin-bottom: 2rem;
+      letter-spacing: 0.03em;
+    }
+
+    /* ============ RESUMEN ============ */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .summary-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      transition: var(--transition);
+    }
+    .summary-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-glow);
+      transform: translateY(-2px);
+    }
+    .summary-card .icon { font-size: 1.5rem; margin-bottom: 0.75rem; display: block; }
+    .summary-card h3 {
+      font-family: var(--font-head);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .summary-card p { font-size: 0.9rem; color: var(--text-2); line-height: 1.6; }
+    .overview-box {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+      color: var(--text-2);
+      line-height: 1.8;
+    }
+    .overview-box strong { color: var(--text-1); }
+    .quote-box {
+      background: var(--bg-2);
+      border-radius: var(--radius);
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    .quote-box::before {
+      content: '"';
+      position: absolute;
+      top: -0.5rem; left: 1.5rem;
+      font-size: 4rem;
+      color: var(--accent);
+      opacity: 0.3;
+      font-family: Georgia, serif;
+      line-height: 1;
+    }
+    .quote-box p { font-style: italic; color: var(--text-2); font-size: 1rem; padding-left: 1rem; }
+    .quote-box cite {
+      display: block;
+      color: var(--text-3);
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+      padding-left: 1rem;
+      font-style: normal;
+      font-family: var(--font-head);
+    }
+
+    /* ============ CONCEPTOS ============ */
+    .concepts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+    .concept-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .concept-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      opacity: 0;
+      transition: var(--transition);
+    }
+    .concept-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+    }
+    .concept-card:hover::before { opacity: 1; }
+    .concept-tag {
+      display: inline-block;
+      background: rgba(79, 158, 255, 0.12);
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      margin-bottom: 0.6rem;
+    }
+    .concept-card h3 {
+      font-family: var(--font-head);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 0.5rem;
+    }
+    .concept-card p { font-size: 0.88rem; color: var(--text-2); line-height: 1.6; }
+
+    /* ============ EXPLICACIÓN ============ */
+    .exp-section { margin-bottom: 1.5rem; }
+    .exp-toggle {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      text-align: left;
+      transition: var(--transition);
+    }
+    .exp-toggle:hover { border-color: var(--border-hover); background: var(--bg-hover); }
+    .exp-toggle h3 { font-family: var(--font-head); font-size: 1rem; font-weight: 700; color: var(--text-1); }
+    .exp-toggle .arrow { color: var(--accent); font-size: 1.2rem; transition: transform 0.3s ease; flex-shrink: 0; margin-left: 1rem; }
+    .exp-toggle.open { border-radius: var(--radius) var(--radius) 0 0; }
+    .exp-toggle.open .arrow { transform: rotate(90deg); }
+    .exp-body {
+      display: none;
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 var(--radius) var(--radius);
+      padding: 1.5rem;
+      animation: slideDown 0.3s ease;
+    }
+    .exp-body.open { display: block; }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .exp-body p { font-size: 0.93rem; color: var(--text-2); line-height: 1.8; margin-bottom: 1rem; }
+    .exp-body p:last-child { margin-bottom: 0; }
+    .exp-body strong { color: var(--text-1); }
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.88rem;
+    }
+    .comparison-table th {
+      background: var(--bg-3);
+      color: var(--accent);
+      font-family: var(--font-head);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+    .comparison-table td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); color: var(--text-2); }
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .comparison-table tr:hover td { background: var(--bg-2); }
+    .comparison-table td strong { color: var(--text-1); }
+    .pros-cons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .pros-cons-box { background: var(--bg-2); border-radius: var(--radius-sm); padding: 1rem; }
+    .pros-cons-box h4 {
+      font-family: var(--font-head);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.6rem;
+    }
+    .pros-cons-box.pros h4 { color: var(--accent-2); }
+    .pros-cons-box.cons h4 { color: var(--accent-4); }
+    .pros-cons-box ul { list-style: none; padding: 0; }
+    .pros-cons-box ul li {
+      font-size: 0.85rem;
+      color: var(--text-2);
+      padding: 0.3rem 0;
+      padding-left: 1.2rem;
+      position: relative;
+    }
+    .pros-cons-box.pros ul li::before { content: '+'; position: absolute; left: 0; color: var(--accent-2); font-weight: 700; }
+    .pros-cons-box.cons ul li::before { content: '-'; position: absolute; left: 0; color: var(--accent-4); font-weight: 700; }
+
+    /* ============ FLASHCARDS ============ */
+    .flashcard-progress {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .progress-bar {
+      flex: 1;
+      height: 4px;
+      background: var(--bg-3);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      border-radius: 100px;
+      transition: width 0.4s ease;
+    }
+    .progress-text { font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); white-space: nowrap; }
+    .flashcard-wrapper {
+      perspective: 1000px;
+      width: 100%;
+      max-width: 620px;
+      margin: 0 auto 1.5rem;
+      height: 280px;
+      cursor: pointer;
+    }
+    .flashcard {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .flashcard.flipped { transform: rotateY(180deg); }
+    .flashcard-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      text-align: center;
+    }
+    .flashcard-front {
+      background: linear-gradient(135deg, var(--bg-card), var(--bg-2));
+      border: 1px solid var(--border-hover);
+      box-shadow: var(--shadow);
+    }
+    .flashcard-back {
+      background: linear-gradient(135deg, #0d2040, #112236);
+      border: 1px solid rgba(16, 217, 168, 0.3);
+      box-shadow: 0 4px 24px rgba(16, 217, 168, 0.1);
+      transform: rotateY(180deg);
+    }
+    .flashcard-face .label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 1rem;
+    }
+    .flashcard-back .label { color: var(--accent-2); opacity: 0.8; }
+    .flashcard-face .content { font-family: var(--font-head); font-size: 1.1rem; font-weight: 600; color: var(--text-1); line-height: 1.5; }
+    .flashcard-back .content { color: #c8f0e6; font-size: 0.98rem; line-height: 1.6; }
+    .flashcard-hint {
+      text-align: center;
+      font-family: var(--font-head);
+      font-size: 0.78rem;
+      color: var(--text-3);
+      margin-bottom: 1.5rem;
+    }
+    .flashcard-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+    .nav-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-2);
+      font-family: var(--font-head);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.6rem 1.4rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .nav-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+    .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* ============ COMPLETAR ============ */
+    .score-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .score-item { display: flex; align-items: center; gap: 0.5rem; }
+    .score-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .score-dot.correct { background: var(--accent-2); }
+    .score-dot.incorrect { background: var(--accent-4); }
+    .score-dot.pending { background: var(--text-3); }
+    .score-label { font-family: var(--font-head); font-size: 0.82rem; color: var(--text-2); }
+    .score-num { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700; color: var(--text-1); }
+    .fill-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      transition: var(--transition);
+    }
+    .fill-card:hover { border-color: var(--border-hover); }
+    .question-num {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .fill-sentence { font-size: 1rem; color: var(--text-1); line-height: 1.8; margin-bottom: 1rem; }
+    .fill-input-wrap { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; }
+    .fill-input {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      color: var(--text-1);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      padding: 0.5rem 0.9rem;
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: var(--transition);
+      min-width: 160px;
+    }
+    .fill-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(79, 158, 255, 0.2); }
+    .fill-input.correct { border-color: var(--accent-2); background: rgba(16, 217, 168, 0.08); }
+    .fill-input.incorrect { border-color: var(--accent-4); background: rgba(248, 113, 113, 0.08); }
+    .verify-btn {
+      background: rgba(79, 158, 255, 0.12);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-family: var(--font-head);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .verify-btn:hover { background: rgba(79, 158, 255, 0.25); }
+    .fill-feedback {
+      margin-top: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      display: none;
+    }
+    .fill-feedback.show { display: block; }
+    .fill-feedback.correct-fb {
+      background: rgba(16, 217, 168, 0.1);
+      border: 1px solid rgba(16, 217, 168, 0.3);
+      color: #4eeec4;
+    }
+    .fill-feedback.incorrect-fb {
+      background: rgba(248, 113, 113, 0.1);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+      color: #fc9090;
+    }
+
+    /* ============ MULTIPLE CHOICE ============ */
+    .mc-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      transition: var(--transition);
+    }
+    .mc-card .question-num { color: var(--accent-3); }
+    .mc-question { font-size: 1rem; color: var(--text-1); font-family: var(--font-head); font-weight: 600; margin-bottom: 1.2rem; line-height: 1.5; }
+    .mc-options { display: flex; flex-direction: column; gap: 0.5rem; }
+    .mc-option {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      text-align: left;
+      width: 100%;
+    }
+    .mc-option:hover:not(.disabled) { border-color: var(--border-hover); background: var(--bg-hover); }
+    .mc-option.correct { border-color: var(--accent-2); background: rgba(16, 217, 168, 0.1); }
+    .mc-option.incorrect { border-color: var(--accent-4); background: rgba(248, 113, 113, 0.1); }
+    .mc-option.disabled { cursor: not-allowed; }
+    .mc-option .option-letter {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(79, 158, 255, 0.1);
+      border: 1px solid rgba(79, 158, 255, 0.3);
+      width: 1.6rem;
+      height: 1.6rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: var(--transition);
+    }
+    .mc-option.correct .option-letter { background: rgba(16, 217, 168, 0.2); border-color: var(--accent-2); color: var(--accent-2); }
+    .mc-option.incorrect .option-letter { background: rgba(248, 113, 113, 0.2); border-color: var(--accent-4); color: var(--accent-4); }
+    .mc-option .option-text { font-size: 0.9rem; color: var(--text-2); line-height: 1.5; }
+    .mc-explanation {
+      margin-top: 1rem;
+      padding: 0.9rem 1.1rem;
+      background: var(--bg-2);
+      border-left: 3px solid var(--accent-2);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-size: 0.85rem;
+      color: var(--text-2);
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .mc-explanation.show { display: block; }
+
+    /* ============ FOOTER ============ */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      color: var(--text-3);
+      font-family: var(--font-head);
+      font-size: 0.8rem;
+    }
+    footer span { color: var(--accent); }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 600px) {
+      header { padding: 1.5rem 1rem 1rem; }
+      main { padding: 1rem 1rem 3rem; }
+      .pros-cons { grid-template-columns: 1fr; }
+      .flashcard-wrapper { height: 260px; }
+      .tabs { padding: 0 0.5rem; }
+      .tab-btn { padding: 0.8rem 0.9rem; font-size: 0.75rem; }
+      .summary-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">Arquitectura y Sistemas Operativos · Unidad 3</div>
+  <h1>Procesos e <span>Hilos</span></h1>
+  <p>Multihilo &nbsp;·&nbsp; ULT &nbsp;·&nbsp; KLT &nbsp;·&nbsp; Planificación</p>
+</header>
+
+<div class="tabs-container">
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" onclick="showTab('resumen', this)" role="tab">Resumen</button>
+    <button class="tab-btn" onclick="showTab('conceptos', this)" role="tab">Conceptos</button>
+    <button class="tab-btn" onclick="showTab('explicacion', this)" role="tab">Explicación</button>
+    <button class="tab-btn" onclick="showTab('flashcards', this)" role="tab">Flashcards</button>
+    <button class="tab-btn" onclick="showTab('completar', this)" role="tab">Completar</button>
+    <button class="tab-btn" onclick="showTab('quiz', this)" role="tab">Quiz</button>
+  </nav>
+</div>
+
+<main>
+
+<!-- ========== RESUMEN ========== -->
+<section id="resumen" class="section active">
+  <h2 class="section-title">Resumen General</h2>
+  <p class="section-subtitle">Visión general de la unidad</p>
+
+  <div class="quote-box">
+    <p>La programación secuencial es realmente difícil, y la programación paralela es un paso más allá de eso.</p>
+    <cite>— Andrew S. Tanenbaum</cite>
+  </div>
+
+  <div class="overview-box">
+    La Unidad 3 estudia los <strong>hilos</strong> (threads), también llamados procesos livianos. Un hilo es la unidad mínima de ejecución dentro de un proceso. El sistema operativo moderno separa la <em>propiedad de recursos</em> (proceso) de la <em>planificación y ejecución</em> (hilo). El <strong>multihilo</strong> permite que un proceso ejecute varias tareas simultáneamente compartiendo memoria y recursos. Se analizan dos implementaciones clave: <strong>ULT</strong> (User Level Thread), donde el kernel no conoce los hilos, y <strong>KLT</strong> (Kernel Level Thread), donde el kernel los gestiona directamente con su propia API.
+  </div>
+
+  <div class="summary-grid">
+    <div class="summary-card">
+      <span class="icon">⚡</span>
+      <h3>Rendimiento</h3>
+      <p>Crear, cambiar y destruir un hilo es entre 10 y 100 veces más rápido que la misma operación con un proceso completo.</p>
+    </div>
+    <div class="summary-card">
+      <span class="icon">🔗</span>
+      <h3>Memoria Compartida</h3>
+      <p>Los hilos de un mismo proceso comparten espacio de direcciones, variables globales y punteros a archivos entre sí.</p>
+    </div>
+    <div class="summary-card">
+      <span class="icon">🔒</span>
+      <h3>Sin Protección</h3>
+      <p>No existe aislamiento entre hilos del mismo proceso. Si un hilo modifica un dato, todos los demás lo ven de inmediato.</p>
+    </div>
+    <div class="summary-card">
+      <span class="icon">🏗️</span>
+      <h3>ULT vs KLT</h3>
+      <p>ULT es más ligero y portable pero bloquea el proceso entero ante una syscall. KLT es más costoso pero evita el bloqueo total.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CONCEPTOS ========== -->
+<section id="conceptos" class="section">
+  <h2 class="section-title">Conceptos Clave</h2>
+  <p class="section-subtitle">12 definiciones fundamentales extraídas del material</p>
+
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <span class="concept-tag">Definición</span>
+      <h3>Hilo (Thread)</h3>
+      <p>Tarea que puede ejecutarse al mismo tiempo que otra. También llamado <em>proceso liviano</em>. Es la unidad de planificación en el enfoque moderno de SO.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-tag">Definición</span>
+      <h3>Proceso</h3>
+      <p>En el enfoque moderno, es la <em>unidad de propiedad de recursos</em>: incluye espacio de direcciones, código, datos, pila y PCB.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-tag">Capacidad</span>
+      <h3>Multihilo</h3>
+      <p>Capacidad de un sistema operativo de dar soporte a múltiples hilos de ejecución en un solo proceso. Opuesto al enfoque <em>monohilo</em>.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-tag">Elementos</span>
+      <h3>Componentes de cada hilo</h3>
+      <p>Cada hilo tiene su propio <strong>PC</strong>, <strong>registros</strong>, <strong>stack</strong> y <strong>estado</strong>. Comparte con el resto el espacio de memoria del proceso.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-tag">Estados</span>
+      <h3>Estados de un hilo</h3>
+      <p><strong>Creación</strong> → <strong>Bloqueo</strong> (espera evento, guarda registros) → <strong>Desbloqueo</strong> (vuelve a listos) → <strong>Finalización</strong> (libera datos).</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-tag">Implementación</span>
+      <h3>ULT (User Level Thread)</h3>
+      <p>Hilos gestionados completamente en espacio de usuario mediante una biblioteca. El kernel no conoce su existencia y los trata como procesos monohilo.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-tag">Implementación</span>
+      <h3>KLT (Kernel Level Thread)</h3>
+      <p>El kernel gestiona los hilos directamente. Toda creación o eliminación requiere una syscall. Permite planificar hilos en distintos procesadores.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-tag">Costo</span>
+      <h3>Cambio de modo (Mode Switch)</h3>
+      <p>Transición entre espacio de usuario y espacio de kernel. En KLT, cambiar de hilo implica un <em>doble cambio de modo</em>, su principal desventaja.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-tag">Estructura</span>
+      <h3>PCB (Process Control Block)</h3>
+      <p>Estructura que almacena el estado del proceso. En multihilo: un PCB por proceso y uno por hilo (que guarda PC, registros y pila propios del hilo).</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-tag">Bibliotecas</span>
+      <h3>Pthreads · Win32 · Java</h3>
+      <p><strong>POSIX Pthreads</strong>: usuario o kernel. <strong>Win32</strong>: solo Windows, solo kernel. <strong>Java</strong>: usa la biblioteca del SO host (POSIX o Win32).</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-tag">Problema</span>
+      <h3>Condición de carrera</h3>
+      <p>Problema de concurrencia donde el resultado depende del orden de ejecución de los hilos. Se aborda con mecanismos de sincronización en unidades posteriores.</p>
+    </div>
+    <div class="concept-card">
+      <span class="concept-tag">Problema</span>
+      <h3>Deadlock</h3>
+      <p>Situación donde dos o más hilos se bloquean mutuamente esperando recursos que el otro retiene. También se resuelve con técnicas de sincronización.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== EXPLICACIÓN ========== -->
+<section id="explicacion" class="section">
+  <h2 class="section-title">Explicación Detallada</h2>
+  <p class="section-subtitle">Desarrollo de cada tema con ejemplos del material</p>
+
+  <div class="exp-section">
+    <button class="exp-toggle open" onclick="toggleExp(this)">
+      <h3>1. ¿Por qué necesitamos hilos?</h3>
+      <span class="arrow">▶</span>
+    </button>
+    <div class="exp-body open">
+      <p>En los sistemas operativos tradicionales, cada proceso tiene un solo hilo de ejecución. Sin embargo, muchas aplicaciones necesitan realizar varias tareas <strong>simultáneamente</strong> dentro del mismo espacio de memoria.</p>
+      <p><strong>Ejemplo 1 — Procesador de texto:</strong> Un hilo lee los comandos del usuario y otro ejecuta el guardado automático. Sin hilos, el editor se congelaría durante cada guardado y el usuario notaría la pérdida de rendimiento.</p>
+      <p><strong>Ejemplo 2 — Servidor web:</strong> Por cada request se crea un hilo. Si la página solicitada no está en caché, ese hilo va a disco y se bloquea; mientras tanto, otros hilos siguen atendiendo nuevos pedidos sin interrupción.</p>
+      <p>Las tres razones principales para usar hilos son: <strong>(1)</strong> múltiples tareas en paralelo dentro del mismo proceso, <strong>(2)</strong> rendimiento (crear/destruir hilos es 10–100× más rápido que procesos), y <strong>(3)</strong> paralelismo de I/O que mejora el aprovechamiento del CPU.</p>
+    </div>
+  </div>
+
+  <div class="exp-section">
+    <button class="exp-toggle" onclick="toggleExp(this)">
+      <h3>2. Proceso vs. Hilo — Diferencias y elementos compartidos</h3>
+      <span class="arrow">▶</span>
+    </button>
+    <div class="exp-body">
+      <p>En el enfoque moderno: <strong>proceso = propiedad de recursos</strong> y <strong>hilo = planificación/ejecución</strong>. Un proceso puede contener múltiples hilos.</p>
+      <table class="comparison-table">
+        <thead><tr><th>Ítems por proceso (compartidos)</th><th>Ítems por hilo (privados)</th></tr></thead>
+        <tbody>
+          <tr><td>Espacio de memoria (address space)</td><td>PC (Program Counter)</td></tr>
+          <tr><td>Variables globales</td><td>Registros</td></tr>
+          <tr><td>Punteros a archivos</td><td>Stack de ejecución</td></tr>
+          <tr><td>Punteros a procesos hijos</td><td>Estado del hilo</td></tr>
+          <tr><td>Señales</td><td></td></tr>
+          <tr><td>Información estadística</td><td></td></tr>
+        </tbody>
+      </table>
+      <p>No existe mecanismo de protección entre hilos del mismo proceso (todos pertenecen al mismo usuario y comparten la misma memoria). Si un hilo modifica un dato, todos los demás lo ven inmediatamente.</p>
+    </div>
+  </div>
+
+  <div class="exp-section">
+    <button class="exp-toggle" onclick="toggleExp(this)">
+      <h3>3. Estados de los hilos y consideraciones</h3>
+      <span class="arrow">▶</span>
+    </button>
+    <div class="exp-body">
+      <p>En un sistema multihilo, la planificación se realiza <strong>a nivel de hilo</strong>. Sin embargo, hay acciones que afectan a todos los hilos de un proceso a la vez.</p>
+      <table class="comparison-table">
+        <thead><tr><th>Estado</th><th>Descripción</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Creación</strong></td><td>Al crear un proceso se crea su primer hilo. Se pueden crear más, cada uno con su propio contexto y pila.</td></tr>
+          <tr><td><strong>Bloqueo</strong></td><td>El hilo espera un evento. Se guardan sus registros. El SO ejecuta otro hilo del mismo proceso o de otro.</td></tr>
+          <tr><td><strong>Desbloqueo</strong></td><td>Ocurre el evento esperado. El hilo pasa a la cola de listos.</td></tr>
+          <tr><td><strong>Finalización</strong></td><td>Se liberan los datos del hilo (registros, pila, variables locales).</td></tr>
+        </tbody>
+      </table>
+      <p><strong>Consideraciones clave:</strong> Suspender un proceso suspende <em>todos</em> sus hilos. Finalizar un proceso finaliza <em>todos</em> sus hilos. El estado "Suspendido" no aplica a nivel de hilo, solo a nivel de proceso.</p>
+    </div>
+  </div>
+
+  <div class="exp-section">
+    <button class="exp-toggle" onclick="toggleExp(this)">
+      <h3>4. ULT vs. KLT — Comparación detallada</h3>
+      <span class="arrow">▶</span>
+    </button>
+    <div class="exp-body">
+      <table class="comparison-table">
+        <thead><tr><th>Aspecto</th><th>ULT</th><th>KLT</th></tr></thead>
+        <tbody>
+          <tr><td>¿Quién gestiona?</td><td>La aplicación / biblioteca de usuario</td><td>El kernel del SO</td></tr>
+          <tr><td>¿El kernel los conoce?</td><td>No</td><td>Sí</td></tr>
+          <tr><td>Cambio de hilo</td><td>Sin cambio de modo</td><td>Doble cambio de modo</td></tr>
+          <tr><td>Hilo con syscall bloqueante</td><td>Bloquea todo el proceso</td><td>Solo bloquea ese hilo</td></tr>
+          <tr><td>Multiprocesamiento</td><td>No se beneficia</td><td>Puede usar múltiples CPUs</td></tr>
+          <tr><td>Planificación</td><td>A nivel de proceso</td><td>A nivel de hilo</td></tr>
+        </tbody>
+      </table>
+      <div class="pros-cons">
+        <div class="pros-cons-box pros">
+          <h4>Ventajas ULT</h4>
+          <ul>
+            <li>Sin cambio de modo al cambiar hilos</li>
+            <li>La app define el algoritmo de planificación</li>
+            <li>Portable a cualquier SO</li>
+          </ul>
+        </div>
+        <div class="pros-cons-box cons">
+          <h4>Desventajas ULT</h4>
+          <ul>
+            <li>Syscall bloqueante = bloquea el proceso entero</li>
+            <li>No aprovecha el multiprocesamiento</li>
+          </ul>
+        </div>
+        <div class="pros-cons-box pros">
+          <h4>Ventajas KLT</h4>
+          <ul>
+            <li>Un hilo bloqueado no detiene el proceso</li>
+            <li>Puede planificar en múltiples procesadores</li>
+            <li>Las rutinas del kernel pueden ser multihilo</li>
+          </ul>
+        </div>
+        <div class="pros-cons-box cons">
+          <h4>Desventajas KLT</h4>
+          <ul>
+            <li>Doble cambio de modo al cambiar de hilo</li>
+            <li>Más costoso que ULT por las syscalls</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FLASHCARDS ========== -->
+<section id="flashcards" class="section">
+  <h2 class="section-title">Flashcards</h2>
+  <p class="section-subtitle">Hacé click en la carta para revelar la respuesta</p>
+
+  <div class="flashcard-progress">
+    <div class="progress-bar">
+      <div class="progress-fill" id="fc-progress" style="width: 8.33%"></div>
+    </div>
+    <span class="progress-text" id="fc-counter">1 / 12</span>
+  </div>
+
+  <div class="flashcard-wrapper" id="fc-wrapper" onclick="flipCard()">
+    <div class="flashcard" id="fc-card">
+      <div class="flashcard-face flashcard-front">
+        <span class="label">Pregunta</span>
+        <p class="content" id="fc-question"></p>
+      </div>
+      <div class="flashcard-face flashcard-back">
+        <span class="label">Respuesta</span>
+        <p class="content" id="fc-answer"></p>
+      </div>
+    </div>
+  </div>
+
+  <p class="flashcard-hint" id="fc-hint">Hacé click para ver la respuesta →</p>
+
+  <div class="flashcard-nav">
+    <button class="nav-btn" id="fc-prev" onclick="prevCard()" disabled>← Anterior</button>
+    <button class="nav-btn" id="fc-next" onclick="nextCard()">Siguiente →</button>
+  </div>
+</section>
+
+<!-- ========== COMPLETAR ========== -->
+<section id="completar" class="section">
+  <h2 class="section-title">Completar el Espacio</h2>
+  <p class="section-subtitle">Escribí la palabra que falta y presioná Enter o Verificar</p>
+
+  <div class="score-panel">
+    <div class="score-item">
+      <div class="score-dot correct"></div>
+      <span class="score-label">Correctas:</span>
+      <span class="score-num" id="fill-correct">0</span>
+    </div>
+    <div class="score-item">
+      <div class="score-dot incorrect"></div>
+      <span class="score-label">Incorrectas:</span>
+      <span class="score-num" id="fill-incorrect">0</span>
+    </div>
+    <div class="score-item">
+      <div class="score-dot pending"></div>
+      <span class="score-label">Pendientes:</span>
+      <span class="score-num" id="fill-pending">12</span>
+    </div>
+  </div>
+
+  <div id="fill-container"></div>
+</section>
+
+<!-- ========== QUIZ ========== -->
+<section id="quiz" class="section">
+  <h2 class="section-title">Multiple Choice</h2>
+  <p class="section-subtitle">Seleccioná la opción correcta para ver la explicación</p>
+
+  <div class="score-panel">
+    <div class="score-item">
+      <div class="score-dot correct"></div>
+      <span class="score-label">Correctas:</span>
+      <span class="score-num" id="mc-correct">0</span>
+    </div>
+    <div class="score-item">
+      <div class="score-dot incorrect"></div>
+      <span class="score-label">Incorrectas:</span>
+      <span class="score-num" id="mc-incorrect">0</span>
+    </div>
+    <div class="score-item">
+      <div class="score-dot pending"></div>
+      <span class="score-label">Pendientes:</span>
+      <span class="score-num" id="mc-pending">6</span>
+    </div>
+  </div>
+
+  <div id="mc-container"></div>
+</section>
+
+</main>
+
+<footer>
+  Unidad 3 &nbsp;·&nbsp; Procesos e Hilos &nbsp;·&nbsp; <span>Arquitectura y Sistemas Operativos</span>
+</footer>
+
+<script>
+// ============ TABS ============
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ============ ACCORDION ============
+function toggleExp(btn) {
+  btn.classList.toggle('open');
+  const body = btn.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+// ============ FLASHCARDS ============
+const flashcards = [
+  {
+    q: "¿Qué es un hilo (thread)?",
+    a: "Una tarea que puede ejecutarse simultáneamente con otra. También llamado proceso liviano. Es la unidad de planificación en el enfoque moderno del SO."
+  },
+  {
+    q: "¿Qué es el multihilo?",
+    a: "La capacidad de un sistema operativo de dar soporte a múltiples hilos de ejecución en un solo proceso."
+  },
+  {
+    q: "¿Qué elementos son PRIVADOS de cada hilo?",
+    a: "PC (program counter), registros, stack de ejecución y estado del hilo."
+  },
+  {
+    q: "¿Qué elementos COMPARTEN todos los hilos de un proceso?",
+    a: "Espacio de memoria, variables globales, punteros a archivos, punteros a procesos hijos, señales e información estadística."
+  },
+  {
+    q: "¿Qué es ULT (User Level Thread)?",
+    a: "Hilos gestionados completamente en espacio de usuario mediante una biblioteca. El kernel no conoce su existencia y los trata como procesos monohilo."
+  },
+  {
+    q: "¿Qué es KLT (Kernel Level Thread)?",
+    a: "El kernel gestiona los hilos directamente y provee una API para crearlos y administrarlos. La planificación se realiza a nivel de hilo."
+  },
+  {
+    q: "¿Cuánto más rápido es crear un hilo vs un proceso?",
+    a: "Entre 10 y 100 veces más rápido."
+  },
+  {
+    q: "¿Cuál es la principal desventaja de ULT?",
+    a: "Una llamada al sistema bloqueante bloquea todo el proceso, ya que el kernel no distingue los hilos y suspende el proceso completo."
+  },
+  {
+    q: "¿Cuál es la principal desventaja de KLT?",
+    a: "Un cambio de hilo produce un doble cambio de modo (espacio de usuario → kernel → usuario), lo que tiene un costo adicional."
+  },
+  {
+    q: "¿Cuáles son los cuatro estados de un hilo?",
+    a: "Creación, Bloqueo, Desbloqueo y Finalización. El estado 'Suspendido' aplica al proceso, no al hilo."
+  },
+  {
+    q: "¿Qué ocurre con los hilos cuando se finaliza o suspende un proceso?",
+    a: "Todos los hilos del proceso son finalizados o suspendidos respectivamente. Son acciones que afectan al proceso como un todo."
+  },
+  {
+    q: "¿Cuáles son las tres principales bibliotecas de hilos?",
+    a: "POSIX Pthreads (usuario o kernel), Win32 (solo Windows, solo kernel) y Java (usa la biblioteca del SO host)."
+  }
+];
+
+let currentCard = 0;
+let isFlipped = false;
+
+function renderCard() {
+  const card = flashcards[currentCard];
+  document.getElementById('fc-question').textContent = card.q;
+  document.getElementById('fc-answer').textContent = card.a;
+  document.getElementById('fc-counter').textContent = `${currentCard + 1} / ${flashcards.length}`;
+  const pct = ((currentCard + 1) / flashcards.length) * 100;
+  document.getElementById('fc-progress').style.width = pct + '%';
+  document.getElementById('fc-prev').disabled = currentCard === 0;
+  document.getElementById('fc-next').disabled = currentCard === flashcards.length - 1;
+  document.getElementById('fc-hint').textContent = isFlipped
+    ? 'Hacé click para ver la pregunta ←'
+    : 'Hacé click para ver la respuesta →';
+}
+
+function flipCard() {
+  isFlipped = !isFlipped;
+  document.getElementById('fc-card').classList.toggle('flipped', isFlipped);
+  document.getElementById('fc-hint').textContent = isFlipped
+    ? 'Hacé click para ver la pregunta ←'
+    : 'Hacé click para ver la respuesta →';
+}
+
+function nextCard() {
+  if (currentCard < flashcards.length - 1) {
+    currentCard++;
+    isFlipped = false;
+    document.getElementById('fc-card').classList.remove('flipped');
+    renderCard();
+  }
+}
+
+function prevCard() {
+  if (currentCard > 0) {
+    currentCard--;
+    isFlipped = false;
+    document.getElementById('fc-card').classList.remove('flipped');
+    renderCard();
+  }
+}
+
+renderCard();
+
+// ============ FILL IN THE BLANK ============
+const fillItems = [
+  {
+    sentence: "Un hilo también se conoce como proceso ___.",
+    answer: "liviano",
+    hint: "adjetivo que indica que es más ligero que un proceso"
+  },
+  {
+    sentence: "La capacidad de un SO de dar soporte a múltiples hilos en un solo proceso se llama ___.",
+    answer: "multihilo",
+    hint: "prefijo 'multi' más la palabra 'hilo'"
+  },
+  {
+    sentence: "En ULT puro, el ___ no conoce la existencia de los hilos.",
+    answer: "kernel",
+    hint: "núcleo del sistema operativo"
+  },
+  {
+    sentence: "Crear un hilo es entre ___ y 100 veces más rápido que crear un proceso.",
+    answer: "10",
+    hint: "el mínimo del rango mencionado en el material"
+  },
+  {
+    sentence: "En KLT, la planificación se realiza a nivel de ___.",
+    answer: "hilo",
+    hint: "la unidad mínima de ejecución"
+  },
+  {
+    sentence: "En ULT, la planificación se realiza a nivel de ___.",
+    answer: "proceso",
+    hint: "la unidad de propiedad de recursos"
+  },
+  {
+    sentence: "Cuando se finaliza un proceso, todos sus hilos son ___.",
+    answer: "finalizados",
+    hint: "participio de 'finalizar'"
+  },
+  {
+    sentence: "El cambio de hilo en KLT produce un doble cambio de ___ (usuario ↔ kernel).",
+    answer: "modo",
+    hint: "lo que cambia al entrar y salir del kernel"
+  },
+  {
+    sentence: "Los ítems privados de cada hilo son: PC, registros, ___ y estado.",
+    answer: "stack",
+    hint: "pila de llamadas (en inglés)"
+  },
+  {
+    sentence: "La biblioteca de hilos POSIX se llama ___ Pthreads.",
+    answer: "POSIX",
+    hint: "estándar de portabilidad para sistemas operativos Unix"
+  },
+  {
+    sentence: "El enfoque tradicional de un solo hilo por proceso se llama estrategia ___.",
+    answer: "monohilo",
+    hint: "prefijo 'mono' más la palabra 'hilo'"
+  },
+  {
+    sentence: "Los hilos de un proceso comparten el espacio de ___, variables globales y señales.",
+    answer: "memoria",
+    hint: "donde viven el código y los datos del proceso"
+  }
+];
+
+let fillCorrect = 0;
+let fillIncorrect = 0;
+let fillAnswered = 0;
+
+function buildFillItems() {
+  const container = document.getElementById('fill-container');
+  fillItems.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'fill-card';
+    card.innerHTML = `
+      <div class="question-num">Ejercicio ${i + 1} / ${fillItems.length}</div>
+      <p class="fill-sentence">${item.sentence}</p>
+      <div class="fill-input-wrap">
+        <input
+          type="text"
+          class="fill-input"
+          id="fill-input-${i}"
+          placeholder="Tu respuesta…"
+          onkeydown="if(event.key==='Enter') verifyFill(${i})"
+          autocomplete="off"
+          spellcheck="false"
+        >
+        <button class="verify-btn" onclick="verifyFill(${i})">Verificar</button>
+      </div>
+      <div class="fill-feedback" id="fill-fb-${i}"></div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function verifyFill(i) {
+  const input = document.getElementById(`fill-input-${i}`);
+  const fb = document.getElementById(`fill-fb-${i}`);
+  if (input.disabled) return;
+
+  const userVal = input.value.trim().toLowerCase();
+  const correct = fillItems[i].answer.toLowerCase();
+
+  const accepted =
+    userVal === correct ||
+    (correct === 'stack' && (userVal === 'pila' || userVal === 'stack')) ||
+    (correct === 'finalizados' && (userVal === 'terminados' || userVal === 'finalizados')) ||
+    (correct === 'posix' && (userVal === 'posix' || userVal === 'pthreads'));
+
+  input.disabled = true;
+  fillAnswered++;
+
+  if (accepted) {
+    input.classList.add('correct');
+    fb.className = 'fill-feedback correct-fb show';
+    fb.innerHTML = `✓ ¡Correcto! La respuesta es <strong>${fillItems[i].answer}</strong>.`;
+    fillCorrect++;
+  } else {
+    input.classList.add('incorrect');
+    fb.className = 'fill-feedback incorrect-fb show';
+    fb.innerHTML = `✗ Incorrecto. La respuesta correcta era <strong>${fillItems[i].answer}</strong>. Pista: ${fillItems[i].hint}.`;
+    fillIncorrect++;
+  }
+
+  document.getElementById('fill-correct').textContent = fillCorrect;
+  document.getElementById('fill-incorrect').textContent = fillIncorrect;
+  document.getElementById('fill-pending').textContent = fillItems.length - fillAnswered;
+}
+
+buildFillItems();
+
+// ============ MULTIPLE CHOICE ============
+const mcItems = [
+  {
+    q: "¿Qué ítem NO es privado de cada hilo, sino compartido con todos los hilos del mismo proceso?",
+    options: ["PC (Program Counter)", "Registros", "Variables globales", "Stack de ejecución"],
+    correct: 2,
+    explanation: "Las variables globales pertenecen al proceso y son compartidas por todos sus hilos. PC, registros y stack son ítems privados de cada hilo."
+  },
+  {
+    q: "¿Cuánto más rápido es crear un hilo respecto a crear un proceso?",
+    options: ["2 a 5 veces", "10 a 100 veces", "100 a 1000 veces", "Igual de rápido, no hay diferencia"],
+    correct: 1,
+    explanation: "Según el material de la unidad, crear, eliminar o intercambiar un hilo es entre 10 y 100 veces más rápido que la operación equivalente con procesos."
+  },
+  {
+    q: "¿Cuál es la principal desventaja del enfoque ULT?",
+    options: [
+      "No es portable entre distintos sistemas operativos",
+      "Requiere cambio de modo para cambiar entre hilos",
+      "Una llamada al sistema bloqueante bloquea todo el proceso",
+      "No permite que la app defina su propio algoritmo de planificación"
+    ],
+    correct: 2,
+    explanation: "En ULT, el kernel no conoce los hilos y trata el proceso como monohilo. Si cualquier hilo realiza una syscall bloqueante, el kernel bloquea el proceso completo, paralizando también todos sus demás hilos."
+  },
+  {
+    q: "¿Qué biblioteca de hilos está disponible SOLAMENTE en sistemas Windows?",
+    options: ["POSIX Pthreads", "Java Threads", "Win32", "GNU Threads"],
+    correct: 2,
+    explanation: "Win32 es la biblioteca de hilos exclusiva de Windows y opera solo a nivel kernel. POSIX Pthreads puede usarse en múltiples sistemas operativos. Java usa la biblioteca del SO host."
+  },
+  {
+    q: "¿Qué sucede con los hilos cuando se suspende un proceso en un sistema multihilo?",
+    options: [
+      "Solo el hilo principal se suspende",
+      "Los hilos continúan ejecutándose de forma independiente",
+      "Todos los hilos del proceso son suspendidos",
+      "Los hilos se migran a otro proceso activo"
+    ],
+    correct: 2,
+    explanation: "Suspender un proceso implica que todos sus hilos sean suspendidos. El estado 'Suspendido' aplica a nivel de proceso, no de hilo individual."
+  },
+  {
+    q: "En el enfoque moderno de SO, ¿qué representa un hilo?",
+    options: [
+      "La unidad de propiedad de recursos (espacio de direcciones, archivos)",
+      "La unidad de planificación y ejecución",
+      "El bloque de control del proceso (PCB)",
+      "El espacio de direcciones compartido"
+    ],
+    correct: 1,
+    explanation: "En el enfoque moderno: proceso = unidad de propiedad de recursos, hilo = unidad de planificación/ejecución. Esta separación permite que un proceso tenga múltiples hilos planificados independientemente por el SO."
+  }
+];
+
+let mcCorrect = 0;
+let mcIncorrect = 0;
+let mcAnswered = 0;
+
+function buildMC() {
+  const container = document.getElementById('mc-container');
+  const letters = ['A', 'B', 'C', 'D'];
+
+  mcItems.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'mc-card';
+
+    const optionsHtml = item.options.map((opt, j) => `
+      <button class="mc-option" id="mc-opt-${i}-${j}" onclick="selectMC(${i}, ${j})">
+        <span class="option-letter">${letters[j]}</span>
+        <span class="option-text">${opt}</span>
+      </button>
+    `).join('');
+
+    card.innerHTML = `
+      <div class="question-num">Pregunta ${i + 1} / ${mcItems.length}</div>
+      <p class="mc-question">${item.q}</p>
+      <div class="mc-options">${optionsHtml}</div>
+      <div class="mc-explanation" id="mc-exp-${i}">${item.explanation}</div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+function selectMC(qi, oi) {
+  const opts = document.querySelectorAll(`[id^="mc-opt-${qi}-"]`);
+  if (opts[0].classList.contains('disabled')) return;
+
+  opts.forEach(o => o.classList.add('disabled'));
+
+  if (oi === mcItems[qi].correct) {
+    opts[oi].classList.add('correct');
+    mcCorrect++;
+  } else {
+    opts[oi].classList.add('incorrect');
+    opts[mcItems[qi].correct].classList.add('correct');
+    mcIncorrect++;
+  }
+
+  mcAnswered++;
+  document.getElementById(`mc-exp-${qi}`).classList.add('show');
+  document.getElementById('mc-correct').textContent = mcCorrect;
+  document.getElementById('mc-incorrect').textContent = mcIncorrect;
+  document.getElementById('mc-pending').textContent = mcItems.length - mcAnswered;
+}
+
+buildMC();
+</script>
+
+</body>
+</html>

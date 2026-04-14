@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Organización Empresarial — Unidad 1: Teoría General de Sistemas</title>
+<style>
+  :root {
+    --bg: #f2ede4;
+    --surface: #ffffff;
+    --surface-alt: #faf7f2;
+    --primary: #2d4a3e;
+    --primary-light: #3d6b58;
+    --gold: #c8a458;
+    --gold-light: #e8c87a;
+    --coral: #c0472f;
+    --coral-light: #e0614a;
+    --text: #1a1a2a;
+    --text-muted: #6b7080;
+    --border: #ddd8ce;
+    --shadow: 0 2px 16px rgba(45,74,62,.10);
+    --shadow-lg: 0 8px 32px rgba(45,74,62,.14);
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Optima, Candara, 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      45deg, transparent, transparent 24px,
+      rgba(200,164,88,.08) 24px, rgba(200,164,88,.08) 25px
+    );
+  }
+  .header-inner { position: relative; max-width: 760px; margin: 0 auto; }
+  .materia-tag {
+    display: inline-block;
+    background: rgba(200,164,88,.22);
+    color: var(--gold-light);
+    font-size: .75rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: .3em .9em;
+    border-radius: 20px;
+    border: 1px solid rgba(200,164,88,.35);
+    margin-bottom: 1rem;
+  }
+  header h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    color: #ffffff;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    line-height: 1.2;
+    margin-bottom: .5rem;
+  }
+  header p {
+    color: rgba(255,255,255,.7);
+    font-size: .95rem;
+  }
+
+  /* ── NAV TABS ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  }
+  .tabs {
+    display: flex; overflow-x: auto;
+    max-width: 900px; margin: 0 auto;
+    scrollbar-width: none;
+    padding: 0 1rem;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0;
+    padding: 1rem 1.2rem;
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: none;
+    border: none; border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: color .2s, border-color .2s;
+    letter-spacing: .02em;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--primary); }
+  .tab-btn.active { color: var(--primary); border-bottom-color: var(--gold); }
+
+  /* ── MAIN CONTENT ── */
+  main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  .section { display: none; animation: fadeIn .35s ease; }
+  .section.active { display: block; }
+
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+  /* ── RESUMEN ── */
+  .overview-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+    border-left: 5px solid var(--gold);
+  }
+  .overview-card h2 {
+    font-family: Georgia, serif;
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+  }
+  .overview-card p { color: var(--text); font-size: 1rem; margin-bottom: .8rem; }
+
+  .stages-row {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+  .stage-card {
+    flex: 1 1 160px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: var(--radius-sm);
+    padding: 1.2rem;
+    text-align: center;
+    position: relative;
+  }
+  .stage-card .num {
+    display: block;
+    font-size: 2rem;
+    font-family: Georgia, serif;
+    color: var(--gold-light);
+    font-weight: 700;
+    line-height: 1;
+  }
+  .stage-card .label {
+    font-size: .9rem; font-weight: 600;
+    margin-top: .3rem;
+    text-transform: uppercase; letter-spacing: .06em;
+  }
+  .stage-card .sub { font-size: .78rem; opacity: .75; margin-top: .3rem; }
+  .stage-arrow {
+    display: flex; align-items: center;
+    font-size: 1.5rem; color: var(--gold);
+  }
+
+  .enfoques-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  .enfoque-card {
+    border-radius: var(--radius-sm);
+    padding: 1.2rem;
+  }
+  .enfoque-sistemico { background: #e8f4f0; border: 1px solid #b8d8ce; }
+  .enfoque-analitico { background: #f4f0e8; border: 1px solid #d8c8b8; }
+  .enfoque-card h4 {
+    font-family: Georgia, serif;
+    font-size: 1rem;
+    margin-bottom: .6rem;
+  }
+  .enfoque-sistemico h4 { color: var(--primary); }
+  .enfoque-analitico h4 { color: #6b4e1a; }
+  .enfoque-card ul { padding-left: 1.2rem; font-size: .88rem; }
+  .enfoque-card li { margin-bottom: .3rem; }
+
+  /* ── CONCEPTOS ── */
+  .concept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+  .concept-card {
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    padding: 1.3rem;
+    box-shadow: var(--shadow);
+    border-top: 3px solid var(--gold);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .concept-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+  .concept-card h3 {
+    font-family: Georgia, serif;
+    font-size: 1rem;
+    color: var(--primary);
+    margin-bottom: .5rem;
+  }
+  .concept-card p { font-size: .87rem; color: var(--text); }
+  .concept-tag {
+    display: inline-block;
+    font-size: .68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    padding: .15em .6em;
+    border-radius: 10px;
+    margin-bottom: .5rem;
+    background: rgba(45,74,62,.1);
+    color: var(--primary);
+  }
+
+  /* ── DETALLE ── */
+  .detail-section { margin-bottom: 2rem; }
+  .detail-section h2 {
+    font-family: Georgia, serif;
+    font-size: 1.35rem;
+    color: var(--primary);
+    padding-bottom: .5rem;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 1rem;
+  }
+  .detail-section h3 {
+    font-size: 1rem;
+    color: var(--primary-light);
+    margin: 1rem 0 .4rem;
+  }
+  .detail-section p { font-size: .93rem; margin-bottom: .7rem; }
+  .detail-section ul { padding-left: 1.5rem; margin-bottom: .8rem; }
+  .detail-section li { font-size: .91rem; margin-bottom: .35rem; }
+
+  .example-box {
+    background: var(--surface-alt);
+    border-left: 4px solid var(--gold);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 1rem 1.3rem;
+    margin: 1rem 0;
+  }
+  .example-box .ex-label {
+    font-size: .72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .1em; color: var(--gold); margin-bottom: .4rem;
+  }
+
+  .types-row {
+    display: flex; gap: .8rem; flex-wrap: wrap; margin: 1rem 0;
+  }
+  .type-pill {
+    background: var(--surface);
+    border: 2px solid var(--primary);
+    border-radius: 24px;
+    padding: .5rem 1.1rem;
+    font-size: .85rem; font-weight: 600;
+    color: var(--primary);
+  }
+  .type-pill.open { border-color: #2d8a5f; color: #2d8a5f; background: #eaf7f0; }
+  .type-pill.closed { border-color: #c0472f; color: #c0472f; background: #fdf0ee; }
+  .type-pill.semi { border-color: #8b6914; color: #8b6914; background: #fdf6e8; }
+
+  .qualities-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: .6rem; margin-top: 1rem;
+  }
+  .quality-item {
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    padding: .8rem;
+    text-align: center;
+    font-size: .82rem;
+    font-weight: 600;
+    color: var(--primary);
+    border: 1px solid var(--border);
+  }
+  .quality-item span {
+    display: block; font-size: .72rem;
+    color: var(--text-muted); font-weight: 400;
+    margin-top: .2rem;
+  }
+
+  /* ── FLASHCARDS ── */
+  .fc-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1.5rem; flex-wrap: wrap; gap: .5rem;
+  }
+  .fc-header h2 {
+    font-family: Georgia, serif;
+    color: var(--primary); font-size: 1.35rem;
+  }
+  .progress-badge {
+    background: var(--primary);
+    color: #fff; border-radius: 20px;
+    padding: .3em .9em; font-size: .85rem; font-weight: 600;
+  }
+  .fc-arena {
+    perspective: 1000px;
+    width: 100%; max-width: 540px;
+    height: 220px;
+    margin: 0 auto 1.5rem;
+    cursor: pointer;
+  }
+  .fc-inner {
+    width: 100%; height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform .55s cubic-bezier(.4,0,.2,1);
+  }
+  .fc-inner.flipped { transform: rotateY(180deg); }
+  .fc-face {
+    position: absolute; inset: 0;
+    border-radius: var(--radius);
+    backface-visibility: hidden;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+  }
+  .fc-front {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: #fff;
+  }
+  .fc-back {
+    background: var(--surface);
+    color: var(--text);
+    transform: rotateY(180deg);
+    border: 2px solid var(--gold);
+  }
+  .fc-face .hint {
+    font-size: .7rem; text-transform: uppercase; letter-spacing: .1em;
+    opacity: .6; margin-bottom: .7rem;
+  }
+  .fc-face .question { font-family: Georgia, serif; font-size: 1.1rem; line-height: 1.4; }
+  .fc-face .answer { font-size: .93rem; line-height: 1.5; }
+  .fc-face .answer strong { color: var(--primary); }
+
+  .fc-controls {
+    display: flex; justify-content: center; gap: .8rem;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: .65rem 1.4rem;
+    border-radius: 8px;
+    font-size: .9rem; font-weight: 600;
+    border: none; cursor: pointer;
+    transition: transform .15s, box-shadow .15s, background .15s;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-light); box-shadow: 0 4px 12px rgba(45,74,62,.3); }
+  .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: var(--surface-alt); }
+  .btn-gold { background: var(--gold); color: var(--text); }
+  .btn-gold:hover { background: var(--gold-light); }
+
+  .fc-dots {
+    display: flex; justify-content: center; gap: .4rem; margin-top: 1.2rem;
+  }
+  .fc-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border); transition: background .2s, transform .2s;
+  }
+  .fc-dot.active { background: var(--primary); transform: scale(1.3); }
+  .fc-dot.seen { background: var(--gold); }
+
+  /* ── COMPLETAR ── */
+  .fill-list { display: flex; flex-direction: column; gap: 1rem; }
+  .fill-item {
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    padding: 1.3rem;
+    box-shadow: var(--shadow);
+    transition: border .2s;
+    border: 2px solid transparent;
+  }
+  .fill-item.correct { border-color: #2d8a5f; background: #f0fbf5; }
+  .fill-item.wrong { border-color: var(--coral); background: #fdf2f0; }
+  .fill-num {
+    font-size: .72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .1em; color: var(--text-muted); margin-bottom: .4rem;
+  }
+  .fill-sentence {
+    font-size: .97rem; margin-bottom: .8rem; line-height: 1.6;
+  }
+  .fill-sentence em {
+    display: inline-block;
+    min-width: 120px; text-align: center;
+    border-bottom: 2px solid var(--gold);
+    color: transparent;
+    font-style: normal;
+    margin: 0 .2rem;
+  }
+  .fill-row { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
+  .fill-input {
+    flex: 1; min-width: 180px;
+    padding: .55rem .9rem;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: .9rem;
+    font-family: inherit;
+    transition: border-color .2s;
+    background: var(--bg);
+  }
+  .fill-input:focus { outline: none; border-color: var(--primary); background: #fff; }
+  .fill-feedback {
+    font-size: .85rem; margin-top: .7rem; display: none;
+    padding: .6rem .9rem;
+    border-radius: var(--radius-sm);
+  }
+  .fill-feedback.show { display: block; }
+  .fill-feedback.ok { background: #e8f7ef; color: #1a6644; }
+  .fill-feedback.ko { background: #fdf0ee; color: #c0472f; }
+  .fill-progress {
+    text-align: right; font-size: .82rem; color: var(--text-muted);
+    margin-bottom: 1rem; font-weight: 600;
+  }
+
+  /* ── MULTIPLE CHOICE ── */
+  .mc-list { display: flex; flex-direction: column; gap: 1.5rem; }
+  .mc-item {
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+  .mc-q {
+    font-family: Georgia, serif;
+    font-size: 1rem; margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+  .mc-q strong { color: var(--primary); margin-right: .4rem; }
+  .mc-options { display: flex; flex-direction: column; gap: .5rem; }
+  .mc-opt {
+    display: flex; align-items: flex-start; gap: .8rem;
+    padding: .75rem 1rem;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--border);
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+    font-size: .9rem;
+  }
+  .mc-opt:hover:not(.disabled) { border-color: var(--primary); background: var(--surface-alt); }
+  .mc-opt .letter {
+    flex-shrink: 0;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .78rem; font-weight: 700;
+  }
+  .mc-opt.correct-ans { border-color: #2d8a5f; background: #eaf7f0; }
+  .mc-opt.correct-ans .letter { background: #2d8a5f; }
+  .mc-opt.wrong-ans { border-color: var(--coral); background: #fdf0ee; }
+  .mc-opt.wrong-ans .letter { background: var(--coral); }
+  .mc-opt.disabled { cursor: default; }
+  .mc-explanation {
+    margin-top: .9rem; font-size: .85rem;
+    padding: .7rem 1rem;
+    border-radius: var(--radius-sm);
+    display: none;
+  }
+  .mc-explanation.show { display: block; }
+  .mc-explanation.ok { background: #e8f7ef; color: #1a6644; }
+  .mc-explanation.ko { background: #fdf0ee; color: #c0472f; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .enfoques-grid { grid-template-columns: 1fr; }
+    .stages-row { flex-direction: column; }
+    .stage-arrow { display: none; }
+    .concept-grid { grid-template-columns: 1fr; }
+    .qualities-grid { grid-template-columns: repeat(2, 1fr); }
+    .fc-arena { height: 240px; }
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-family: Georgia, serif;
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+  }
+  .section-title span {
+    display: block; font-family: Optima, Candara, 'Gill Sans', 'Gill Sans MT', sans-serif;
+    font-size: .75rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .12em; color: var(--gold);
+    margin-bottom: .2rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="materia-tag">Organización Empresarial</div>
+    <h1>Unidad 1: Teoría General de Sistemas</h1>
+    <p>Sistemas, organizaciones, información contable y normas</p>
+  </div>
+</header>
+
+<nav>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showSection('resumen', this)">Resumen</button>
+    <button class="tab-btn" onclick="showSection('conceptos', this)">Conceptos Clave</button>
+    <button class="tab-btn" onclick="showSection('detalle', this)">Explicación</button>
+    <button class="tab-btn" onclick="showSection('flashcards', this)">Flashcards</button>
+    <button class="tab-btn" onclick="showSection('completar', this)">Completar</button>
+    <button class="tab-btn" onclick="showSection('multiple', this)">Multiple Choice</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ══════════════ RESUMEN ══════════════ -->
+<div id="resumen" class="section active">
+  <div class="overview-card">
+    <h2>¿De qué trata esta unidad?</h2>
+    <p>
+      La Unidad 1 introduce la <strong>Teoría General de Sistemas</strong> aplicada a las organizaciones empresariales.
+      Un sistema es un conjunto organizado de elementos interdependientes que trabajan hacia un objetivo común.
+      Si uno falla, todo el sistema se altera.
+    </p>
+    <p>
+      Se analizan los componentes básicos (objetivo, elementos, estructura, proceso, frontera), los tipos de sistemas
+      (abiertos, cerrados, semiabiertos) y cómo las organizaciones funcionan como sistemas.
+      También se estudian los <strong>sistemas de información</strong> y la <strong>información contable</strong>,
+      incluyendo las normas legales y profesionales que los regulan en Argentina.
+    </p>
+
+    <div class="stages-row">
+      <div class="stage-card">
+        <span class="num">①</span>
+        <div class="label">Entradas</div>
+        <div class="sub">Inputs / datos y recursos</div>
+      </div>
+      <div class="stage-arrow">→</div>
+      <div class="stage-card">
+        <span class="num">②</span>
+        <div class="label">Proceso</div>
+        <div class="sub">Transformación</div>
+      </div>
+      <div class="stage-arrow">→</div>
+      <div class="stage-card">
+        <span class="num">③</span>
+        <div class="label">Salidas</div>
+        <div class="sub">Outputs / resultados</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="overview-card" style="border-left-color: var(--primary);">
+    <h2>Los dos enfoques complementarios</h2>
+    <div class="enfoques-grid">
+      <div class="enfoque-card enfoque-sistemico">
+        <h4>Enfoque Sistémico</h4>
+        <ul>
+          <li>Destaca las interacciones</li>
+          <li>Percepción global</li>
+          <li>Modifica variables simultáneamente</li>
+        </ul>
+      </div>
+      <div class="enfoque-card enfoque-analitico">
+        <h4>Enfoque Analítico</h4>
+        <ul>
+          <li>Cada elemento en particular</li>
+          <li>Precisión de los detalles</li>
+          <li>Modifica una variable a la vez</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ CONCEPTOS CLAVE ══════════════ -->
+<div id="conceptos" class="section">
+  <h1 class="section-title">
+    <span>Unidad 1</span>
+    Conceptos Clave
+  </h1>
+  <div class="concept-grid">
+
+    <div class="concept-card">
+      <div class="concept-tag">Definición base</div>
+      <h3>Sistema</h3>
+      <p>Conjunto organizado de elementos interdependientes que trabajan coordinadamente para cumplir un objetivo común. Si uno falla, todo el sistema se altera.</p>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-tag">Componente</div>
+      <h3>Objetivo</h3>
+      <p>La meta que el sistema busca alcanzar mediante la interacción de sus componentes.</p>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-tag">Componente</div>
+      <h3>Elementos</h3>
+      <p>Las partes identificables del sistema. Los elementos grandes pueden incluir subsistemas.</p>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-tag">Componente</div>
+      <h3>Estructura</h3>
+      <p>El conjunto de relaciones entre objetos y atributos de los objetos de un sistema.</p>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-tag">Componente</div>
+      <h3>Frontera</h3>
+      <p>Delimita el sistema del entorno. Puede ser física o conceptual. Todo lo que queda fuera es el ambiente o meta-sistema.</p>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-tag">Principio TGS</div>
+      <h3>Input (Entrada)</h3>
+      <p>Procesos que incorporan información, energía o materia al sistema, provenientes del exterior.</p>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-tag">Principio TGS</div>
+      <h3>Output (Salida)</h3>
+      <p>Lo obtenido mediante el funcionamiento del sistema que por lo general sale al medio externo.</p>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-tag">Principio TGS</div>
+      <h3>Throughput (Transformador)</h3>
+      <p>Mecanismos del sistema que producen cambios o convierten entradas en salidas.</p>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-tag">Principio TGS</div>
+      <h3>Retroalimentación</h3>
+      <p>Cuando el sistema convierte sus salidas en entradas nuevamente, ajustando su funcionamiento.</p>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-tag">Tipo</div>
+      <h3>Sistema Abierto</h3>
+      <p>Se relaciona e intercambia información, energía o materia con el entorno. Necesario para la supervivencia de las organizaciones.</p>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-tag">Tipo</div>
+      <h3>Sistema Cerrado</h3>
+      <p>No realiza intercambios con su entorno. Es un sistema ideal, en la práctica difícil de encontrar.</p>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-tag">Tipo</div>
+      <h3>Sistema Semiabierto</h3>
+      <p>Comparte la menor información posible con el entorno, sin llegar a ser totalmente cerrado.</p>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-tag">Estructura</div>
+      <h3>Subsistema</h3>
+      <p>Sistema más pequeño en el que se descompone un sistema mayor. Las organizaciones se descomponen en subsistemas a medida que crecen.</p>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-tag">Información</div>
+      <h3>Sistema de Información</h3>
+      <p>Unidad compleja formada por elementos humanos, materiales y tecnológicos que recopilan datos y los transforman en información útil para la toma de decisiones.</p>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-tag">Contabilidad</div>
+      <h3>Información Contable</h3>
+      <p>Subsistema de información que registra operaciones comerciales en libros, brindando información para planificación, gestión, control y evaluación.</p>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-tag">Contabilidad</div>
+      <h3>Estados Contables</h3>
+      <p>Informes periódicos que reflejan: 1) Situación patrimonial (bienes, derechos, deudas), 2) Económica (pérdidas y ganancias), 3) Financiera (pagos y cobranzas).</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════ EXPLICACIÓN DETALLADA ══════════════ -->
+<div id="detalle" class="section">
+  <h1 class="section-title">
+    <span>Unidad 1</span>
+    Explicación Detallada
+  </h1>
+
+  <div class="detail-section">
+    <h2>¿Qué es la Teoría General de Sistemas?</h2>
+    <p>
+      La <strong>Teoría General de Sistemas (TGS)</strong> es el estudio de los sistemas en general
+      desde una perspectiva <em>interdisciplinaria</em>, es decir, abarca distintas disciplinas como
+      biología, medicina, sociología, administración de empresas, etc.
+    </p>
+    <p>
+      Un sistema es una unidad cuyos elementos interaccionan juntos y simultáneamente,
+      afectándose unos a otros, operando hacia una meta en común.
+      Es algo que se percibe como una identidad distinguible de su entorno, capaz de
+      mantener esa identidad a lo largo del tiempo y bajo entornos cambiantes.
+    </p>
+    <div class="example-box">
+      <div class="ex-label">Ejemplo del material</div>
+      <p><strong>Una orquesta:</strong> cada músico ejecuta un instrumento diferente, pero si uno desafina, desmerece toda la pieza musical. El <em>input</em> es la partitura, el <em>proceso</em> es la ejecución de los instrumentos, y el <em>output</em> es la melodía.</p>
+    </div>
+  </div>
+
+  <div class="detail-section">
+    <h2>Componentes de un Sistema</h2>
+    <ul>
+      <li><strong>Objetivo:</strong> la meta que todos los componentes buscan alcanzar.</li>
+      <li><strong>Elementos:</strong> partes identificables. Los más grandes son subsistemas.</li>
+      <li><strong>Atributos:</strong> propiedades de los elementos (velocidad, precisión, confiabilidad).</li>
+      <li><strong>Estructura:</strong> conjunto de relaciones entre los objetos del sistema.</li>
+      <li><strong>Proceso:</strong> resultado neto de actividades que convierten entradas en salidas.</li>
+      <li><strong>Organización:</strong> reglas que condicionan el funcionamiento de los componentes.</li>
+      <li><strong>Frontera:</strong> delimita el sistema. Lo interno está bajo control del observador; lo externo actúa como perturbaciones.</li>
+    </ul>
+  </div>
+
+  <div class="detail-section">
+    <h2>Principios de la TGS: Entradas, Proceso y Salidas</h2>
+    <h3>Entradas (Inputs)</h3>
+    <p>Incorporan información, energía o materia al sistema desde el afuera.</p>
+    <h3>Transformadores (Throughput)</h3>
+    <p>Mecanismos internos que convierten entradas en salidas.</p>
+    <h3>Salidas (Outputs)</h3>
+    <p>Los resultados obtenidos que por lo general salen al medio externo.</p>
+    <h3>Retroalimentación</h3>
+    <p>Cuando las salidas se convierten nuevamente en entradas, permitiendo al sistema ajustar su funcionamiento.</p>
+    <h3>Medio ambiente</h3>
+    <p>Todo lo que rodea al sistema y existe fuera de él, constituyendo un sistema dentro de otro sistema (supersistema).</p>
+  </div>
+
+  <div class="detail-section">
+    <h2>Tipos de Sistemas</h2>
+    <div class="types-row">
+      <span class="type-pill open">Abiertos</span>
+      <span class="type-pill closed">Cerrados</span>
+      <span class="type-pill semi">Semiabiertos</span>
+    </div>
+    <ul style="margin-top:.8rem">
+      <li><strong>Abiertos:</strong> comparten información libremente con el entorno. Las organizaciones son sistemas abiertos (necesitan relacionarse para sobrevivir).</li>
+      <li><strong>Cerrados:</strong> no comparten ningún tipo de información. Son siempre sistemas ideales.</li>
+      <li><strong>Semiabiertos o Semicerrados:</strong> comparten la menor información posible sin llegar a ser cerrados.</li>
+    </ul>
+    <div class="example-box">
+      <div class="ex-label">Ejemplos reales</div>
+      <p><strong>Sistema solar</strong> (cerrado respecto a materia), <strong>Sistema circulatorio</strong> (corazón, venas, arterias, sangre), <strong>Termo</strong> (sistema térmico semiabierto), <strong>Idioma</strong> (sistema lingüístico conceptual).</p>
+    </div>
+  </div>
+
+  <div class="detail-section">
+    <h2>Las Organizaciones como Sistemas</h2>
+    <p>
+      Las organizaciones son sistemas abiertos y complejos. A medida que crecen,
+      se descomponen en <strong>subsistemas</strong>. Uno de estos subsistemas clave es el
+      <strong>Sistema de Información</strong>.
+    </p>
+    <p>
+      Las 4 operaciones básicas de una empresa que impulsan el circuito de información son:
+    </p>
+    <div class="types-row">
+      <span class="type-pill">Compras</span>
+      <span class="type-pill">Ventas</span>
+      <span class="type-pill">Pagos</span>
+      <span class="type-pill">Cobros</span>
+    </div>
+  </div>
+
+  <div class="detail-section">
+    <h2>Cualidades de la Información</h2>
+    <p>Para que la información sea válida en el sistema contable, debe cumplir 10 cualidades:</p>
+    <div class="qualities-grid">
+      <div class="quality-item">Útil <span>sirve al objetivo</span></div>
+      <div class="quality-item">Confiable <span>veraz</span></div>
+      <div class="quality-item">Íntegra <span>completa</span></div>
+      <div class="quality-item">Representativa <span>esencial y real</span></div>
+      <div class="quality-item">Prudente <span>sensata y medida</span></div>
+      <div class="quality-item">Objetiva <span>imparcial</span></div>
+      <div class="quality-item">Verificable <span>comprobable</span></div>
+      <div class="quality-item">Oportuna <span>a tiempo</span></div>
+      <div class="quality-item">Clara <span>entendible</span></div>
+      <div class="quality-item">Comparable <span>susceptible a comparación</span></div>
+    </div>
+  </div>
+
+  <div class="detail-section">
+    <h2>Normas: Marco Jurídico Contable</h2>
+    <h3>Normas Legales</h3>
+    <p>Originadas en: Código de Comercio, Ley de Sociedades Comerciales (Nº 19.550), IGJ, BCRA, Comisión Nacional de Valores.</p>
+    <h3>Normas Profesionales</h3>
+    <p>Emitidas por: Consejo Profesional de Ciencias Económicas, FACPCE, CGCE. Sus Resoluciones Técnicas (RT) se publican en el Boletín Oficial.</p>
+  </div>
+</div>
+
+<!-- ══════════════ FLASHCARDS ══════════════ -->
+<div id="flashcards" class="section">
+  <div class="fc-header">
+    <h2 class="section-title" style="margin:0">
+      <span>Practicá</span>
+      Flashcards
+    </h2>
+    <div class="progress-badge" id="fc-progress">1 / 12</div>
+  </div>
+
+  <div class="fc-arena" id="fc-arena" onclick="flipCard()">
+    <div class="fc-inner" id="fc-inner">
+      <div class="fc-face fc-front">
+        <div class="hint">Pregunta — hacé click para dar vuelta</div>
+        <div class="question" id="fc-question"></div>
+      </div>
+      <div class="fc-face fc-back">
+        <div class="hint">Respuesta</div>
+        <div class="answer" id="fc-answer"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fc-controls">
+    <button class="btn btn-secondary" onclick="prevCard()">← Anterior</button>
+    <button class="btn btn-gold" onclick="flipCard()">Dar vuelta</button>
+    <button class="btn btn-primary" onclick="nextCard()">Siguiente →</button>
+  </div>
+
+  <div class="fc-dots" id="fc-dots"></div>
+</div>
+
+<!-- ══════════════ COMPLETAR EL ESPACIO ══════════════ -->
+<div id="completar" class="section">
+  <h1 class="section-title">
+    <span>Practicá</span>
+    Completar el Espacio
+  </h1>
+  <div class="fill-progress" id="fill-progress">0 / 12 correctas</div>
+  <div class="fill-list" id="fill-list"></div>
+</div>
+
+<!-- ══════════════ MULTIPLE CHOICE ══════════════ -->
+<div id="multiple" class="section">
+  <h1 class="section-title">
+    <span>Practicá</span>
+    Multiple Choice
+  </h1>
+  <div class="mc-list" id="mc-list"></div>
+</div>
+
+</main>
+
+<script>
+// ─── TABS ───────────────────────────────────────────
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ─── FLASHCARDS DATA ─────────────────────────────────
+const flashcards = [
+  {
+    q: '¿Qué es un sistema?',
+    a: 'Conjunto <strong>organizado</strong> de elementos interdependientes que trabajan coordinadamente para cumplir un <strong>objetivo común</strong>. Si uno falla, todo el sistema se altera.'
+  },
+  {
+    q: '¿Qué son las entradas (inputs)?',
+    a: 'Procesos que incorporan <strong>información, energía o materia</strong> al sistema, proviniendo del exterior.'
+  },
+  {
+    q: '¿Qué son las salidas (outputs)?',
+    a: 'Lo obtenido mediante el funcionamiento del sistema que <strong>sale al medio externo</strong>.'
+  },
+  {
+    q: '¿Qué es el throughput o transformador?',
+    a: 'Mecanismos del sistema que <strong>producen cambios</strong> o convierten entradas en salidas.'
+  },
+  {
+    q: '¿Qué es la retroalimentación?',
+    a: 'Cuando el sistema <strong>convierte sus salidas en entradas</strong>, ajustando su propio funcionamiento.'
+  },
+  {
+    q: '¿Qué es la frontera de un sistema?',
+    a: 'Límite físico o conceptual que delimita el sistema. Lo interno está bajo <strong>control del observador</strong>; lo externo actúa como perturbaciones.'
+  },
+  {
+    q: '¿Qué es un sistema abierto?',
+    a: 'El que <strong>se relaciona e intercambia</strong> información, energía o materia con el entorno. Las organizaciones son sistemas abiertos.'
+  },
+  {
+    q: '¿Qué es un sistema cerrado?',
+    a: 'El que <strong>no realiza intercambios</strong> con su entorno. Son siempre <strong>sistemas ideales</strong>.'
+  },
+  {
+    q: '¿Qué es un subsistema?',
+    a: 'Sistema <strong>más pequeño</strong> en el que se descompone un sistema mayor.'
+  },
+  {
+    q: '¿Cuál es la diferencia entre enfoque sistémico y analítico?',
+    a: '<strong>Sistémico:</strong> percepción global, modifica variables simultáneamente.<br><strong>Analítico:</strong> precisión de detalles, modifica una variable a la vez.'
+  },
+  {
+    q: '¿Cuáles son las 4 operaciones básicas de una empresa?',
+    a: '<strong>Compras, Ventas, Pagos y Cobros.</strong> Impulsan el circuito del sistema de información contable.'
+  },
+  {
+    q: '¿Qué son los Estados Contables?',
+    a: 'Informes periódicos que reflejan la situación: 1) <strong>Patrimonial</strong> (bienes y deudas), 2) <strong>Económica</strong> (pérdidas/ganancias), 3) <strong>Financiera</strong> (pagos/cobranzas).'
+  }
+];
+
+let fcIndex = 0;
+let fcFlipped = false;
+
+function renderFC() {
+  const card = flashcards[fcIndex];
+  document.getElementById('fc-question').textContent = card.q;
+  document.getElementById('fc-answer').innerHTML = card.a;
+  document.getElementById('fc-progress').textContent = (fcIndex + 1) + ' / ' + flashcards.length;
+
+  const inner = document.getElementById('fc-inner');
+  inner.classList.remove('flipped');
+  fcFlipped = false;
+
+  const dots = document.getElementById('fc-dots');
+  dots.innerHTML = '';
+  flashcards.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'fc-dot' + (i === fcIndex ? ' active' : (i < fcIndex ? ' seen' : ''));
+    dots.appendChild(d);
+  });
+}
+
+function flipCard() {
+  const inner = document.getElementById('fc-inner');
+  fcFlipped = !fcFlipped;
+  if (fcFlipped) inner.classList.add('flipped');
+  else inner.classList.remove('flipped');
+}
+
+function nextCard() {
+  fcIndex = (fcIndex + 1) % flashcards.length;
+  renderFC();
+}
+
+function prevCard() {
+  fcIndex = (fcIndex - 1 + flashcards.length) % flashcards.length;
+  renderFC();
+}
+
+renderFC();
+
+// ─── FILL IN THE BLANK ───────────────────────────────
+const fillData = [
+  {
+    sentence: 'Un sistema es un conjunto ___ de elementos que trabajan coordinadamente para cumplir un objetivo común.',
+    blank: 'organizado',
+    explanation: '"Organizado" es la palabra clave: los elementos no están al azar, sino estructurados.'
+  },
+  {
+    sentence: 'Los sistemas ___ realizan intercambios con su entorno.',
+    blank: 'abiertos',
+    explanation: 'Los sistemas abiertos son los que se relacionan con el entorno, necesario para la supervivencia de las organizaciones.'
+  },
+  {
+    sentence: 'Los sistemas ___ no realizan intercambios con su entorno y son considerados ideales.',
+    blank: 'cerrados',
+    explanation: 'Los sistemas cerrados no tienen conexión con el medio. Son sistemas teóricos o ideales.'
+  },
+  {
+    sentence: 'Las ___ son procesos que incorporan información, energía o materia al sistema desde el exterior.',
+    blank: 'entradas',
+    explanation: 'Las entradas (inputs) son lo que el sistema recibe del afuera para procesar.'
+  },
+  {
+    sentence: 'Los ___ son los resultados obtenidos por el sistema que salen al medio externo.',
+    blank: 'outputs',
+    explanation: 'Los outputs (salidas) son el producto final del funcionamiento del sistema.'
+  },
+  {
+    sentence: 'La ___ ocurre cuando el sistema convierte sus salidas en entradas.',
+    blank: 'retroalimentación',
+    explanation: 'La retroalimentación (feedback) es el mecanismo por el cual el sistema se autoregula.'
+  },
+  {
+    sentence: 'La Teoría de Sistemas estudia los sistemas desde una perspectiva ___.',
+    blank: 'interdisciplinaria',
+    explanation: 'Interdisciplinaria porque abarca biología, sociología, administración, informática y otros campos.'
+  },
+  {
+    sentence: 'La ___ se disminuye al obtenerse información.',
+    blank: 'incertidumbre',
+    explanation: 'La información reduce la incertidumbre: cuanta más información se tiene, mayor organización existe en el sistema.'
+  },
+  {
+    sentence: 'Las operaciones básicas de una empresa son compras, ventas, ___ y cobros.',
+    blank: 'pagos',
+    explanation: 'Las 4 operaciones básicas son compras, ventas, pagos y cobros, que impulsan el circuito del SIC.'
+  },
+  {
+    sentence: 'La ___ es la disciplina que permite el registro de operaciones comerciales en los libros correspondientes.',
+    blank: 'contabilidad',
+    explanation: 'La contabilidad usa documentación para registrar operaciones y brindar información para gestión y control.'
+  },
+  {
+    sentence: 'Los estados contables reflejan la situación ___, económica y financiera de la empresa.',
+    blank: 'patrimonial',
+    explanation: 'La situación patrimonial incluye bienes propios, derechos a cobrar y deudas.'
+  },
+  {
+    sentence: 'La información ___ es la que puede ser comparada con otra información similar.',
+    blank: 'comparable',
+    explanation: 'Una de las 10 cualidades de la información es ser comparable, lo que permite análisis y benchmarking.'
+  }
+];
+
+let fillCorrect = 0;
+
+function updateFillProgress() {
+  document.getElementById('fill-progress').textContent = fillCorrect + ' / ' + fillData.length + ' correctas';
+}
+
+function checkFill(index) {
+  const input = document.getElementById('fill-input-' + index);
+  const item = document.getElementById('fill-item-' + index);
+  const feedback = document.getElementById('fill-feedback-' + index);
+  const val = input.value.trim().toLowerCase();
+  const correct = fillData[index].blank.toLowerCase();
+
+  // Accept partial matches for multi-word answers
+  const isCorrect = val === correct || correct.includes(val) && val.length >= 4;
+
+  input.disabled = true;
+  feedback.classList.add('show');
+
+  if (isCorrect) {
+    item.classList.add('correct');
+    feedback.classList.add('ok');
+    feedback.innerHTML = '✓ Correcto! ' + fillData[index].explanation;
+    fillCorrect++;
+    updateFillProgress();
+  } else {
+    item.classList.add('wrong');
+    feedback.classList.add('ko');
+    feedback.innerHTML = '✗ La respuesta es "<strong>' + fillData[index].blank + '</strong>". ' + fillData[index].explanation;
+  }
+}
+
+function buildFillList() {
+  const list = document.getElementById('fill-list');
+  list.innerHTML = '';
+  fillData.forEach((fd, i) => {
+    const parts = fd.sentence.split('___');
+    const el = document.createElement('div');
+    el.className = 'fill-item';
+    el.id = 'fill-item-' + i;
+    el.innerHTML = `
+      <div class="fill-num">Pregunta ${i + 1} de ${fillData.length}</div>
+      <div class="fill-sentence">${parts[0]}<em>_______________</em>${parts[1] || ''}</div>
+      <div class="fill-row">
+        <input type="text" class="fill-input" id="fill-input-${i}"
+          placeholder="Escribí tu respuesta..."
+          onkeydown="if(event.key==='Enter') checkFill(${i})">
+        <button class="btn btn-primary" onclick="checkFill(${i})">Verificar</button>
+      </div>
+      <div class="fill-feedback" id="fill-feedback-${i}"></div>
+    `;
+    list.appendChild(el);
+  });
+}
+
+buildFillList();
+updateFillProgress();
+
+// ─── MULTIPLE CHOICE ─────────────────────────────────
+const mcData = [
+  {
+    q: '¿Cuántos tipos de sistemas reconoce la Teoría General de Sistemas?',
+    options: ['2 tipos: abiertos y cerrados', '3 tipos: abiertos, cerrados y semiabiertos', '4 tipos: abiertos, cerrados, semiabiertos y mixtos', '5 tipos según su tamaño'],
+    correct: 1,
+    explanation: 'La TGS reconoce 3 tipos: abiertos (intercambian con el entorno), cerrados (no intercambian, son ideales) y semiabiertos/semicerrados (intercambian lo mínimo posible).'
+  },
+  {
+    q: 'En el ejemplo de la orquesta como sistema, ¿qué representa el OUTPUT?',
+    options: ['La partitura', 'Los músicos', 'La melodía resultante', 'Los instrumentos musicales'],
+    correct: 2,
+    explanation: 'La partitura es el input, la ejecución de los instrumentos es el proceso (throughput) y la melodía es el output (resultado final).'
+  },
+  {
+    q: '¿Cuál es una característica del enfoque SISTÉMICO?',
+    options: ['Se centra en la precisión de los detalles', 'Modifica una variable a la vez', 'Se centra en la percepción global', 'Analiza cada elemento por separado'],
+    correct: 2,
+    explanation: 'El enfoque sistémico destaca las interacciones y la percepción global, modificando grupos de variables en forma simultánea. El enfoque analítico es el que se centra en detalles.'
+  },
+  {
+    q: '¿Qué es la retroalimentación en un sistema?',
+    options: ['La entrada de información del exterior', 'La transformación de datos en el sistema', 'Cuando el sistema convierte sus salidas en entradas', 'El medio ambiente que rodea al sistema'],
+    correct: 2,
+    explanation: 'La retroalimentación (feedback) es el mecanismo por el cual las salidas del sistema se convierten en nuevas entradas, permitiendo que el sistema se autorregule.'
+  },
+  {
+    q: '¿Cuál cualidad de la información indica que debe estar disponible "a tiempo"?',
+    options: ['Útil', 'Clara', 'Oportuna', 'Objetiva'],
+    correct: 2,
+    explanation: '"Oportuna" es la cualidad que indica que la información debe estar disponible a tiempo, es decir, cuando se necesita para la toma de decisiones.'
+  },
+  {
+    q: '¿Qué organismo en Argentina emite las Resoluciones Técnicas (RT) contables?',
+    options: ['El Banco Central de la República Argentina', 'La Inspección General de Justicia', 'El Consejo Profesional de Ciencias Económicas', 'La Comisión Nacional de Valores'],
+    correct: 2,
+    explanation: 'Las normas profesionales surgen del Consejo Profesional de Ciencias Económicas y la FACPCE. Sus Resoluciones Técnicas se publican en el Boletín Oficial.'
+  },
+  {
+    q: '¿Cuáles son las 4 operaciones básicas que impulsan el circuito del Sistema de Información Contable?',
+    options: ['Producción, distribución, administración y finanzas', 'Compras, ventas, pagos y cobros', 'Ingresos, egresos, activos y pasivos', 'Planificación, gestión, control y evaluación'],
+    correct: 1,
+    explanation: 'Las 4 operaciones básicas son Compras, Ventas, Pagos y Cobros. Estas son respaldadas por documentos comerciales que las detallan y comprueban.'
+  }
+];
+
+function buildMC() {
+  const list = document.getElementById('mc-list');
+  list.innerHTML = '';
+  mcData.forEach((mc, qi) => {
+    const el = document.createElement('div');
+    el.className = 'mc-item';
+    el.innerHTML = `
+      <div class="mc-q"><strong>${qi + 1}.</strong> ${mc.q}</div>
+      <div class="mc-options">
+        ${mc.options.map((opt, oi) => `
+          <div class="mc-opt" id="mc-${qi}-${oi}" onclick="selectMC(${qi}, ${oi})">
+            <div class="letter">${String.fromCharCode(65 + oi)}</div>
+            <span>${opt}</span>
+          </div>
+        `).join('')}
+      </div>
+      <div class="mc-explanation" id="mc-exp-${qi}"></div>
+    `;
+    list.appendChild(el);
+  });
+}
+
+function selectMC(qi, oi) {
+  const mc = mcData[qi];
+  // Disable all options for this question
+  mc.options.forEach((_, i) => {
+    const opt = document.getElementById('mc-' + qi + '-' + i);
+    opt.classList.add('disabled');
+    if (i === mc.correct) opt.classList.add('correct-ans');
+  });
+
+  const chosen = document.getElementById('mc-' + qi + '-' + oi);
+  const exp = document.getElementById('mc-exp-' + qi);
+  exp.classList.add('show');
+
+  if (oi === mc.correct) {
+    exp.classList.add('ok');
+    exp.innerHTML = '✓ ¡Correcto! ' + mc.explanation;
+  } else {
+    chosen.classList.add('wrong-ans');
+    exp.classList.add('ko');
+    exp.innerHTML = '✗ Incorrecto. La respuesta correcta es la <strong>' + String.fromCharCode(65 + mc.correct) + '</strong>. ' + mc.explanation;
+  }
+}
+
+buildMC();
+</script>
+</body>
+</html>

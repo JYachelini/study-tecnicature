@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tecnicatura — Base de Conocimiento</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #0b1929;
+      --bg-card:      #0e2038;
+      --bg-card-h:    #122641;
+      --grid:         rgba(79, 195, 247, 0.035);
+      --accent:       #4fc3f7;
+      --accent-glow:  rgba(79, 195, 247, 0.09);
+      --success:      #80cbc4;
+      --success-dim:  rgba(128, 203, 196, 0.12);
+      --warn:         #ffb74d;
+      --warn-dim:     rgba(255, 183, 77, 0.1);
+      --text:         #d0e8f5;
+      --text-sub:     #6a90a8;
+      --text-ghost:   #253f52;
+      --border:       rgba(79, 195, 247, 0.11);
+      --border-h:     rgba(79, 195, 247, 0.38);
+      --font:         'Courier New', Courier, monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      background-image:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 48px 48px;
+      overflow-x: hidden;
+    }
+
+    /* subtle scanlines overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0,0,0,0.07) 3px,
+        rgba(0,0,0,0.07) 4px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── HEADER ─────────────────────────────────────── */
+    header {
+      position: relative;
+      padding: 3.5rem 2.5rem 2.5rem;
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 5%, var(--accent) 50%, transparent 95%);
+      opacity: 0.25;
+    }
+
+    /* decorative large circle — blueprint compass rose */
+    header::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      border: 1px solid rgba(79,195,247,0.07);
+      box-shadow:
+        0 0 0 40px rgba(79,195,247,0.025),
+        0 0 0 80px rgba(79,195,247,0.015),
+        0 0 0 120px rgba(79,195,247,0.008);
+      pointer-events: none;
+    }
+
+    .header-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeIn 0.5s ease 0.05s forwards;
+    }
+
+    .tag {
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.18rem 0.55rem;
+      border: 1px solid var(--border);
+      color: var(--text-sub);
+    }
+
+    .tag.hi {
+      color: var(--accent);
+      border-color: rgba(79,195,247,0.3);
+    }
+
+    .title-wrap {
+      opacity: 0;
+      animation: slideUp 0.65s cubic-bezier(.22,.68,0,1.2) 0.2s forwards;
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 6vw, 5rem);
+      font-weight: bold;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      line-height: 0.92;
+      color: var(--text);
+    }
+
+    h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .header-caption {
+      margin-top: 0.9rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-sub);
+    }
+
+    .header-caption span {
+      color: var(--text-ghost);
+      margin: 0 0.4rem;
+    }
+
+    /* ── STATS BAR ───────────────────────────────────── */
+    .statsbar {
+      position: relative;
+      z-index: 1;
+      padding: 0.9rem 2.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeIn 0.5s ease 0.5s forwards;
+    }
+
+    .stat {
+      display: flex;
+      align-items: baseline;
+      gap: 0.45rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .stat-num {
+      font-size: 1.4rem;
+      font-weight: bold;
+      line-height: 1;
+    }
+
+    .stat-num.g { color: var(--success); }
+    .stat-num.p { color: var(--warn); }
+    .stat-num.t { color: var(--accent); }
+    .stat-lbl { color: var(--text-sub); }
+
+    .progress-wrap {
+      flex: 1;
+      min-width: 100px;
+      max-width: 220px;
+      margin-left: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .progress-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-ghost);
+      text-align: right;
+    }
+
+    .progress-track {
+      height: 2px;
+      background: var(--text-ghost);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--success));
+      width: 0%;
+      transition: width 1.4s cubic-bezier(.4,0,.2,1);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    /* ── MAIN ────────────────────────────────────────── */
+    main {
+      position: relative;
+      z-index: 1;
+      padding: 2rem 2.5rem 3rem;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .section-hd {
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-ghost);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid rgba(79,195,247,0.06);
+    }
+
+    /* ── GRID ────────────────────────────────────────── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 1.25rem;
+    }
+
+    /* ── CARD ────────────────────────────────────────── */
+    .card {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 1.4rem 1.4rem 1.2rem;
+      transition:
+        background 0.3s,
+        border-color 0.3s,
+        box-shadow 0.3s,
+        transform 0.35s cubic-bezier(.22,.68,0,1.1);
+      opacity: 0;
+      animation: slideUp 0.55s ease forwards;
+    }
+
+    /* stagger delays */
+    .card:nth-child(1) { animation-delay: 0.35s; }
+    .card:nth-child(2) { animation-delay: 0.48s; }
+    .card:nth-child(3) { animation-delay: 0.61s; }
+    .card:nth-child(4) { animation-delay: 0.74s; }
+
+    .card:hover {
+      background: var(--bg-card-h);
+      border-color: var(--border-h);
+      box-shadow:
+        0 0 0 1px rgba(79,195,247,0.05),
+        0 8px 40px rgba(0,0,0,0.4),
+        0 0 60px var(--accent-glow);
+      transform: translateY(-3px);
+    }
+
+    /* inner double-border */
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 5px;
+      border: 1px solid rgba(79,195,247,0.04);
+      pointer-events: none;
+      transition: border-color 0.3s;
+    }
+
+    .card:hover::before {
+      border-color: rgba(79,195,247,0.1);
+    }
+
+    /* corner brackets */
+    .cc {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-color: var(--accent);
+      border-style: solid;
+      opacity: 0.3;
+      transition: opacity 0.3s;
+    }
+    .card:hover .cc { opacity: 0.7; }
+    .cc.tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+    .cc.tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+    .cc.bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+    .cc.br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+    /* card header row */
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding-bottom: 1rem;
+      margin-bottom: 0.9rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+      margin-bottom: 0.45rem;
+    }
+
+    .card-name {
+      font-size: 0.78rem;
+      font-weight: bold;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      line-height: 1.35;
+      color: var(--text);
+    }
+
+    .card-right {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .card-id {
+      font-size: 0.57rem;
+      letter-spacing: 0.15em;
+      color: var(--text-ghost);
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    .card-ratio {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .card-ratio sup {
+      font-size: 0.65rem;
+      color: var(--text-sub);
+      font-weight: normal;
+      vertical-align: super;
+    }
+
+    /* ── UNIT LIST ───────────────────────────────────── */
+    .units {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .u-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      padding: 0.35rem 0.4rem;
+      transition: background 0.2s;
+    }
+
+    .u-item:hover { background: rgba(79,195,247,0.035); }
+
+    .u-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .u-dot.ok   { background: var(--success); box-shadow: 0 0 6px var(--success); }
+    .u-dot.lock { background: transparent; border: 1px solid var(--text-ghost); }
+
+    .u-label { flex: 1; }
+
+    /* done: wrap in <a> */
+    .u-link {
+      flex: 1;
+      color: var(--text);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .u-link:hover { color: var(--accent); }
+    .u-link:hover .u-label { text-decoration: underline; text-underline-offset: 3px; }
+
+    .u-item.lock-item .u-label { color: var(--text-sub); }
+
+    .u-badge {
+      font-size: 0.54rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.12rem 0.38rem;
+      border: 1px solid;
+      flex-shrink: 0;
+    }
+
+    .u-badge.ok {
+      color: var(--success);
+      border-color: rgba(128,203,196,0.3);
+      background: var(--success-dim);
+    }
+
+    .u-badge.lock {
+      color: var(--text-ghost);
+      border-color: var(--text-ghost);
+      background: transparent;
+    }
+
+    .no-units {
+      font-size: 0.67rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-ghost);
+      padding: 0.6rem 0.4rem;
+      text-align: center;
+    }
+
+    /* ── FOOTER ─────────────────────────────────────── */
+    footer {
+      position: relative;
+      z-index: 1;
+      padding: 1.5rem 2.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    footer::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 5%, var(--accent) 50%, transparent 95%);
+      opacity: 0.2;
+    }
+
+    .footer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    /* technical drawing title block */
+    .title-block {
+      display: grid;
+      grid-template-columns: auto auto;
+      gap: 0.15rem 1.2rem;
+      border: 1px solid var(--border);
+      padding: 0.55rem 0.9rem;
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .title-block dt { color: var(--text-ghost); }
+    .title-block dd { color: var(--text-sub); }
+
+    .footer-total {
+      font-size: 0.67rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-sub);
+      text-align: right;
+      line-height: 1.7;
+    }
+
+    .footer-total strong { color: var(--accent); font-size: 1.1rem; }
+
+    .footer-total .bar {
+      margin-top: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      justify-content: flex-end;
+    }
+
+    .bar-track {
+      width: 80px;
+      height: 2px;
+      background: var(--text-ghost);
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--success));
+      width: 0%;
+      transition: width 1.8s cubic-bezier(.4,0,.2,1);
+    }
+
+    .bar-pct {
+      font-size: 0.7rem;
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    /* ── ANIMATIONS ──────────────────────────────────── */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────────── */
+    @media (max-width: 640px) {
+      header        { padding: 2.5rem 1.25rem 2rem; }
+      .statsbar     { padding: 0.75rem 1.25rem; gap: 1.2rem; }
+      main          { padding: 1.5rem 1.25rem 2.5rem; }
+      footer        { padding: 1.25rem; }
+      h1            { font-size: 2.2rem; }
+      .progress-wrap { display: none; }
+    }
+
+    @media (max-width: 400px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── HEADER ───────────────────────────────────────── -->
+  <header>
+    <div class="header-meta">
+      <span class="tag hi">Sistema de Estudio</span>
+      <span class="tag">Tecnicatura</span>
+      <span class="tag">Rev. A</span>
+    </div>
+    <div class="title-wrap">
+      <h1>Base de<br><em>Conocimiento</em></h1>
+      <p class="header-caption">
+        Repositorio de unidades
+        <span>//</span>
+        Generador de HTMLs
+        <span>//</span>
+        2026
+      </p>
+    </div>
+  </header>
+
+  <!-- ── STATS BAR ────────────────────────────────────── -->
+  <div class="statsbar">
+    <div class="stat">
+      <span class="stat-num g">7</span>
+      <span class="stat-lbl">Generadas</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num p">2</span>
+      <span class="stat-lbl">Pendientes</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num t">4</span>
+      <span class="stat-lbl">Materias</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label">Progreso — <span id="pctLabel">0%</span></div>
+      <div class="progress-track">
+        <div class="progress-fill" id="mainBar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CARDS ────────────────────────────────────────── -->
+  <main>
+    <div class="section-hd">// Materias disponibles — 4 registros</div>
+    <div class="grid">
+
+      <!-- ① Arquitectura y Sistemas Operativos -->
+      <div class="card">
+        <span class="cc tl"></span><span class="cc tr"></span>
+        <span class="cc bl"></span><span class="cc br"></span>
+        <div class="card-top">
+          <div>
+            <div class="card-icon">⚙</div>
+            <div class="card-name">Arquitectura y<br>Sistemas Operativos</div>
+          </div>
+          <div class="card-right">
+            <div class="card-id">DRW-01</div>
+            <div class="card-ratio">3<sup>/3</sup></div>
+          </div>
+        </div>
+        <ul class="units">
+          <li class="u-item">
+            <span class="u-dot ok"></span>
+            <a class="u-link" href="arquitectura-y-sistemas-operativos/unidad-1/output/unidad-1.html">
+              <span class="u-label">Unidad 1</span>
+            </a>
+            <span class="u-badge ok">OK</span>
+          </li>
+          <li class="u-item">
+            <span class="u-dot ok"></span>
+            <a class="u-link" href="arquitectura-y-sistemas-operativos/unidad-2/output/unidad-2.html">
+              <span class="u-label">Unidad 2</span>
+            </a>
+            <span class="u-badge ok">OK</span>
+          </li>
+          <li class="u-item">
+            <span class="u-dot ok"></span>
+            <a class="u-link" href="arquitectura-y-sistemas-operativos/unidad-3/output/unidad-3.html">
+              <span class="u-label">Unidad 3</span>
+            </a>
+            <span class="u-badge ok">OK</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- ② Matemática -->
+      <div class="card">
+        <span class="cc tl"></span><span class="cc tr"></span>
+        <span class="cc bl"></span><span class="cc br"></span>
+        <div class="card-top">
+          <div>
+            <div class="card-icon">∑</div>
+            <div class="card-name">Matemática</div>
+          </div>
+          <div class="card-right">
+            <div class="card-id">DRW-02</div>
+            <div class="card-ratio">3<sup>/3</sup></div>
+          </div>
+        </div>
+        <ul class="units">
+          <li class="u-item">
+            <span class="u-dot ok"></span>
+            <a class="u-link" href="matematica/unidad-1/output/unidad-1.html">
+              <span class="u-label">Unidad 1</span>
+            </a>
+            <span class="u-badge ok">OK</span>
+          </li>
+          <li class="u-item">
+            <span class="u-dot ok"></span>
+            <a class="u-link" href="matematica/unidad-2/output/unidad-2.html">
+              <span class="u-label">Unidad 2</span>
+            </a>
+            <span class="u-badge ok">OK</span>
+          </li>
+          <li class="u-item">
+            <span class="u-dot ok"></span>
+            <a class="u-link" href="matematica/unidad-3/output/unidad-3.html">
+              <span class="u-label">Unidad 3</span>
+            </a>
+            <span class="u-badge ok">OK</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- ③ Organización Empresarial -->
+      <div class="card">
+        <span class="cc tl"></span><span class="cc tr"></span>
+        <span class="cc bl"></span><span class="cc br"></span>
+        <div class="card-top">
+          <div>
+            <div class="card-icon">◈</div>
+            <div class="card-name">Organización<br>Empresarial</div>
+          </div>
+          <div class="card-right">
+            <div class="card-id">DRW-03</div>
+            <div class="card-ratio">1<sup>/3</sup></div>
+          </div>
+        </div>
+        <ul class="units">
+          <li class="u-item">
+            <span class="u-dot ok"></span>
+            <a class="u-link" href="organizacion-empresarial/unidad-1/output/unidad-1.html">
+              <span class="u-label">Unidad 1</span>
+            </a>
+            <span class="u-badge ok">OK</span>
+          </li>
+          <li class="u-item lock-item">
+            <span class="u-dot lock"></span>
+            <span class="u-label">Unidad 2</span>
+            <span class="u-badge lock">—</span>
+          </li>
+          <li class="u-item lock-item">
+            <span class="u-dot lock"></span>
+            <span class="u-label">Unidad 3</span>
+            <span class="u-badge lock">—</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- ④ Programación -->
+      <div class="card">
+        <span class="cc tl"></span><span class="cc tr"></span>
+        <span class="cc bl"></span><span class="cc br"></span>
+        <div class="card-top">
+          <div>
+            <div class="card-icon">&lt;/&gt;</div>
+            <div class="card-name">Programación</div>
+          </div>
+          <div class="card-right">
+            <div class="card-id">DRW-04</div>
+            <div class="card-ratio">0<sup>/—</sup></div>
+          </div>
+        </div>
+        <p class="no-units">// Sin unidades configuradas</p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── FOOTER ───────────────────────────────────────── -->
+  <footer>
+    <div class="footer-inner">
+      <dl class="title-block">
+        <dt>Proyecto</dt>  <dd>Tecnicatura</dd>
+        <dt>Sistema</dt>   <dd>Generador de HTMLs</dd>
+        <dt>Fecha</dt>     <dd>2026-04-14</dd>
+        <dt>Revisión</dt>  <dd>A</dd>
+      </dl>
+      <div class="footer-total">
+        Cobertura total
+        <br>
+        <strong>7</strong> / 9 unidades generadas
+        <div class="bar">
+          <div class="bar-track">
+            <div class="bar-fill" id="footerBar"></div>
+          </div>
+          <span class="bar-pct" id="footerPct">0%</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const generated = 7, total = 9;
+      const pct = Math.round((generated / total) * 100);
+
+      function animateBars() {
+        const pctStr = pct + '%';
+        document.getElementById('mainBar').style.width   = pctStr;
+        document.getElementById('footerBar').style.width = pctStr;
+        document.getElementById('pctLabel').textContent  = pctStr;
+        document.getElementById('footerPct').textContent = pctStr;
+      }
+
+      // kick off after entrance animations settle
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => setTimeout(animateBars, 700));
+      } else {
+        setTimeout(animateBars, 700);
+      }
+    })();
+  </script>
+
+</body>
+</html>

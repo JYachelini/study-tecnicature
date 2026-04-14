@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teoria de Conjuntos — Matematica Unidad 1</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0e0c0a;--sf:#181410;--sf2:#221e18;--sf3:#2c2820;
+  --bd:#3d3628;--gold:#c9a84c;--goldl:#e8c97a;--goldd:#8a6e2a;
+  --tx:#e8e2d5;--txd:#9a9080;--txf:#5a5248;
+  --grn:#4a9e6a;--red:#b85050;
+  --r:8px;--rl:14px;
+  --sh:0 4px 24px rgba(0,0,0,.5);
+  --fh:'Palatino Linotype','Book Antiqua',Palatino,Georgia,serif;
+  --fb:Georgia,'Times New Roman',serif;
+  --fm:'Courier New','Courier',monospace;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--bg);color:var(--tx);min-height:100vh;font-size:16px;line-height:1.7}
+
+/* HEADER */
+.hdr{background:var(--sf);border-bottom:1px solid var(--bd);padding:1.1rem 1.5rem;display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap}
+.hdr-bc{font-size:.72rem;color:var(--txd);font-family:var(--fm);letter-spacing:.05em;text-transform:uppercase}
+.hdr h1{font-family:var(--fh);font-size:1.5rem;font-weight:normal;color:var(--goldl);letter-spacing:-.01em}
+
+/* TAB NAV */
+.tnav{background:var(--sf);border-bottom:2px solid var(--bd);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:sticky;top:0;z-index:10}
+.tnav::-webkit-scrollbar{display:none}
+.tnav ul{display:flex;list-style:none;padding:0 1rem;min-width:max-content}
+.tab-btn{background:none;border:none;border-bottom:3px solid transparent;color:var(--txd);cursor:pointer;font-family:var(--fm);font-size:.7rem;font-weight:bold;letter-spacing:.06em;text-transform:uppercase;padding:.85rem .8rem;transition:color .2s,border-color .2s;white-space:nowrap;display:flex;align-items:center;gap:.4rem}
+.tab-btn:hover{color:var(--goldl)}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tbadge{background:var(--sf3);color:var(--txd);border:1px solid var(--bd);border-radius:99px;font-size:.6rem;padding:.1rem .4rem;transition:background .3s,color .3s}
+.tab-btn.done .tbadge{background:var(--grn);color:#fff;border-color:var(--grn)}
+
+/* LAYOUT */
+main{max-width:900px;margin:0 auto;padding:2rem 1rem 4rem}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* SECTION HEADER */
+.stitle{font-family:var(--fh);font-size:1.45rem;font-weight:normal;color:var(--goldl);margin-bottom:.3rem}
+.ssub{font-size:.82rem;color:var(--txd);font-family:var(--fm);margin-bottom:1.75rem}
+
+/* CARD */
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1.4rem;margin-bottom:1.2rem;box-shadow:var(--sh)}
+.ctitle{font-family:var(--fh);font-size:1rem;color:var(--gold);margin-bottom:.85rem;font-weight:normal;display:flex;align-items:center;gap:.45rem}
+.ctitle::before{content:'';width:3px;height:1em;background:var(--gold);border-radius:2px;flex-shrink:0}
+
+/* INLINE MATH */
+.mx{font-family:var(--fm);font-size:.88em;color:var(--goldl);background:var(--sf2);padding:.1em .35em;border-radius:4px;border:1px solid var(--bd)}
+.formula{display:inline-block;font-family:var(--fm);color:var(--goldl);background:var(--sf2);padding:.15em .6em;border-radius:5px;border:1px solid var(--goldd);margin:.1em 0}
+
+/* TABLE */
+.dtable{width:100%;border-collapse:collapse;font-size:.88rem}
+.dtable th{background:var(--sf2);color:var(--gold);font-family:var(--fm);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;padding:.6rem .9rem;text-align:left;border-bottom:2px solid var(--bd)}
+.dtable td{padding:.6rem .9rem;border-bottom:1px solid var(--bd);vertical-align:top;line-height:1.5}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--sf2)}
+.sym{font-family:var(--fm);color:var(--goldl)}
+
+/* PROGRESS */
+.pgrow{display:flex;align-items:center;gap:.7rem;margin-bottom:1.5rem}
+.pgtrack{flex:1;height:5px;background:var(--sf3);border-radius:99px;overflow:hidden}
+.pgfill{height:100%;background:var(--gold);border-radius:99px;transition:width .5s ease;width:0%}
+.pglabel{font-family:var(--fm);font-size:.72rem;color:var(--txd);white-space:nowrap}
+
+/* SECTION 1 */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin-top:.75rem}
+.citem{background:var(--sf2);border:1px solid var(--bd);border-left:3px solid var(--gold);border-radius:var(--r);padding:.85rem 1rem}
+.csym{font-family:var(--fm);font-size:1.15rem;color:var(--gold);margin-bottom:.25rem}
+.cname{font-weight:bold;font-size:.85rem;color:var(--tx);margin-bottom:.2rem}
+.cdef{font-size:.82rem;color:var(--txd);line-height:1.5}
+
+/* SECTION 2 */
+.opgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.2rem;margin-top:.75rem}
+.opcard{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1.2rem;box-shadow:var(--sh)}
+.ophdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
+.opname{font-family:var(--fh);font-size:1rem;color:var(--goldl)}
+.optag{font-family:var(--fm);font-size:.82rem;color:var(--gold);background:var(--sf2);border:1px solid var(--goldd);border-radius:5px;padding:.18rem .55rem}
+.opvenn{display:flex;justify-content:center;margin:.65rem 0}
+.opvenn svg{max-width:136px;height:80px}
+.opdesc{font-size:.85rem;color:var(--txd);margin-bottom:.6rem;line-height:1.5}
+.opex{background:var(--sf2);border:1px solid var(--bd);border-radius:6px;padding:.5rem .8rem;font-family:var(--fm);font-size:.78rem}
+.opex .res{color:var(--goldl);font-weight:bold}
+
+/* LAWS */
+.laws{list-style:none;display:flex;flex-direction:column;gap:.4rem}
+.lawitem{display:flex;align-items:flex-start;gap:1rem;padding:.55rem 0;border-bottom:1px solid var(--bd);font-size:.88rem}
+.lawitem:last-child{border-bottom:none}
+.lawname{color:var(--gold);font-family:var(--fm);font-size:.72rem;font-weight:bold;letter-spacing:.04em;text-transform:uppercase;min-width:130px;flex-shrink:0;padding-top:.05em}
+.lawex{font-family:var(--fm);color:var(--tx)}
+
+/* SECTION 3 */
+.remlist{list-style:none;display:flex;flex-direction:column;gap:.65rem}
+.remitem{display:flex;gap:.9rem;align-items:flex-start;padding:.8rem 1rem;background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);font-size:.88rem;line-height:1.6}
+.remnum{font-family:var(--fm);font-size:.66rem;color:var(--gold);background:var(--sf3);border:1px solid var(--goldd);border-radius:4px;padding:.18rem .45rem;flex-shrink:0;margin-top:.1em}
+
+/* SECTION 4: FLASHCARDS */
+.fcarea{display:flex;flex-direction:column;align-items:center;gap:1.25rem}
+.fcwrap{width:100%;max-width:500px;height:220px;perspective:1200px;cursor:pointer}
+.fcinner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1)}
+.fcwrap.flipped .fcinner{transform:rotateY(180deg)}
+.fcface{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:var(--rl);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;box-shadow:var(--sh)}
+.fcfront{background:var(--sf);border:1px solid var(--bd)}
+.fcback{background:linear-gradient(135deg,var(--sf2),var(--sf3));border:1px solid var(--goldd);transform:rotateY(180deg)}
+.fclabel{font-family:var(--fm);font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.7rem}
+.fcfront .fclabel{color:var(--txf)}
+.fcback .fclabel{color:var(--goldd)}
+.fctext{font-family:var(--fb);font-size:.97rem;line-height:1.5;color:var(--tx)}
+.fcback .fctext{color:var(--goldl)}
+.fchint{margin-top:.75rem;font-family:var(--fm);font-size:.62rem;color:var(--txf);letter-spacing:.05em}
+.fcctrl{display:flex;align-items:center;gap:.75rem}
+.fcbtn{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);color:var(--tx);cursor:pointer;font-family:var(--fm);font-size:.78rem;padding:.5rem 1.1rem;transition:background .15s,border-color .15s,color .15s}
+.fcbtn:hover:not(:disabled){background:var(--sf2);border-color:var(--goldd);color:var(--goldl)}
+.fcbtn:disabled{opacity:.3;cursor:not-allowed}
+.fcctr{font-family:var(--fm);font-size:.78rem;color:var(--txd);min-width:46px;text-align:center}
+
+/* SECTION 5: FILL */
+.fillitem{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1.2rem 1.4rem;margin-bottom:1rem;box-shadow:var(--sh)}
+.fillsent{font-size:.93rem;margin-bottom:.8rem;line-height:1.8}
+.fillblank{display:inline-block;min-width:90px;border-bottom:2px solid var(--goldd);color:var(--txd);font-style:italic;padding:0 .25rem}
+.fillrow{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.fillinput{background:var(--sf2);border:1px solid var(--bd);border-radius:6px;color:var(--tx);font-family:var(--fb);font-size:.88rem;min-width:160px;flex:1;outline:none;padding:.48rem .8rem;transition:border-color .2s}
+.fillinput:focus{border-color:var(--goldd)}
+.fillinput.ok{border-color:var(--grn);background:rgba(74,158,106,.1)}
+.fillinput.fail{border-color:var(--red);animation:shake .3s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.fillbtn{background:var(--goldd);border:1px solid var(--goldd);border-radius:6px;color:var(--bg);cursor:pointer;font-family:var(--fm);font-size:.75rem;font-weight:bold;letter-spacing:.04em;padding:.48rem 1rem;text-transform:uppercase;transition:background .15s;white-space:nowrap}
+.fillbtn:hover{background:var(--gold)}
+.fillfb{margin-top:.45rem;font-family:var(--fm);font-size:.78rem;min-height:1em}
+.fillfb.ok{color:var(--grn)}
+.fillfb.fail{color:var(--red)}
+
+/* SECTION 6: MC */
+.mcitem{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1.2rem 1.4rem;margin-bottom:1.2rem;box-shadow:var(--sh)}
+.mcnum{font-family:var(--fm);font-size:.66rem;color:var(--goldd);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem}
+.mcq{font-size:.95rem;margin-bottom:.9rem;line-height:1.5}
+.mcopts{list-style:none;display:flex;flex-direction:column;gap:.45rem}
+.mcopt{display:flex;align-items:flex-start;gap:.7rem;border:1px solid var(--bd);border-radius:var(--r);cursor:pointer;font-size:.88rem;padding:.6rem .85rem;transition:border-color .15s,background .15s;user-select:none}
+.mcopt:hover:not(.locked){border-color:var(--goldd);background:var(--sf2)}
+.mcletter{font-family:var(--fm);font-size:.75rem;font-weight:bold;color:var(--gold);min-width:1.2rem;flex-shrink:0;padding-top:.05em}
+.mcopt.cpick{border-color:var(--grn);background:rgba(74,158,106,.1)}
+.mcopt.wpick{border-color:var(--red);background:rgba(184,80,80,.1)}
+.mcopt.reveal{border-color:var(--grn);background:rgba(74,158,106,.07)}
+.mcopt.locked{cursor:default}
+.mcopt.cpick .mcletter{color:var(--grn)}
+.mcopt.wpick .mcletter{color:var(--red)}
+.mcopt.reveal .mcletter{color:var(--grn)}
+.mcexp{display:none;margin-top:.8rem;border-radius:var(--r);font-size:.85rem;line-height:1.55;padding:.7rem .95rem}
+.mcexp.show{display:block}
+.mcexp.ok{background:rgba(74,158,106,.1);border-left:3px solid var(--grn);color:#7ad09a}
+.mcexp.fail{background:rgba(184,80,80,.1);border-left:3px solid var(--red);color:#d09090}
+
+/* CALLOUT */
+.callout{background:var(--sf2);border-left:3px solid var(--goldd);border-radius:0 var(--r) var(--r) 0;color:var(--txd);font-size:.86rem;line-height:1.6;margin:1rem 0;padding:.8rem 1rem}
+.callout strong{color:var(--goldl)}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .hdr{flex-direction:column;gap:.25rem;padding:.9rem 1rem}
+  .hdr h1{font-size:1.2rem}
+  main{padding:1.2rem .75rem 3rem}
+  .tab-btn{padding:.75rem .55rem;font-size:.65rem}
+  .fcwrap{height:185px}
+  .opgrid,.cgrid{grid-template-columns:1fr}
+  .lawname{min-width:90px;font-size:.68rem}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <span class="hdr-bc">Matematica · Unidad 1</span>
+  <h1>Teoria de Conjuntos</h1>
+</header>
+
+<nav class="tnav" aria-label="Secciones">
+  <ul>
+    <li><button class="tab-btn active" data-tab="s0">§1 Resumen <span class="tbadge" id="b0">—</span></button></li>
+    <li><button class="tab-btn" data-tab="s1">§2 Operaciones <span class="tbadge" id="b1">—</span></button></li>
+    <li><button class="tab-btn" data-tab="s2">§3 Recordar <span class="tbadge" id="b2">—</span></button></li>
+    <li><button class="tab-btn" data-tab="s3">§4 Flashcards <span class="tbadge" id="b3">5</span></button></li>
+    <li><button class="tab-btn" data-tab="s4">§5 Completar <span class="tbadge" id="b4">3</span></button></li>
+    <li><button class="tab-btn" data-tab="s5">§6 Quiz <span class="tbadge" id="b5">4</span></button></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- §1 RESUMEN -->
+<section class="tab-pane active" id="s0">
+  <h2 class="stitle">Resumen general y conceptos clave</h2>
+  <p class="ssub">Fundamentos del razonamiento logico-matematico</p>
+
+  <div class="card">
+    <div class="ctitle">Que es un Conjunto?</div>
+    <p>Una <strong>reunion bien definida de objetos diferenciables</strong>, llamados elementos. Se nombran con mayusculas (<em>A, B, U...</em>) y sus elementos con minusculas. Dos formas de definirlo:</p>
+    <div class="callout" style="margin-top:.85rem">
+      <strong>Extension</strong> — enumerar elementos: <span class="formula">A = {1, 2, 3}</span><br>
+      <strong>Comprension</strong> — describir una propiedad: <span class="formula">A = {x | x pertenece a N, x &lt; 4}</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">Glosario de conceptos clave</div>
+    <div class="cgrid">
+      <div class="citem">
+        <div class="csym">&#x2208; / &#x2209;</div>
+        <div class="cname">Pertenencia</div>
+        <div class="cdef">Elemento &#x2192; Conjunto. <span class="mx">3 &#x2208; A</span> significa "3 pertenece a A".</div>
+      </div>
+      <div class="citem">
+        <div class="csym">&#x2286; / &#x2284;</div>
+        <div class="cname">Inclusion (Subconjunto)</div>
+        <div class="cdef">Conjunto &#x2192; Conjunto. <span class="mx">B &#x2286; A</span> si todo elemento de B esta en A.</div>
+      </div>
+      <div class="citem">
+        <div class="csym">&#x2205;</div>
+        <div class="cname">Conjunto Vacio</div>
+        <div class="cdef">Sin elementos. Subconjunto de cualquier conjunto: <span class="mx">&#x2205; &#x2286; A</span>.</div>
+      </div>
+      <div class="citem">
+        <div class="csym">U</div>
+        <div class="cname">Conjunto Universal</div>
+        <div class="cdef">Marco de referencia que contiene todos los elementos en estudio.</div>
+      </div>
+      <div class="citem">
+        <div class="csym">A = B</div>
+        <div class="cname">Igualdad</div>
+        <div class="cdef">Doble inclusion: <span class="mx">A &#x2286; B</span> y <span class="mx">B &#x2286; A</span> simultaneamente.</div>
+      </div>
+      <div class="citem">
+        <div class="csym">&#x1D4AB;(A)</div>
+        <div class="cname">Conjunto de Partes</div>
+        <div class="cdef">Todos los subconjuntos posibles de A. Si |A| = n, entonces |&#x1D4AB;(A)| = 2<sup>n</sup>.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">Tabla comparativa</div>
+    <table class="dtable">
+      <thead><tr><th>Concepto</th><th>Simbolo</th><th>Relacion</th><th>Ejemplo</th></tr></thead>
+      <tbody>
+        <tr><td>Pertenencia</td><td><span class="sym">&#x2208;</span></td><td>Elemento &#x2192; Conjunto</td><td><span class="mx">3 &#x2208; {1,2,3}</span></td></tr>
+        <tr><td>Inclusion</td><td><span class="sym">&#x2286;</span></td><td>Conjunto &#x2192; Conjunto</td><td><span class="mx">{1} &#x2286; {1,2,3}</span></td></tr>
+        <tr><td>Igualdad</td><td><span class="sym">=</span></td><td>Conjunto &#x2194; Conjunto</td><td><span class="mx">{1,2} = {2,1}</span></td></tr>
+        <tr><td>Conjunto vacio</td><td><span class="sym">&#x2205;</span></td><td>—</td><td><span class="mx">&#x2205; &#x2286; A, para todo A</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- §2 OPERACIONES -->
+<section class="tab-pane" id="s1">
+  <h2 class="stitle">Operaciones y Algebra de Boole</h2>
+  <p class="ssub">Como se combinan y transforman los conjuntos</p>
+
+  <div class="opgrid">
+
+    <div class="opcard">
+      <div class="ophdr"><div class="opname">Union</div><div class="optag">A &#x222A; B</div></div>
+      <div class="opvenn"><svg viewBox="0 0 136 80" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="40" r="28" fill="rgba(201,168,76,.35)" stroke="#c9a84c" stroke-width="1.5"/>
+        <circle cx="86" cy="40" r="28" fill="rgba(201,168,76,.35)" stroke="#c9a84c" stroke-width="1.5"/>
+        <text x="32" y="44" fill="#e8c97a" font-size="12" font-family="serif" font-style="italic">A</text>
+        <text x="97" y="44" fill="#e8c97a" font-size="12" font-family="serif" font-style="italic">B</text>
+      </svg></div>
+      <p class="opdesc">Todos los elementos de A <em>o</em> B (o ambos).</p>
+      <div class="opex">A={1,2,3} B={3,4,5}<br><span class="res">A &#x222A; B = {1,2,3,4,5}</span></div>
+    </div>
+
+    <div class="opcard">
+      <div class="ophdr"><div class="opname">Interseccion</div><div class="optag">A &#x2229; B</div></div>
+      <div class="opvenn"><svg viewBox="0 0 136 80" xmlns="http://www.w3.org/2000/svg">
+        <defs><clipPath id="ci-a"><circle cx="50" cy="40" r="28"/></clipPath></defs>
+        <circle cx="50" cy="40" r="28" fill="rgba(201,168,76,.08)" stroke="#c9a84c" stroke-width="1.5"/>
+        <circle cx="86" cy="40" r="28" fill="rgba(201,168,76,.08)" stroke="#c9a84c" stroke-width="1.5"/>
+        <circle cx="86" cy="40" r="28" clip-path="url(#ci-a)" fill="rgba(201,168,76,.75)" stroke="none"/>
+        <text x="28" y="44" fill="#9a9080" font-size="12" font-family="serif" font-style="italic">A</text>
+        <text x="99" y="44" fill="#9a9080" font-size="12" font-family="serif" font-style="italic">B</text>
+      </svg></div>
+      <p class="opdesc">Solo los elementos comunes a A <em>y</em> B.</p>
+      <div class="opex">A={1,2,3} B={3,4,5}<br><span class="res">A &#x2229; B = {3}</span></div>
+    </div>
+
+    <div class="opcard">
+      <div class="ophdr"><div class="opname">Diferencia</div><div class="optag">A \ B</div></div>
+      <div class="opvenn"><svg viewBox="0 0 136 80" xmlns="http://www.w3.org/2000/svg">
+        <defs><mask id="md-m"><rect x="0" y="0" width="136" height="80" fill="white"/><circle cx="86" cy="40" r="28" fill="black"/></mask></defs>
+        <circle cx="86" cy="40" r="28" fill="rgba(201,168,76,.08)" stroke="#c9a84c" stroke-width="1.5" opacity=".5"/>
+        <circle cx="50" cy="40" r="28" fill="rgba(201,168,76,.6)" mask="url(#md-m)" stroke="none"/>
+        <circle cx="50" cy="40" r="28" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+        <text x="28" y="44" fill="#e8c97a" font-size="12" font-family="serif" font-style="italic">A</text>
+        <text x="99" y="44" fill="#9a9080" font-size="12" font-family="serif" font-style="italic">B</text>
+      </svg></div>
+      <p class="opdesc">Elementos de A que <em>no</em> estan en B.</p>
+      <div class="opex">A={1,2,3} B={3,4,5}<br><span class="res">A \ B = {1,2}</span></div>
+    </div>
+
+    <div class="opcard">
+      <div class="ophdr"><div class="opname">Dif. Simetrica</div><div class="optag">A &#x25B3; B</div></div>
+      <div class="opvenn"><svg viewBox="0 0 136 80" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <mask id="ms-a"><rect x="0" y="0" width="136" height="80" fill="white"/><circle cx="86" cy="40" r="28" fill="black"/></mask>
+          <mask id="ms-b"><rect x="0" y="0" width="136" height="80" fill="white"/><circle cx="50" cy="40" r="28" fill="black"/></mask>
+        </defs>
+        <circle cx="50" cy="40" r="28" fill="rgba(201,168,76,.6)" mask="url(#ms-a)"/>
+        <circle cx="86" cy="40" r="28" fill="rgba(201,168,76,.6)" mask="url(#ms-b)"/>
+        <circle cx="50" cy="40" r="28" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+        <circle cx="86" cy="40" r="28" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+        <text x="28" y="44" fill="#e8c97a" font-size="12" font-family="serif" font-style="italic">A</text>
+        <text x="99" y="44" fill="#e8c97a" font-size="12" font-family="serif" font-style="italic">B</text>
+      </svg></div>
+      <p class="opdesc">En A o en B, pero <em>no en ambos</em>. Equivale a (A\B) &#x222A; (B\A).</p>
+      <div class="opex">A={1,2,3} B={3,4,5}<br><span class="res">A &#x25B3; B = {1,2,4,5}</span></div>
+    </div>
+
+    <div class="opcard">
+      <div class="ophdr"><div class="opname">Complemento</div><div class="optag">A<sup>c</sup></div></div>
+      <div class="opvenn"><svg viewBox="0 0 136 80" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="126" height="70" rx="4" fill="rgba(201,168,76,.28)" stroke="#c9a84c" stroke-width="1.5"/>
+        <circle cx="62" cy="40" r="24" fill="#181410" stroke="#c9a84c" stroke-width="1.5"/>
+        <text x="62" y="44" text-anchor="middle" fill="#9a9080" font-size="12" font-family="serif" font-style="italic">A</text>
+        <text x="13" y="20" fill="#e8c97a" font-size="10" font-family="serif" font-style="italic">U</text>
+      </svg></div>
+      <p class="opdesc">Todo lo de U que <em>no</em> esta en A. Equivale a U \ A.</p>
+      <div class="opex">U={1..5} A={2,4}<br><span class="res">A<sup>c</sup> = {1,3,5}</span></div>
+    </div>
+
+  </div>
+
+  <div class="card">
+    <div class="ctitle">Algebra de Boole — Propiedades</div>
+    <ul class="laws">
+      <li class="lawitem"><span class="lawname">Idempotencia</span><span class="lawex">A &#x222A; A = A &nbsp;|&nbsp; A &#x2229; A = A</span></li>
+      <li class="lawitem"><span class="lawname">Absorcion</span><span class="lawex">A &#x222A; (A &#x2229; B) = A</span></li>
+      <li class="lawitem"><span class="lawname">Distributiva</span><span class="lawex">A &#x222A; (B &#x2229; C) = (A &#x222A; B) &#x2229; (A &#x222A; C)</span></li>
+      <li class="lawitem"><span class="lawname">De Morgan (1)</span><span class="lawex">(A &#x222A; B)<sup>c</sup> = A<sup>c</sup> &#x2229; B<sup>c</sup></span></li>
+      <li class="lawitem"><span class="lawname">De Morgan (2)</span><span class="lawex">(A &#x2229; B)<sup>c</sup> = A<sup>c</sup> &#x222A; B<sup>c</sup></span></li>
+      <li class="lawitem"><span class="lawname">Doble complemento</span><span class="lawex">(A<sup>c</sup>)<sup>c</sup> = A</span></li>
+    </ul>
+    <div class="callout" style="margin-top:1rem"><strong>Tip De Morgan:</strong> Al distribuir el complemento, la union se convierte en interseccion y viceversa.</div>
+  </div>
+</section>
+
+<!-- §3 RECORDAR -->
+<section class="tab-pane" id="s2">
+  <h2 class="stitle">Puntos para recordar</h2>
+  <p class="ssub">Lo esencial que no puede faltar</p>
+  <div class="card">
+    <ul class="remlist">
+      <li class="remitem"><span class="remnum">01</span><div>El <strong>conjunto vacio</strong> (&#x2205;) es subconjunto de cualquier conjunto, pero no tiene elementos propios.</div></li>
+      <li class="remitem"><span class="remnum">02</span><div><strong>Pertenencia (&#x2208;)</strong> es entre un <em>elemento</em> y un conjunto. <strong>Inclusion (&#x2286;)</strong> es entre dos <em>conjuntos</em>. No mezclarlos.</div></li>
+      <li class="remitem"><span class="remnum">03</span><div>Si <span class="mx">A &#x2286; B</span> y <span class="mx">B &#x2286; A</span>, entonces <span class="mx">A = B</span>. Esta es la definicion formal de igualdad de conjuntos.</div></li>
+      <li class="remitem"><span class="remnum">04</span><div>Dos conjuntos son <strong>disjuntos</strong> cuando <span class="mx">A &#x2229; B = &#x2205;</span>: no comparten ningun elemento.</div></li>
+      <li class="remitem"><span class="remnum">05</span><div>El <strong>Conjunto de Partes</strong> &#x1D4AB;(A) tiene <span class="mx">2<sup>n</sup></span> elementos si A tiene <em>n</em> elementos. Siempre incluye &#x2205; y al propio A.</div></li>
+      <li class="remitem"><span class="remnum">06</span><div>La <strong>diferencia simetrica</strong> A &#x25B3; B contiene lo que no es compartido. Si A &#x2229; B = &#x2205;, entonces A &#x25B3; B = A &#x222A; B.</div></li>
+      <li class="remitem"><span class="remnum">07</span><div>Las <strong>Leyes de De Morgan</strong>: el complemento de la union es la interseccion de los complementos, y viceversa.</div></li>
+      <li class="remitem"><span class="remnum">08</span><div>Los <strong>Diagramas de Venn</strong> son utiles para visualizar, pero no reemplazan la demostracion formal.</div></li>
+    </ul>
+  </div>
+</section>
+
+<!-- §4 FLASHCARDS -->
+<section class="tab-pane" id="s3">
+  <h2 class="stitle">Flashcards</h2>
+  <p class="ssub">Click en la carta para revelar la respuesta</p>
+  <div class="card">
+    <div class="pgrow">
+      <div class="pgtrack"><div class="pgfill" id="fc-pf"></div></div>
+      <span class="pglabel" id="fc-pl">0 / 5 vistas</span>
+    </div>
+    <div class="fcarea">
+      <div class="fcwrap" id="fc-card">
+        <div class="fcinner">
+          <div class="fcface fcfront">
+            <div class="fclabel">Pregunta</div>
+            <div class="fctext" id="fc-q">—</div>
+            <div class="fchint">click para ver respuesta</div>
+          </div>
+          <div class="fcface fcback">
+            <div class="fclabel">Respuesta</div>
+            <div class="fctext" id="fc-a">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="fcctrl">
+        <button class="fcbtn" id="fc-prev" disabled>&#x2190; Anterior</button>
+        <span class="fcctr" id="fc-ctr">1 / 5</span>
+        <button class="fcbtn" id="fc-next">Siguiente &#x2192;</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §5 COMPLETAR -->
+<section class="tab-pane" id="s4">
+  <h2 class="stitle">Completar el espacio</h2>
+  <p class="ssub">Escribi la palabra que falta — Enter o boton para verificar</p>
+  <div class="pgrow">
+    <div class="pgtrack"><div class="pgfill" id="fill-pf"></div></div>
+    <span class="pglabel" id="fill-pl">0 / 3 correctas</span>
+  </div>
+  <div class="fillitem">
+    <div class="fillsent">Dos conjuntos se dicen <span class="fillblank">_______</span> si simultaneamente A &#x2286; B y B &#x2286; A.</div>
+    <div class="fillrow">
+      <input class="fillinput" id="fill-0" placeholder="tu respuesta..." autocomplete="off" spellcheck="false">
+      <button class="fillbtn" data-fi="0">Verificar</button>
+    </div>
+    <div class="fillfb" id="fb-0"></div>
+  </div>
+  <div class="fillitem">
+    <div class="fillsent">La diferencia <span class="fillblank">_______</span> (A &#x25B3; B) reune los elementos que estan en A o en B, pero no en ambos.</div>
+    <div class="fillrow">
+      <input class="fillinput" id="fill-1" placeholder="tu respuesta..." autocomplete="off" spellcheck="false">
+      <button class="fillbtn" data-fi="1">Verificar</button>
+    </div>
+    <div class="fillfb" id="fb-1"></div>
+  </div>
+  <div class="fillitem">
+    <div class="fillsent">Por la propiedad <span class="fillblank">_______</span>, la operacion A &#x222A; (B &#x222A; C) es equivalente a (A &#x222A; B) &#x222A; C.</div>
+    <div class="fillrow">
+      <input class="fillinput" id="fill-2" placeholder="tu respuesta..." autocomplete="off" spellcheck="false">
+      <button class="fillbtn" data-fi="2">Verificar</button>
+    </div>
+    <div class="fillfb" id="fb-2"></div>
+  </div>
+</section>
+
+<!-- §6 QUIZ -->
+<section class="tab-pane" id="s5">
+  <h2 class="stitle">Multiple Choice</h2>
+  <p class="ssub">Selecciona la opcion correcta — vas a ver la explicacion al responder</p>
+  <div class="pgrow">
+    <div class="pgtrack"><div class="pgfill" id="mc-pf"></div></div>
+    <span class="pglabel" id="mc-pl">0 / 4 respondidas</span>
+  </div>
+
+  <div class="mcitem" data-mc="0">
+    <div class="mcnum">Pregunta 1</div>
+    <div class="mcq">Si A = {1}, cual es su conjunto de partes &#x1D4AB;(A)?</div>
+    <ul class="mcopts">
+      <li class="mcopt" data-opt="0"><span class="mcletter">A</span>{&#x2205;}</li>
+      <li class="mcopt" data-opt="1"><span class="mcletter">B</span>{1}</li>
+      <li class="mcopt" data-opt="2"><span class="mcletter">C</span>{&#x2205;, {1}}</li>
+      <li class="mcopt" data-opt="3"><span class="mcletter">D</span>{&#x2205;, 1}</li>
+    </ul>
+    <div class="mcexp" id="mc-e0"></div>
+  </div>
+
+  <div class="mcitem" data-mc="1">
+    <div class="mcnum">Pregunta 2</div>
+    <div class="mcq">Cual de las siguientes afirmaciones es siempre verdadera?</div>
+    <ul class="mcopts">
+      <li class="mcopt" data-opt="0"><span class="mcletter">A</span>&#x2205; &#x2208; A para cualquier conjunto A</li>
+      <li class="mcopt" data-opt="1"><span class="mcletter">B</span>&#x2205; &#x2286; A para cualquier conjunto A</li>
+      <li class="mcopt" data-opt="2"><span class="mcletter">C</span>A &#x2286; &#x2205; para cualquier conjunto A</li>
+      <li class="mcopt" data-opt="3"><span class="mcletter">D</span>A &#x2208; A para cualquier conjunto A</li>
+    </ul>
+    <div class="mcexp" id="mc-e1"></div>
+  </div>
+
+  <div class="mcitem" data-mc="2">
+    <div class="mcnum">Pregunta 3</div>
+    <div class="mcq">Dado A = {1,2,3} y B = {3,4,5}, cual es A &#x25B3; B?</div>
+    <ul class="mcopts">
+      <li class="mcopt" data-opt="0"><span class="mcletter">A</span>{3}</li>
+      <li class="mcopt" data-opt="1"><span class="mcletter">B</span>{1,2,3,4,5}</li>
+      <li class="mcopt" data-opt="2"><span class="mcletter">C</span>{1,2,4,5}</li>
+      <li class="mcopt" data-opt="3"><span class="mcletter">D</span>{1,2}</li>
+    </ul>
+    <div class="mcexp" id="mc-e2"></div>
+  </div>
+
+  <div class="mcitem" data-mc="3">
+    <div class="mcnum">Pregunta 4</div>
+    <div class="mcq">Que establece la primera Ley de De Morgan?</div>
+    <ul class="mcopts">
+      <li class="mcopt" data-opt="0"><span class="mcletter">A</span>(A &#x2229; B)<sup>c</sup> = A<sup>c</sup> &#x222A; B<sup>c</sup></li>
+      <li class="mcopt" data-opt="1"><span class="mcletter">B</span>(A &#x222A; B)<sup>c</sup> = A<sup>c</sup> &#x222A; B<sup>c</sup></li>
+      <li class="mcopt" data-opt="2"><span class="mcletter">C</span>(A &#x222A; B)<sup>c</sup> = A<sup>c</sup> &#x2229; B<sup>c</sup></li>
+      <li class="mcopt" data-opt="3"><span class="mcletter">D</span>(A &#x2229; B)<sup>c</sup> = A<sup>c</sup> &#x2229; B<sup>c</sup></li>
+    </ul>
+    <div class="mcexp" id="mc-e3"></div>
+  </div>
+</section>
+
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ── TABS ── */
+  var btns  = document.querySelectorAll('.tab-btn');
+  var panes = document.querySelectorAll('.tab-pane');
+  btns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      btns.forEach(function (b) { b.classList.remove('active'); });
+      panes.forEach(function (p) { p.classList.remove('active'); });
+      btn.classList.add('active');
+      document.getElementById(btn.getAttribute('data-tab')).classList.add('active');
+    });
+  });
+
+  /* ── FLASHCARDS ── */
+  var fc = [
+    { q: 'Que representa el Conjunto de Partes P(A)?',
+      a: 'El conjunto que contiene todos los subconjuntos posibles de A. Si |A| = n, entonces |P(A)| = 2 elevado a n.' },
+    { q: 'Que condicion define la igualdad de dos conjuntos?',
+      a: 'Doble inclusion: A esta incluido en B y B esta incluido en A simultaneamente (tienen exactamente los mismos elementos).' },
+    { q: 'Cual es el resultado de A interseccion vacio?',
+      a: 'El conjunto vacio. La interseccion con el conjunto vacio siempre da vacio.' },
+    { q: 'Que son conjuntos disjuntos?',
+      a: 'Dos conjuntos A y B son disjuntos cuando A interseccion B = vacio: no comparten ningun elemento.' },
+    { q: 'Cuantos subconjuntos tiene un conjunto con n elementos?',
+      a: '2 elevado a n subconjuntos. Siempre incluye el conjunto vacio y el propio conjunto.' }
+  ];
+  var fci  = 0;
+  var seen = {};
+
+  function fcRender() {
+    var card = document.getElementById('fc-card');
+    card.classList.remove('flipped');
+    document.getElementById('fc-q').textContent = fc[fci].q;
+    document.getElementById('fc-a').textContent = fc[fci].a;
+    document.getElementById('fc-ctr').textContent = (fci + 1) + ' / ' + fc.length;
+    document.getElementById('fc-prev').disabled = fci === 0;
+    document.getElementById('fc-next').disabled = fci === fc.length - 1;
+    seen[fci] = true;
+    var s = Object.keys(seen).length;
+    document.getElementById('fc-pf').style.width = Math.round(s / fc.length * 100) + '%';
+    document.getElementById('fc-pl').textContent = s + ' / ' + fc.length + ' vistas';
+    if (s === fc.length) {
+      document.querySelector('[data-tab="s3"]').classList.add('done');
+      document.getElementById('b3').textContent = '\u2713';
+    }
+  }
+
+  document.getElementById('fc-card').addEventListener('click', function () {
+    this.classList.toggle('flipped');
+  });
+  document.getElementById('fc-prev').addEventListener('click', function () {
+    if (fci > 0) { fci--; fcRender(); }
+  });
+  document.getElementById('fc-next').addEventListener('click', function () {
+    if (fci < fc.length - 1) { fci++; fcRender(); }
+  });
+  fcRender();
+
+  /* ── FILL IN THE BLANK ── */
+  var fills  = ['iguales', 'simetrica', 'asociativa'];
+  var fillOk = 0;
+
+  function norm(s) {
+    return s.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  function checkFill(i) {
+    var inp = document.getElementById('fill-' + i);
+    var fb  = document.getElementById('fb-' + i);
+    if (inp.disabled) return;
+    if (norm(inp.value) === norm(fills[i])) {
+      inp.classList.remove('fail'); inp.classList.add('ok');
+      inp.disabled = true;
+      fb.textContent = '\u2713 Correcto!';
+      fb.className = 'fillfb ok';
+      fillOk++;
+      document.getElementById('fill-pf').style.width = Math.round(fillOk / fills.length * 100) + '%';
+      document.getElementById('fill-pl').textContent = fillOk + ' / ' + fills.length + ' correctas';
+      if (fillOk === fills.length) {
+        document.querySelector('[data-tab="s4"]').classList.add('done');
+        document.getElementById('b4').textContent = '\u2713';
+      }
+    } else {
+      inp.classList.remove('fail');
+      void inp.offsetWidth;
+      inp.classList.add('fail');
+      fb.textContent = '\u2717 Intentalo de nuevo.';
+      fb.className = 'fillfb fail';
+    }
+  }
+
+  document.querySelectorAll('.fillbtn').forEach(function (btn) {
+    btn.addEventListener('click', function () { checkFill(+btn.getAttribute('data-fi')); });
+  });
+  document.querySelectorAll('.fillinput').forEach(function (inp, i) {
+    inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') checkFill(i); });
+  });
+
+  /* ── MULTIPLE CHOICE ── */
+  var mc = [
+    { c: 2, ex: [
+      'Incorrecto. {vacio} seria P del conjunto vacio, no de {1}.',
+      'Incorrecto. {1} tiene un solo elemento pero le falta el conjunto vacio como subconjunto.',
+      'Correcto. P({1}) = {vacio, {1}}. Con n=1 elemento, 2^1 = 2 subconjuntos: el vacio y el propio {1}.',
+      'Incorrecto. Los subconjuntos son conjuntos, no elementos sueltos. La D confunde el numero 1 con {1}.'
+    ]},
+    { c: 1, ex: [
+      'Incorrecto. El vacio pertenece a A solo si A lo contiene como elemento, lo cual no siempre ocurre.',
+      'Correcto. El conjunto vacio es subconjunto de CUALQUIER conjunto. No hay ningun elemento en vacio que este fuera de A.',
+      'Incorrecto. A solo es subconjunto del vacio si A = vacio. Para otros A esto es falso.',
+      'Incorrecto. Eso llevaria a paradojas logicas (Paradoja de Russell). Un conjunto ordinario no se contiene a si mismo.'
+    ]},
+    { c: 2, ex: [
+      'Incorrecto. Eso es A interseccion B, los elementos en comun.',
+      'Incorrecto. Eso es A union B, todos los elementos.',
+      'Correcto. A delta B = (A\\B) union (B\\A) = {1,2} union {4,5} = {1,2,4,5}. El 3 se excluye por estar en ambos.',
+      'Incorrecto. Eso es A\\B, solo los de A que no estan en B.'
+    ]},
+    { c: 2, ex: [
+      'Incorrecto. Eso es la SEGUNDA ley de De Morgan (sobre la interseccion).',
+      'Incorrecto. El complemento de la union no es la union de los complementos.',
+      'Correcto. Primera Ley de De Morgan: (A union B) complemento = A complemento interseccion B complemento.',
+      'Incorrecto. El complemento de la interseccion no es la interseccion de los complementos.'
+    ]}
+  ];
+  var mcDone = 0;
+
+  document.querySelectorAll('.mcitem').forEach(function (item) {
+    var qi   = +item.getAttribute('data-mc');
+    var opts = item.querySelectorAll('.mcopt');
+    opts.forEach(function (opt) {
+      opt.addEventListener('click', function () {
+        if (item.dataset.answered) return;
+        item.dataset.answered = '1';
+        mcDone++;
+        var chosen = +opt.getAttribute('data-opt');
+        var right  = mc[qi].c;
+        opts.forEach(function (o) { o.classList.add('locked'); });
+        opt.classList.add(chosen === right ? 'cpick' : 'wpick');
+        if (chosen !== right) opts[right].classList.add('reveal');
+        var exp = document.getElementById('mc-e' + qi);
+        exp.textContent = (chosen === right ? '\u2713 Correcto. ' : '\u2717 Incorrecto. ') + mc[qi].ex[chosen];
+        exp.className = 'mcexp show ' + (chosen === right ? 'ok' : 'fail');
+        document.getElementById('mc-pf').style.width = Math.round(mcDone / mc.length * 100) + '%';
+        document.getElementById('mc-pl').textContent = mcDone + ' / ' + mc.length + ' respondidas';
+        if (mcDone === mc.length) {
+          document.querySelector('[data-tab="s5"]').classList.add('done');
+          document.getElementById('b5').textContent = '\u2713';
+        }
+      });
+    });
+  });
+
+});
+</script>
+</body>
+</html>

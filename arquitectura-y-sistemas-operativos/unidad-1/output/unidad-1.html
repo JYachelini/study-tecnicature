@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unidad 1 — Introducción a los Sistemas Operativos</title>
+<style>
+  :root {
+    --bg: #0b0e17;
+    --surface: #111827;
+    --card: #1a2235;
+    --card-hover: #1e2a42;
+    --border: #2a3755;
+    --accent: #3b82f6;
+    --accent-glow: rgba(59,130,246,0.25);
+    --accent2: #8b5cf6;
+    --success: #22c55e;
+    --success-bg: rgba(34,197,94,0.12);
+    --error: #f87171;
+    --error-bg: rgba(248,113,113,0.12);
+    --warning: #fbbf24;
+    --text: #e2e8f0;
+    --text-muted: #7b8fa8;
+    --text-dim: #4b6080;
+    --mono: "Menlo", "Courier New", monospace;
+    --sans: "Georgia", "Times New Roman", serif;
+    --heading: system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #0b0e17 0%, #111827 50%, #0f1823 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(59,130,246,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.3);
+    padding: 0.25rem 0.75rem;
+    border-radius: 2rem;
+    margin-bottom: 1rem;
+  }
+  header h1 {
+    font-family: var(--heading);
+    font-size: clamp(1.6rem, 4vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+  header h1 span { color: var(--accent); }
+  header p {
+    color: var(--text-muted);
+    font-family: var(--heading);
+    font-size: 0.95rem;
+  }
+
+  /* ── TABS ── */
+  .tabs-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(11,14,23,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs-wrap::-webkit-scrollbar { display: none; }
+  .tabs {
+    display: flex;
+    gap: 0.25rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .tab {
+    font-family: var(--heading);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 0.9rem 1rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── SECTIONS ── */
+  .section { display: none; }
+  .section.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem;
+  }
+
+  h2 {
+    font-family: var(--heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  h2 .icon {
+    font-size: 1.2rem;
+    background: var(--accent-glow);
+    border: 1px solid rgba(59,130,246,0.3);
+    border-radius: 8px;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  h3 {
+    font-family: var(--heading);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 1.5rem 0 0.6rem;
+  }
+
+  /* ── RESUMEN ── */
+  .overview-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  .pillar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+  .pillar-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .pillar-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .pillar-card .num {
+    font-family: var(--mono);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+  .pillar-card .label {
+    font-family: var(--heading);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── CONCEPTOS ── */
+  .concept-list { display: flex; flex-direction: column; gap: 0.75rem; }
+  .concept-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    transition: border-color 0.2s;
+  }
+  .concept-item:hover { border-color: var(--accent2); }
+  .concept-term {
+    font-family: var(--heading);
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .concept-term::before {
+    content: '//';
+    font-family: var(--mono);
+    color: var(--text-dim);
+    font-size: 0.8rem;
+  }
+  .concept-def { font-size: 0.88rem; color: var(--text); }
+
+  /* ── DETALLE ── */
+  .detail-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .detail-section h3 {
+    font-family: var(--heading);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 0 0 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .detail-section p { font-size: 0.9rem; color: var(--text); margin-bottom: 0.6rem; }
+  .detail-section ul { padding-left: 1.25rem; }
+  .detail-section li { font-size: 0.88rem; color: var(--text); margin-bottom: 0.3rem; }
+
+  .timeline {
+    position: relative;
+    padding-left: 1.75rem;
+    margin-top: 0.75rem;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2));
+    border-radius: 2px;
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 1rem;
+    padding-left: 0.75rem;
+  }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -1.2rem;
+    top: 0.45rem;
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--accent);
+  }
+  .tl-year {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    margin-bottom: 0.2rem;
+    letter-spacing: 0.05em;
+  }
+  .tl-title {
+    font-family: var(--heading);
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+  .tl-desc { font-size: 0.84rem; color: var(--text-muted); }
+
+  .tag-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent2);
+    background: rgba(139,92,246,0.1);
+    border: 1px solid rgba(139,92,246,0.25);
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+  }
+
+  /* ── FLASHCARDS ── */
+  .flashcard-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  .fc-progress {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 0.3rem 0.75rem;
+    border-radius: 6px;
+  }
+  .fc-progress span { color: var(--accent); font-weight: 700; }
+
+  .flashcard-scene {
+    width: 100%;
+    height: 240px;
+    perspective: 1000px;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+  }
+  .flashcard-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .flashcard-scene.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+  }
+  .flashcard-front {
+    background: linear-gradient(135deg, var(--card) 0%, #1e2a42 100%);
+    border: 1px solid var(--border);
+  }
+  .flashcard-back {
+    background: linear-gradient(135deg, #0f1f3a 0%, #131b30 100%);
+    border: 1px solid rgba(59,130,246,0.4);
+    transform: rotateY(180deg);
+  }
+  .fc-hint {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+  }
+  .fc-question {
+    font-family: var(--heading);
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .fc-answer {
+    font-size: 0.9rem;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .fc-answer strong { color: var(--accent); font-family: var(--heading); }
+
+  .fc-controls {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+  .btn {
+    font-family: var(--heading);
+    font-size: 0.82rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.25rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: #2563eb; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59,130,246,0.4); }
+  .btn-ghost {
+    background: var(--card);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--card-hover); color: var(--text); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* ── COMPLETAR ── */
+  .fill-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s;
+  }
+  .fill-item.correct { border-color: var(--success); background: var(--success-bg); }
+  .fill-item.wrong { border-color: var(--error); }
+  .fill-question {
+    font-size: 0.9rem;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+  }
+  .fill-blank {
+    font-family: var(--mono);
+    color: var(--accent);
+    background: rgba(59,130,246,0.1);
+    border: 1px dashed rgba(59,130,246,0.4);
+    border-radius: 4px;
+    padding: 0 0.4rem;
+    font-size: 0.85rem;
+  }
+  .fill-input-wrap { display: flex; gap: 0.5rem; align-items: center; }
+  .fill-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .fill-input:focus { border-color: var(--accent); }
+  .fill-input:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  .fill-feedback {
+    margin-top: 0.6rem;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    display: none;
+  }
+  .fill-feedback.show { display: block; }
+  .fill-feedback.ok { color: var(--success); }
+  .fill-feedback.ko { color: var(--error); }
+
+  /* ── MULTIPLE CHOICE ── */
+  .mc-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .mc-num {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+  .mc-question {
+    font-family: var(--heading);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+  .mc-options { display: flex; flex-direction: column; gap: 0.5rem; }
+  .mc-option {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.65rem 1rem;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: var(--text);
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    transition: all 0.15s;
+    text-align: left;
+  }
+  .mc-option:hover:not(:disabled) { border-color: var(--accent); background: rgba(59,130,246,0.05); }
+  .mc-option.correct { border-color: var(--success); background: var(--success-bg); color: var(--success); }
+  .mc-option.wrong { border-color: var(--error); background: var(--error-bg); color: var(--error); }
+  .mc-letter {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    min-width: 1.2rem;
+  }
+  .mc-feedback {
+    margin-top: 0.75rem;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 0.9rem;
+    display: none;
+  }
+  .mc-feedback.show { display: block; }
+  .mc-feedback.ok { border-color: rgba(34,197,94,0.3); color: var(--success); }
+  .mc-feedback.ko { border-color: rgba(248,113,113,0.3); color: var(--error); }
+
+  /* ── PROGRESS BAR (fill) ── */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .progress-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+  .progress-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .container { padding: 1.5rem 1rem; }
+    .fc-question { font-size: 0.95rem; }
+    header { padding: 1.75rem 1rem 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Arquitectura y Sistemas Operativos · Unidad 1</div>
+  <h1>Introducción a los<br><span>Sistemas Operativos</span></h1>
+  <p>Tecnicatura Universitaria en Programación</p>
+</header>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('resumen', this)">Resumen</button>
+    <button class="tab" onclick="showTab('conceptos', this)">Conceptos</button>
+    <button class="tab" onclick="showTab('detalle', this)">Detalle</button>
+    <button class="tab" onclick="showTab('flashcards', this)">Flashcards</button>
+    <button class="tab" onclick="showTab('completar', this)">Completar</button>
+    <button class="tab" onclick="showTab('multiple', this)">Multiple Choice</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- SECCIÓN 1: RESUMEN -->
+<!-- ══════════════════════════════════════ -->
+<div id="resumen" class="section active">
+<div class="container">
+  <h2><span class="icon">📋</span> Resumen General</h2>
+
+  <div class="overview-box">
+    Un <strong>Sistema Operativo (SO)</strong> es un programa que controla la ejecución de aplicaciones y actúa como interfaz entre ellas y el hardware de la computadora. Sus tres grandes objetivos son: <em>facilidad de uso</em>, <em>gestión de recursos</em> y <em>capacidad de evolucionar</em>. Los SO evolucionaron desde el procesamiento en serie (sin SO, años 40–50) hasta los sistemas modernos con multiprogramación y tiempo compartido, incorporando conceptos como interrupciones, DMA, memoria virtual y distintos tipos de kernel.
+  </div>
+
+  <h3>Los 5 Pilares del Sistema Operativo</h3>
+  <div class="pillar-grid">
+    <div class="pillar-card"><span class="num">01</span><span class="label">Procesos</span></div>
+    <div class="pillar-card"><span class="num">02</span><span class="label">Gestión de almacenamiento</span></div>
+    <div class="pillar-card"><span class="num">03</span><span class="label">Seguridad</span></div>
+    <div class="pillar-card"><span class="num">04</span><span class="label">Estructura</span></div>
+    <div class="pillar-card"><span class="num">05</span><span class="label">Gestión de recursos</span></div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- SECCIÓN 2: CONCEPTOS CLAVE -->
+<!-- ══════════════════════════════════════ -->
+<div id="conceptos" class="section">
+<div class="container">
+  <h2><span class="icon">🔑</span> Conceptos Clave</h2>
+  <div class="concept-list">
+
+    <div class="concept-item">
+      <div class="concept-term">Sistema Operativo</div>
+      <div class="concept-def">Programa que controla la ejecución de aplicaciones y actúa como interfaz entre las aplicaciones y el hardware. Extiende la funcionalidad de la máquina y administra sus recursos.</div>
+    </div>
+
+    <div class="concept-item">
+      <div class="concept-term">Proceso</div>
+      <div class="concept-def">Unidad de actividad caracterizada por un único hilo secuencial de ejecución, un estado actual y un conjunto de recursos del sistema asociados. Se compone de Instrucciones + Datos + Contexto de ejecución.</div>
+    </div>
+
+    <div class="concept-item">
+      <div class="concept-term">System Call (Llamada al sistema)</div>
+      <div class="concept-def">Instrucciones especiales mediante las cuales los programas de usuario solicitan servicios al sistema operativo (crear archivos, leer datos, acceder a E/S, etc.).</div>
+    </div>
+
+    <div class="concept-item">
+      <div class="concept-term">Interrupción</div>
+      <div class="concept-def">Mecanismo por el cual la ejecución normal del procesador puede ser interrumpida. Tipos: de programa, de E/S, por temporizador y por fallo de hardware.</div>
+    </div>
+
+    <div class="concept-item">
+      <div class="concept-term">DMA (Acceso Directo a Memoria)</div>
+      <div class="concept-def">Técnica que permite transferir grandes volúmenes de datos entre dispositivos de E/S y la memoria principal sin intervención continua del procesador. El procesador solo interviene al inicio y al final.</div>
+    </div>
+
+    <div class="concept-item">
+      <div class="concept-term">Multiprogramación</div>
+      <div class="concept-def">Capacidad de tener varios programas cargados en memoria simultáneamente, de modo que cuando uno espera por E/S, el procesador puede ejecutar otro. Surgió para aprovechar el tiempo ocioso del procesador.</div>
+    </div>
+
+    <div class="concept-item">
+      <div class="concept-term">Tiempo Compartido (Time Sharing)</div>
+      <div class="concept-def">Sistema que comparte el uso del procesador entre múltiples usuarios, entrelazando la ejecución de sus programas usando pequeños intervalos de tiempo. Cada usuario usa 1/n de la capacidad promedio.</div>
+    </div>
+
+    <div class="concept-item">
+      <div class="concept-term">Memoria Virtual y Páginas</div>
+      <div class="concept-def">Técnica que permite a los programas direccionar memoria lógicamente sin depender de la cantidad física disponible. La memoria se divide en páginas de tamaño fijo.</div>
+    </div>
+
+    <div class="concept-item">
+      <div class="concept-term">Page Fault (Fallo de página)</div>
+      <div class="concept-def">Ocurre cuando un programa necesita una instrucción o dato cuya página fue enviada a disco (no está en memoria principal). El SO debe recuperar esa página.</div>
+    </div>
+
+    <div class="concept-item">
+      <div class="concept-term">Kernel Monolítico</div>
+      <div class="concept-def">Tipo de núcleo donde todos los elementos comparten el mismo espacio de direcciones. Todo se ejecuta en el espacio del kernel. Es el modelo clásico.</div>
+    </div>
+
+    <div class="concept-item">
+      <div class="concept-term">Microkernel</div>
+      <div class="concept-def">Tipo de núcleo con pocas funciones esenciales. Otros procesos proporcionan servicios y son tratados como aplicaciones por el kernel. Más modular y seguro.</div>
+    </div>
+
+    <div class="concept-item">
+      <div class="concept-term">PC, IR y PSW</div>
+      <div class="concept-def">Registros de control del procesador. PC (Program Counter): dirección de la próxima instrucción. IR (Instruction Register): instrucción en ejecución. PSW (Program Status Word): estado del programa.</div>
+    </div>
+
+    <div class="concept-item">
+      <div class="concept-term">HAL (Hardware Abstraction Layer)</div>
+      <div class="concept-def">Capa de abstracción de hardware que aísla al SO de las diferencias específicas de la plataforma, mapeando comandos genéricos a los propios del hardware.</div>
+    </div>
+
+    <div class="concept-item">
+      <div class="concept-term">Monitor / Supervisor</div>
+      <div class="concept-def">Pieza de software de la segunda generación de SO que residía en memoria y se encargaba de cargar y ejecutar programas en secuencia (sistemas en lotes). Antecesor del SO moderno.</div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- SECCIÓN 3: DETALLE -->
+<!-- ══════════════════════════════════════ -->
+<div id="detalle" class="section">
+<div class="container">
+  <h2><span class="icon">📖</span> Explicación Detallada</h2>
+
+  <div class="detail-section">
+    <h3>🖥️ ¿Qué es un Sistema Operativo?</h3>
+    <p>Un SO tiene dos funciones principales que parecen no relacionarse entre sí:</p>
+    <ul>
+      <li><strong>Máquina extendida (top-down):</strong> presenta al usuario una máquina virtual más fácil de programar. Provee servicios vía system calls para no tener que programar en código máquina.</li>
+      <li><strong>Administrador de recursos (bottom-up):</strong> gestiona procesadores, memorias, discos e interfaces de red de forma ordenada entre los programas que compiten por su uso.</li>
+    </ul>
+    <div class="tag-list">
+      <span class="tag">facilidad de uso</span>
+      <span class="tag">gestión de recursos</span>
+      <span class="tag">capacidad de evolucionar</span>
+    </div>
+  </div>
+
+  <div class="detail-section">
+    <h3>🕰️ Evolución histórica</h3>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-year">AÑOS 40–50 · 1ª GENERACIÓN</div>
+        <div class="tl-title">Procesamiento en serie</div>
+        <div class="tl-desc">No existía SO. Programas en tarjetas perforadas. Ejecución uno tras otro. Problemas: planificación manual y tiempo de configuración elevado.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">MEDIADOS AÑOS 50 · 2ª GENERACIÓN</div>
+        <div class="tl-title">Sistemas en lotes simple</div>
+        <div class="tl-desc">Surgimiento de mainframes y del monitor/supervisor. Programas en cintas magnéticas. Nuevos conceptos: protección de memoria, instrucciones privilegiadas, interrupciones y temporizador.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">INICIO AÑOS 60 · 3ª GENERACIÓN</div>
+        <div class="tl-title">Sistemas multiprogramados</div>
+        <div class="tl-desc">IBM System/360. Múltiples programas en memoria. CPU aprovechada cuando un proceso espera E/S. Incorpora interrupciones de E/S y DMA.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">AÑOS 60 EN ADELANTE</div>
+        <div class="tl-title">Tiempo compartido</div>
+        <div class="tl-desc">Múltiples usuarios conectados desde terminales. Intervalos de tiempo pequeños. Cada usuario tiene 1/n de la capacidad. Surgimiento de archivos protegidos y gestión de conflictos de recursos.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-section">
+    <h3>⚡ Interrupciones y ciclo de instrucción</h3>
+    <p>El procesador ejecuta un ciclo: leer instrucción del PC → cargarla en IR → ejecutarla → incrementar PC. Las interrupciones permiten romper este ciclo de forma controlada.</p>
+    <p><strong>Tipos:</strong></p>
+    <ul>
+      <li><strong>De programa:</strong> resultado de una instrucción (ej. división por cero, desbordamiento).</li>
+      <li><strong>De E/S:</strong> generada por un controlador al finalizar una operación.</li>
+      <li><strong>Por temporizador:</strong> el SO recupera control periódicamente.</li>
+      <li><strong>Por fallo de hardware.</strong></li>
+    </ul>
+  </div>
+
+  <div class="detail-section">
+    <h3>🔄 Técnicas de E/S</h3>
+    <ul>
+      <li><strong>E/S Programada:</strong> el procesador espera activamente (busy waiting) hasta que termina la operación. Muy ineficiente.</li>
+      <li><strong>E/S por Interrupciones:</strong> el procesador sigue ejecutando otras instrucciones; el módulo de E/S lo interrumpe al terminar. Mejor que la programada.</li>
+      <li><strong>DMA:</strong> el módulo de DMA transfiere datos directamente a/desde la memoria sin usar el procesador. Ideal para grandes volúmenes. El procesador solo interviene al inicio y al final.</li>
+    </ul>
+  </div>
+
+  <div class="detail-section">
+    <h3>🧱 Tipos de Kernel</h3>
+    <ul>
+      <li><strong>Monolítico:</strong> un único proceso con todos los elementos en el mismo espacio de direcciones. Todo en el espacio del kernel.</li>
+      <li><strong>En capas:</strong> basado en el monolítico, organizado en anillos concéntricos. Los procesos externos usan system calls para invocar a los internos.</li>
+      <li><strong>Microkernel:</strong> pocas funciones esenciales en el kernel. Los servicios se implementan como procesos de usuario, igual que las aplicaciones.</li>
+    </ul>
+  </div>
+
+  <div class="detail-section">
+    <h3>🔐 Protección y Seguridad</h3>
+    <ul>
+      <li><strong>Disponibilidad:</strong> protección del sistema frente a interrupciones.</li>
+      <li><strong>Confidencialidad:</strong> solo usuarios autorizados acceden a los datos.</li>
+      <li><strong>Integridad:</strong> solo usuarios autorizados pueden modificar los datos.</li>
+      <li><strong>Autenticidad:</strong> verificación de la identidad de los usuarios.</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- SECCIÓN 4: FLASHCARDS -->
+<!-- ══════════════════════════════════════ -->
+<div id="flashcards" class="section">
+<div class="container">
+  <h2><span class="icon">🃏</span> Flashcards</h2>
+  <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1.5rem;font-family:var(--heading)">Hacé click en la carta para ver la respuesta.</p>
+
+  <div class="flashcard-nav">
+    <button class="btn btn-ghost" id="fc-prev" onclick="fcMove(-1)" disabled>← Anterior</button>
+    <div class="fc-progress">Carta <span id="fc-current">1</span> / <span id="fc-total">12</span></div>
+    <button class="btn btn-ghost" id="fc-next" onclick="fcMove(1)">Siguiente →</button>
+  </div>
+
+  <div class="flashcard-scene" id="fc-scene" onclick="flipCard()">
+    <div class="flashcard-inner" id="fc-inner">
+      <div class="flashcard-face flashcard-front">
+        <div class="fc-hint">pregunta</div>
+        <div class="fc-question" id="fc-q"></div>
+      </div>
+      <div class="flashcard-face flashcard-back">
+        <div class="fc-hint">respuesta</div>
+        <div class="fc-answer" id="fc-a"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fc-controls">
+    <button class="btn btn-primary" onclick="flipCard()">Dar vuelta</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- SECCIÓN 5: COMPLETAR EL ESPACIO -->
+<!-- ══════════════════════════════════════ -->
+<div id="completar" class="section">
+<div class="container">
+  <h2><span class="icon">✏️</span> Completar el Espacio</h2>
+  <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem;font-family:var(--heading)">Escribí la respuesta y presioná Enter o "Verificar".</p>
+
+  <div class="progress-row">
+    <div class="progress-bar"><div class="progress-fill" id="fill-bar" style="width:0%"></div></div>
+    <div class="progress-label"><span id="fill-score">0</span>/12</div>
+  </div>
+
+  <div id="fill-items"></div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- SECCIÓN 6: MULTIPLE CHOICE -->
+<!-- ══════════════════════════════════════ -->
+<div id="multiple" class="section">
+<div class="container">
+  <h2><span class="icon">☑️</span> Multiple Choice</h2>
+  <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1.5rem;font-family:var(--heading)">Seleccioná la opción correcta para ver la explicación.</p>
+  <div id="mc-items"></div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════ -->
+<script>
+// ── TAB NAVIGATION ─────────────────────────────────────
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── FLASHCARD DATA ─────────────────────────────────────
+const flashcards = [
+  {
+    q: "¿Qué es un Sistema Operativo?",
+    a: "Es un <strong>programa que controla la ejecución de aplicaciones</strong> y actúa como interfaz entre las aplicaciones y el hardware. Tiene dos funciones: extender la funcionalidad de la máquina y administrar sus recursos."
+  },
+  {
+    q: "¿Cuáles son los 3 objetivos de un SO?",
+    a: "<strong>1. Facilidad de uso</strong> — interfaz para programadores y usuarios.<br><strong>2. Gestionar los recursos</strong> — procesador, memoria, E/S.<br><strong>3. Capacidad de evolucionar</strong> — actualizaciones de hardware, nuevos servicios, corrección de errores."
+  },
+  {
+    q: "¿Qué es un Proceso?",
+    a: "Una <strong>unidad de actividad</strong> caracterizada por un solo hilo secuencial de ejecución, un estado actual y un conjunto de recursos asociados.<br><br>Componentes: <strong>Instrucciones + Datos + Contexto de ejecución</strong>"
+  },
+  {
+    q: "¿Cuáles son los tipos de interrupciones?",
+    a: "<strong>1. De programa:</strong> división por cero, desbordamiento, etc.<br><strong>2. De E/S:</strong> el controlador indica que terminó la operación.<br><strong>3. Por temporizador:</strong> el SO recupera el control periódicamente.<br><strong>4. Por fallo de hardware.</strong>"
+  },
+  {
+    q: "¿Cuáles son los 5 pilares de un Sistema Operativo?",
+    a: "<strong>1.</strong> Procesos<br><strong>2.</strong> Gestión de Almacenamiento<br><strong>3.</strong> Seguridad<br><strong>4.</strong> Estructura del sistema<br><strong>5.</strong> Planificación y gestión de recursos"
+  },
+  {
+    q: "¿Qué es el DMA y para qué sirve?",
+    a: "<strong>Direct Memory Access</strong> — permite transferir grandes volúmenes de datos entre dispositivos de E/S y la memoria <strong>sin usar el procesador</strong> durante la transferencia.<br><br>El procesador solo interviene al inicio (enviar la orden) y al final (cuando llega la interrupción de fin)."
+  },
+  {
+    q: "¿Qué son los registros PC, IR y PSW?",
+    a: "<strong>PC (Program Counter):</strong> dirección de memoria de la próxima instrucción a ejecutar.<br><br><strong>IR (Instruction Register):</strong> instrucción actualmente en ejecución.<br><br><strong>PSW (Program Status Word):</strong> contiene información del estado del programa (incluye el modo de ejecución)."
+  },
+  {
+    q: "¿Qué diferencia hay entre multiprogramación y tiempo compartido?",
+    a: "<strong>Multiprogramación:</strong> múltiples <em>programas</em> en memoria; el procesador pasa al siguiente cuando uno espera E/S.<br><br><strong>Tiempo compartido:</strong> gestiona múltiples <em>usuarios</em> usando pequeños intervalos de tiempo; cada usuario obtiene ~1/n de la capacidad."
+  },
+  {
+    q: "¿Qué es un Page Fault?",
+    a: "Ocurre cuando un programa necesita una instrucción o dato que se encuentra en una <strong>página que fue enviada a disco</strong> (no está en memoria principal).<br><br>El SO debe recuperar esa página del almacenamiento secundario."
+  },
+  {
+    q: "¿Cuáles son los 3 tipos de kernel?",
+    a: "<strong>Monolítico:</strong> un proceso, todos los elementos en el mismo espacio de direcciones.<br><br><strong>En capas:</strong> anillos concéntricos; capas externas usan system calls hacia las internas.<br><br><strong>Microkernel:</strong> mínimas funciones en el kernel; servicios como procesos de usuario."
+  },
+  {
+    q: "¿Qué es la E/S Programada y cuál es su problema?",
+    a: "Técnica en que el procesador extrae/almacena datos de la memoria y espera activamente hasta que la operación termina (<strong>busy waiting</strong>).<br><br>Problema: el procesador queda <strong>ocupado innecesariamente</strong>, acoplado al dispositivo de E/S."
+  },
+  {
+    q: "¿Cuáles son las 4 propiedades de seguridad que debe garantizar el SO?",
+    a: "<strong>Disponibilidad:</strong> protección frente a interrupciones del sistema.<br><strong>Confidencialidad:</strong> solo acceden quienes tienen autorización.<br><strong>Integridad:</strong> solo modifican quienes tienen autorización.<br><strong>Autenticidad:</strong> verificación de identidad de usuarios."
+  }
+];
+
+// ── FLASHCARD LOGIC ─────────────────────────────────────
+let fcIndex = 0;
+
+function renderCard() {
+  const card = flashcards[fcIndex];
+  document.getElementById('fc-q').textContent = card.q;
+  document.getElementById('fc-a').innerHTML = card.a;
+  document.getElementById('fc-current').textContent = fcIndex + 1;
+  document.getElementById('fc-total').textContent = flashcards.length;
+  document.getElementById('fc-prev').disabled = fcIndex === 0;
+  document.getElementById('fc-next').disabled = fcIndex === flashcards.length - 1;
+  const scene = document.getElementById('fc-scene');
+  scene.classList.remove('flipped');
+}
+
+function flipCard() {
+  document.getElementById('fc-scene').classList.toggle('flipped');
+}
+
+function fcMove(dir) {
+  fcIndex = Math.max(0, Math.min(flashcards.length - 1, fcIndex + dir));
+  renderCard();
+}
+
+renderCard();
+
+// ── FILL-IN DATA ─────────────────────────────────────
+const fillItems = [
+  {
+    q: "Un sistema operativo actúa como interfaz entre las <span class='fill-blank'>___</span> y el hardware de la computadora.",
+    answers: ["aplicaciones"],
+    exp: "El SO actúa como interfaz entre las <strong>aplicaciones</strong> y el hardware."
+  },
+  {
+    q: "Los 3 objetivos del SO son: facilidad de uso, gestionar los recursos y capacidad de <span class='fill-blank'>___</span>.",
+    answers: ["evolucionar"],
+    exp: "El tercer objetivo es la <strong>capacidad de evolucionar</strong> para adaptarse a nuevos hardware y servicios."
+  },
+  {
+    q: "El registro <span class='fill-blank'>___</span> (Program Counter) guarda la dirección de la próxima instrucción a ejecutar.",
+    answers: ["pc", "program counter"],
+    exp: "El <strong>PC (Program Counter)</strong> siempre contiene la dirección de la próxima instrucción."
+  },
+  {
+    q: "El registro IR almacena la instrucción actualmente en <span class='fill-blank'>___</span>.",
+    answers: ["ejecucion", "ejecución"],
+    exp: "El <strong>IR (Instruction Register)</strong> almacena la instrucción en ejecución."
+  },
+  {
+    q: "En la primera generación no existía ningún <span class='fill-blank'>___</span> y los programas se cargaban en tarjetas perforadas.",
+    answers: ["sistema operativo", "so"],
+    exp: "La primera generación (años 40-50) es el <strong>procesamiento en serie</strong>; no había sistema operativo."
+  },
+  {
+    q: "El <span class='fill-blank'>___</span> era una pieza de software que cargaba y ejecutaba programas en los sistemas en lotes simples.",
+    answers: ["monitor", "supervisor"],
+    exp: "El <strong>monitor (o supervisor)</strong> era el antecesor del SO moderno en la segunda generación."
+  },
+  {
+    q: "La memoria virtual fracciona la memoria en bloques de tamaño fijo llamados <span class='fill-blank'>___</span>.",
+    answers: ["paginas", "páginas"],
+    exp: "El esquema de paginación divide la memoria en <strong>páginas</strong> de tamaño fijo."
+  },
+  {
+    q: "La técnica DMA permite transferir datos directamente a la memoria sin usar el <span class='fill-blank'>___</span>.",
+    answers: ["procesador", "cpu"],
+    exp: "El <strong>DMA</strong> libera al <strong>procesador</strong> durante la transferencia de datos."
+  },
+  {
+    q: "Un proceso está formado por instrucciones, datos y contexto de <span class='fill-blank'>___</span>.",
+    answers: ["ejecucion", "ejecución"],
+    exp: "El <strong>contexto de ejecución</strong> contiene los registros del procesador (PC, IR, PSW) que el SO necesita para gestionar el proceso."
+  },
+  {
+    q: "La multiprogramación surge para aprovechar el tiempo que el procesador se encuentra <span class='fill-blank'>___</span>.",
+    answers: ["ocioso"],
+    exp: "Cuando un proceso espera E/S, el procesador queda <strong>ocioso</strong>. La multiprogramación aprovecha ese tiempo ejecutando otro proceso."
+  },
+  {
+    q: "Las 4 propiedades de seguridad del SO son: disponibilidad, confidencialidad, integridad y <span class='fill-blank'>___</span>.",
+    answers: ["autenticidad"],
+    exp: "La <strong>autenticidad</strong> se refiere a la verificación de la identidad de los usuarios."
+  },
+  {
+    q: "El tipo de kernel con pocas funciones esenciales, donde los servicios son procesos de usuario, se llama <span class='fill-blank'>___</span>.",
+    answers: ["microkernel"],
+    exp: "El <strong>microkernel</strong> mantiene mínimas funciones en el kernel; todo lo demás se ejecuta como aplicaciones de usuario."
+  }
+];
+
+let fillScore = 0;
+
+function buildFillItems() {
+  const container = document.getElementById('fill-items');
+  fillItems.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'fill-item';
+    div.id = `fill-${i}`;
+    div.innerHTML = `
+      <div class="fill-question">${item.q}</div>
+      <div class="fill-input-wrap">
+        <input class="fill-input" type="text" placeholder="Tu respuesta..." id="fill-input-${i}" onkeydown="if(event.key==='Enter') checkFill(${i})">
+        <button class="btn btn-primary" onclick="checkFill(${i})" style="white-space:nowrap">Verificar</button>
+      </div>
+      <div class="fill-feedback" id="fill-fb-${i}"></div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function checkFill(i) {
+  const input = document.getElementById(`fill-input-${i}`);
+  const fb = document.getElementById(`fill-fb-${i}`);
+  const item = document.getElementById(`fill-${i}`);
+  if (input.disabled) return;
+  const val = input.value.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const correct = fillItems[i].answers.some(a =>
+    val === a.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+  );
+  input.disabled = true;
+  fb.classList.add('show');
+  if (correct) {
+    item.classList.add('correct');
+    fb.classList.add('ok');
+    fb.innerHTML = `✓ ¡Correcto! ${fillItems[i].exp}`;
+    fillScore++;
+    document.getElementById('fill-score').textContent = fillScore;
+    document.getElementById('fill-bar').style.width = `${(fillScore / fillItems.length) * 100}%`;
+  } else {
+    item.classList.add('wrong');
+    fb.classList.add('ko');
+    fb.innerHTML = `✗ Incorrecto. ${fillItems[i].exp}`;
+  }
+}
+
+buildFillItems();
+
+// ── MULTIPLE CHOICE DATA ────────────────────────────────
+const mcItems = [
+  {
+    q: "¿Qué técnica de E/S utiliza 'busy waiting' (espera activa)?",
+    options: ["E/S por interrupciones", "DMA (Acceso Directo a Memoria)", "E/S Programada", "E/S por tiempo compartido"],
+    correct: 2,
+    exp: "La <strong>E/S Programada</strong> hace que el procesador espere activamente (busy waiting) hasta que la operación termina, manteniéndolo ocupado innecesariamente."
+  },
+  {
+    q: "¿Qué generación de SO introdujo la multiprogramación?",
+    options: ["Primera generación (procesamiento en serie)", "Segunda generación (sistemas en lotes simple)", "Tercera generación (IBM System/360)", "Tiempo compartido"],
+    correct: 2,
+    exp: "La <strong>tercera generación</strong> introdujo la multiprogramación con el IBM System/360, permitiendo que múltiples programas estén en memoria al mismo tiempo."
+  },
+  {
+    q: "¿Cuál de los siguientes NO es uno de los 5 pilares de un Sistema Operativo?",
+    options: ["Procesos", "Gestión de Almacenamiento", "Compilación de programas", "Seguridad"],
+    correct: 2,
+    exp: "Los 5 pilares son: Procesos, Gestión de Almacenamiento, Seguridad, Estructura y Gestión de Recursos. La <strong>compilación de programas</strong> no es un pilar del SO."
+  },
+  {
+    q: "¿Qué registro del procesador contiene la información del estado del programa?",
+    options: ["PC (Program Counter)", "IR (Instruction Register)", "PSW (Program Status Word)", "SP (Stack Pointer)"],
+    correct: 2,
+    exp: "El <strong>PSW (Program Status Word)</strong> contiene información del estado del programa, incluido el modo de ejecución (usuario/kernel)."
+  },
+  {
+    q: "¿Qué tipo de kernel tiene todos los elementos compartiendo el mismo espacio de direcciones?",
+    options: ["Microkernel", "Kernel en capas", "Kernel monolítico", "Nanokernell"],
+    correct: 2,
+    exp: "El <strong>kernel monolítico</strong> es un único proceso donde todos los elementos comparten el mismo espacio de direcciones y todo se ejecuta en el espacio del kernel."
+  },
+  {
+    q: "¿Qué ocurre cuando un programa necesita acceder a una página que fue enviada a disco?",
+    options: ["Se produce una interrupción de temporizador", "Se realiza un acceso DMA", "Se produce un Page Fault (fallo de página)", "El proceso termina con error"],
+    correct: 2,
+    exp: "Cuando la página requerida no está en memoria principal (fue enviada a disco), se produce un <strong>Page Fault</strong> y el SO debe recuperar esa página del almacenamiento secundario."
+  }
+];
+
+function buildMcItems() {
+  const container = document.getElementById('mc-items');
+  const letters = ['A','B','C','D'];
+  mcItems.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'mc-item';
+    const optsHtml = item.options.map((opt, j) => `
+      <button class="mc-option" onclick="checkMc(${i}, ${j})" id="mc-${i}-${j}">
+        <span class="mc-letter">${letters[j]}</span>
+        <span>${opt}</span>
+      </button>
+    `).join('');
+    div.innerHTML = `
+      <div class="mc-num">PREGUNTA ${i+1} DE ${mcItems.length}</div>
+      <div class="mc-question">${item.q}</div>
+      <div class="mc-options">${optsHtml}</div>
+      <div class="mc-feedback" id="mc-fb-${i}"></div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function checkMc(qi, selected) {
+  const item = mcItems[qi];
+  const fb = document.getElementById(`mc-fb-${qi}`);
+  // Disable all options for this question
+  for (let j = 0; j < item.options.length; j++) {
+    const btn = document.getElementById(`mc-${qi}-${j}`);
+    btn.onclick = null;
+    btn.style.cursor = 'default';
+  }
+  const selectedBtn = document.getElementById(`mc-${qi}-${selected}`);
+  const correctBtn = document.getElementById(`mc-${qi}-${item.correct}`);
+  correctBtn.classList.add('correct');
+  fb.classList.add('show');
+  if (selected === item.correct) {
+    fb.classList.add('ok');
+    fb.innerHTML = `✓ ¡Correcto! ${item.exp}`;
+  } else {
+    selectedBtn.classList.add('wrong');
+    fb.classList.add('ko');
+    fb.innerHTML = `✗ Incorrecto. ${item.exp}`;
+  }
+}
+
+buildMcItems();
+</script>
+</body>
+</html>
