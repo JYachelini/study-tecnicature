@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programación — Unidad 3: Algoritmos</title>
+<style>
+  :root {
+    --bg:#0a0e1a;--surface:#111827;--card:#1a2235;--border:#2a3755;
+    --accent:#34d399;--accent-light:rgba(52,211,153,.12);
+    --accent2:#60c5fa;--accent2-light:rgba(96,197,250,.1);
+    --success:#22c55e;--success-bg:rgba(34,197,94,.12);
+    --error:#f87171;--error-bg:rgba(248,113,113,.12);
+    --text:#e2e8f0;--text-muted:#7b8fa8;--text-dim:#3d506b;
+    --mono:"JetBrains Mono","Fira Code","Consolas",monospace;
+    --sans:"Lora","Georgia","Times New Roman",serif;
+    --serif:"Lora","Georgia",serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--serif);font-size:16px;line-height:1.75;min-height:100vh;}
+  header{background:linear-gradient(160deg,#0a0e1a 0%,#0a1a12 50%,#0f1a10 100%);border-bottom:1px solid var(--border);padding:3rem 2rem 2.5rem;text-align:center;position:relative;overflow:hidden;}
+  header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(52,211,153,.15) 0%,transparent 70%);pointer-events:none;}
+  .tag{display:inline-block;font-family:var(--mono);font-size:.66rem;letter-spacing:.15em;color:var(--accent);background:var(--accent-light);border:1px solid rgba(52,211,153,.35);padding:.25rem .85rem;border-radius:99px;margin-bottom:1.1rem;}
+  header h1{font-family:var(--sans);font-size:clamp(1.8rem,4vw,3rem);font-weight:800;letter-spacing:-.03em;color:#fff;margin-bottom:.4rem;}
+  header h1 em{color:var(--accent);font-style:normal;}
+  header p{color:var(--text-muted);font-family:var(--sans);font-size:.88rem;}
+  .tabs-wrap{position:sticky;top:0;z-index:100;background:rgba(10,14,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 1rem;overflow-x:auto;scrollbar-width:none;}
+  .tabs-wrap::-webkit-scrollbar{display:none;}
+  .tabs{display:flex;min-width:max-content;}
+  .tab{font-family:var(--sans);font-size:.82rem;font-weight:500;padding:.75rem 1.1rem;cursor:pointer;color:var(--text-muted);border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+  .tab:hover{color:var(--text);}
+  .tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .panel{display:none;max-width:860px;margin:0 auto;padding:2.5rem 1.5rem 4rem;}
+  .panel.active{display:block;}
+  h2{font-family:var(--sans);font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:1.2rem;}
+  h3{font-family:var(--sans);font-size:1.05rem;font-weight:700;color:var(--accent2);margin:2rem 0 .6rem;}
+  p{margin-bottom:.9rem;}ul,ol{padding-left:1.5rem;margin-bottom:.9rem;}li{margin-bottom:.35rem;}
+  .summary-box{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;padding:1.4rem 1.6rem;margin-bottom:2rem;}
+  .concept-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem;margin-bottom:2rem;}
+  .concept-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem;transition:border-color .2s,transform .2s;}
+  .concept-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .concept-card .term{font-family:var(--mono);font-size:.78rem;font-weight:700;color:var(--accent);margin-bottom:.5rem;}
+  .concept-card .def{font-size:.9rem;color:var(--text-muted);line-height:1.5;}
+  .code-block{background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:1rem 1.4rem;font-family:var(--mono);font-size:.85rem;color:#c9d1d9;margin:1rem 0 1.5rem;overflow-x:auto;line-height:1.7;white-space:pre;}
+  .kw{color:#ff7b72;}.ty{color:#79c0ff;}.cm{color:#8b949e;font-style:italic;}.vr{color:#ffa657;}.st{color:#a5d6ff;}
+  .char-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem;margin:1rem 0 1.5rem;}
+  .char-item{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.9rem 1rem;}
+  .char-icon{font-family:var(--mono);font-size:.8rem;color:var(--accent);font-weight:700;margin-bottom:.3rem;}
+  .char-desc{font-size:.88rem;color:var(--text-muted);}
+  .example-box{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent2);border-radius:8px;padding:1.1rem 1.4rem;margin:1rem 0;}
+  .example-title{font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent2);margin-bottom:.5rem;}
+  .progress-bar-wrap{background:var(--surface);border-radius:99px;height:4px;margin-bottom:1.5rem;overflow:hidden;}
+  .progress-bar{height:100%;background:var(--accent);border-radius:99px;transition:width .3s;}
+  .fc-controls{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+  .fc-progress{font-family:var(--mono);font-size:.85rem;color:var(--text-muted);}
+  .fc-progress span{color:var(--accent);font-weight:700;}
+  .btn{font-family:var(--sans);font-size:.85rem;font-weight:600;padding:.45rem 1.1rem;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;transition:all .15s;}
+  .btn:hover{border-color:var(--accent);color:var(--accent);}
+  .btn-primary{background:var(--accent);border-color:var(--accent);color:#000;font-weight:700;}
+  .flashcard-scene{perspective:1000px;height:220px;cursor:pointer;margin-bottom:1.5rem;user-select:none;}
+  .flashcard{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
+  .flashcard.flipped{transform:rotateY(180deg);}
+  .fc-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;border:1px solid var(--border);}
+  .fc-front{background:var(--card);}
+  .fc-back{background:linear-gradient(135deg,#0a1a12,var(--card));border-color:var(--accent);transform:rotateY(180deg);}
+  .fc-hint{font-family:var(--mono);font-size:.7rem;color:var(--text-dim);margin-bottom:.5rem;}
+  .fc-question{font-size:1.05rem;font-weight:600;color:var(--text);line-height:1.5;}
+  .fc-answer{font-size:.95rem;color:var(--text-muted);line-height:1.6;}
+  .fill-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.5rem;margin-bottom:1rem;}
+  .fill-item.correct{border-color:var(--success);background:var(--success-bg);}
+  .fill-item.wrong{border-color:var(--error);background:var(--error-bg);}
+  .fill-sentence{font-size:.97rem;margin-bottom:.7rem;line-height:1.7;}
+  .fill-input{font-family:var(--mono);font-size:.88rem;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:.4rem .8rem;border-radius:5px;width:220px;outline:none;}
+  .fill-input:focus{border-color:var(--accent2);}
+  .fill-feedback{font-family:var(--sans);font-size:.83rem;margin-top:.5rem;display:none;}
+  .fill-item.correct .fill-feedback{display:block;color:var(--success);}
+  .fill-item.wrong .fill-feedback{display:block;color:var(--error);}
+  .mc-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem 1.5rem;margin-bottom:1.2rem;}
+  .mc-question{font-size:.97rem;font-weight:600;margin-bottom:1rem;}
+  .mc-options{display:flex;flex-direction:column;gap:.5rem;}
+  .mc-option{display:flex;align-items:flex-start;gap:.7rem;padding:.6rem .9rem;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-size:.9rem;transition:all .15s;background:var(--surface);}
+  .mc-option:hover{border-color:var(--accent);}
+  .mc-option.selected-correct{border-color:var(--success);background:var(--success-bg);color:var(--success);}
+  .mc-option.selected-wrong{border-color:var(--error);background:var(--error-bg);color:var(--error);}
+  .mc-option.reveal-correct{border-color:var(--success);background:var(--success-bg);}
+  .mc-letter{font-family:var(--mono);font-size:.75rem;font-weight:700;color:var(--text-muted);min-width:18px;padding-top:1px;}
+  .mc-explanation{margin-top:.8rem;padding:.7rem 1rem;background:var(--surface);border-radius:6px;font-size:.85rem;color:var(--text-muted);display:none;border-left:2px solid var(--accent);}
+  .mc-item.answered .mc-explanation{display:block;}
+  .mc-item.answered .mc-option{pointer-events:none;}
+</style>
+</head>
+<body>
+<header>
+  <div class="tag">Programación · Unidad 3</div>
+  <h1><em>Algoritmos</em></h1>
+  <p>Definición · Características · Pseudocódigo · Diagrama de flujo · Diseño descendente</p>
+</header>
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('resumen')">Resumen</button>
+    <button class="tab" onclick="showTab('conceptos')">Conceptos Clave</button>
+    <button class="tab" onclick="showTab('detalle')">Explicación Detallada</button>
+    <button class="tab" onclick="showTab('flashcards')">Flashcards</button>
+    <button class="tab" onclick="showTab('completar')">Completar el Espacio</button>
+    <button class="tab" onclick="showTab('multiple')">Multiple Choice</button>
+  </div>
+</div>
+
+<div id="panel-resumen" class="panel active">
+  <h2>Resumen General</h2>
+  <div class="summary-box">
+    <p>Un <strong>algoritmo</strong> es una secuencia finita de instrucciones que describen con precisión las operaciones que una computadora debe realizar para resolver un problema en tiempo finito. Son independientes del lenguaje y del hardware. Para diseñarlos se usan <strong>pseudocódigo</strong> y <strong>diagrama de flujo</strong>. La técnica de <strong>diseño descendente</strong> ("divide y vencerás") divide el problema en subproblemas más simples.</p>
+  </div>
+  <h3>Características fundamentales de un algoritmo</h3>
+  <div class="char-list">
+    <div class="char-item"><div class="char-icon">PRECISO</div><div class="char-desc">Indica el orden de realización de cada paso.</div></div>
+    <div class="char-item"><div class="char-icon">NO AMBIGUO</div><div class="char-desc">Si se sigue 2 veces, se alcanza el mismo resultado.</div></div>
+    <div class="char-item"><div class="char-icon">FINITO</div><div class="char-desc">Tiene un número finito de pasos. Siempre termina.</div></div>
+  </div>
+</div>
+
+<div id="panel-conceptos" class="panel">
+  <h2>Conceptos Clave</h2>
+  <div class="concept-grid">
+    <div class="concept-card"><div class="term">Algoritmo</div><div class="def">Secuencia finita de instrucciones precisas que describen cómo resolver un problema en tiempo finito.</div></div>
+    <div class="concept-card"><div class="term">Pseudocódigo</div><div class="def">Representación textual de un algoritmo usando palabras en español e instrucciones estructuradas. No es ejecutable directamente.</div></div>
+    <div class="concept-card"><div class="term">Diagrama de Flujo</div><div class="def">Representación gráfica de un algoritmo. Usa figuras geométricas conectadas con flechas.</div></div>
+    <div class="concept-card"><div class="term">Diseño Descendente</div><div class="def">Técnica de dividir el problema en subproblemas cada vez más simples hasta poder codificarlos. "Divide y vencerás".</div></div>
+    <div class="concept-card"><div class="term">Refinamiento Sucesivo</div><div class="def">Cada paso del algoritmo se va detallando progresivamente hasta llegar a instrucciones implementables.</div></div>
+    <div class="concept-card"><div class="term">Entrada del algoritmo</div><div class="def">Los datos necesarios para resolver el problema. Deben estar definidos antes del procesamiento.</div></div>
+    <div class="concept-card"><div class="term">Proceso del algoritmo</div><div class="def">Los pasos o instrucciones que transforman los datos de entrada en la salida esperada.</div></div>
+    <div class="concept-card"><div class="term">Salida del algoritmo</div><div class="def">El resultado esperado tras ejecutar todos los pasos del proceso.</div></div>
+    <div class="concept-card"><div class="term">Instrucción Mostrar</div><div class="def">Instrucción de pseudocódigo que muestra un valor o mensaje por pantalla.</div></div>
+    <div class="concept-card"><div class="term">Instrucción Leer</div><div class="def">Instrucción de pseudocódigo que lee un valor ingresado por el usuario y lo guarda en una variable.</div></div>
+  </div>
+</div>
+
+<div id="panel-detalle" class="panel">
+  <h2>Explicación Detallada</h2>
+  <h3>¿Qué es un algoritmo?</h3>
+  <p>Un <strong>algoritmo</strong> es un método para resolver un problema. Más precisamente:</p>
+  <div class="example-box">
+    <div class="example-title">Definición formal [Knuth, 1968]</div>
+    <p>Secuencia finita de instrucciones, reglas o pasos que describen en forma precisa las operaciones que una computadora debe realizar para llevar a cabo una tarea en tiempo finito.</p>
+  </div>
+  <p>Los algoritmos son <strong>independientes</strong> tanto del lenguaje de programación como de la computadora. Como una receta de cocina escrita en distintos idiomas: los pasos siguen siendo los mismos.</p>
+
+  <h3>Las 3 partes de un algoritmo</h3>
+  <ol>
+    <li><strong>Datos de entrada:</strong> los datos necesarios para resolver el problema.</li>
+    <li><strong>Proceso:</strong> los pasos a ejecutar (las instrucciones).</li>
+    <li><strong>Salida esperada:</strong> el resultado que se quiere obtener.</li>
+  </ol>
+
+  <h3>Ejemplo de algoritmo en pseudocódigo</h3>
+  <div class="code-block"><span class="kw">Proceso</span> VerificarPedido
+    <span class="kw">Leer</span> <span class="vr">pedido</span>;
+    <span class="kw">Leer</span> <span class="vr">deudaCliente</span>;
+    <span class="kw">Si</span> ( <span class="vr">deudaCliente</span> == <span class="ty">Falso</span> ) <span class="kw">Entonces</span>
+        <span class="kw">Mostrar</span> <span class="st">"Pedido aceptado"</span>;
+    <span class="kw">Sino</span>
+        <span class="kw">Mostrar</span> <span class="st">"Pedido rechazado"</span>;
+    <span class="kw">Fin Si</span>
+<span class="kw">FinProceso</span></div>
+
+  <h3>Diseño Descendente ("Divide y vencerás")</h3>
+  <p>La técnica consiste en dividir el problema en subproblemas más simples, y a su vez dividir esos subproblemas en otros aún más simples, hasta llegar a pasos que puedan implementarse directamente.</p>
+  <div class="example-box">
+    <div class="example-title">Analogía</div>
+    <p>Mudarse = buscar nuevo hogar + adquirir la propiedad + realizar la mudanza.<br>
+    Buscar nuevo hogar = visitar inmobiliarias + navegar sitios web + comparar propiedades + visitar propiedades + decidir.</p>
+  </div>
+
+  <h3>Refinamiento Sucesivo</h3>
+  <p>El primer planteo del algoritmo tendrá pocos pasos generales. Se debe refinar cada paso dividiéndolo en pasos más pequeños y detallados, hasta alcanzar instrucciones que puedan volcarse a una computadora. Este proceso se llama <strong>refinamiento sucesivo</strong>.</p>
+
+  <h3>Pseudocódigo vs. Diagrama de Flujo</h3>
+  <table>
+    <tr><th>Pseudocódigo</th><th>Diagrama de Flujo</th></tr>
+    <tr><td style="font-family:var(--serif);font-size:0.95rem;color:var(--text);">Representación textual con instrucciones en español</td><td style="font-family:var(--serif);font-size:0.95rem;color:var(--text);">Representación gráfica con formas y flechas</td></tr>
+    <tr><td>Más fácil de escribir y modificar</td><td>Más visual, fácil de seguir el flujo</td></tr>
+    <tr><td>Cercano al código real</td><td>Mejor para comunicar el algoritmo</td></tr>
+  </table>
+</div>
+
+<div id="panel-flashcards" class="panel">
+  <h2>Flashcards</h2>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="fc-bar" style="width:9%"></div></div>
+  <div class="fc-controls">
+    <div class="fc-progress">Carta <span id="fc-current">1</span> / <span id="fc-total">11</span></div>
+    <div style="display:flex;gap:.5rem;">
+      <button class="btn" onclick="fcPrev()">← Anterior</button>
+      <button class="btn btn-primary" onclick="fcNext()">Siguiente →</button>
+    </div>
+  </div>
+  <div class="flashcard-scene" onclick="document.getElementById('flashcard').classList.toggle('flipped')">
+    <div class="flashcard" id="flashcard">
+      <div class="fc-face fc-front"><div class="fc-hint">click para ver respuesta</div><div class="fc-question" id="fc-q">¿Qué es un algoritmo?</div></div>
+      <div class="fc-face fc-back"><div class="fc-hint">Respuesta</div><div class="fc-answer" id="fc-a">Secuencia finita de instrucciones precisas que describen las operaciones que una computadora debe realizar para resolver un problema en tiempo finito.</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-completar" class="panel">
+  <h2>Completar el Espacio</h2>
+  <p style="color:var(--text-muted);margin-bottom:1.5rem;font-family:var(--sans);font-size:.9rem;">Escribí la respuesta correcta.</p>
+  <div id="fill-container"></div>
+</div>
+<div id="panel-multiple" class="panel">
+  <h2>Multiple Choice</h2>
+  <div id="mc-container"></div>
+</div>
+
+<script>
+function showTab(id){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('panel-'+id).classList.add('active');event.target.classList.add('active');}
+const cards=[
+  {q:'¿Cuáles son las 3 características fundamentales de un algoritmo?',a:'Preciso (indica el orden), No ambiguo (mismas entradas → misma salida), Finito (termina en algún momento).'},
+  {q:'¿Cuáles son las 3 partes de todo algoritmo?',a:'1) Datos de entrada, 2) Proceso (los pasos), 3) Salida esperada.'},
+  {q:'¿Qué significa que un algoritmo es "independiente del lenguaje"?',a:'El mismo algoritmo puede implementarse en C, Python, Java u otro lenguaje y seguirá siendo el mismo algoritmo.'},
+  {q:'¿Qué es el Diseño Descendente?',a:'Técnica de dividir un problema en subproblemas más simples, y estos en otros más simples, hasta llegar a instrucciones directamente codificables.'},
+  {q:'¿Qué es el Refinamiento Sucesivo?',a:'Proceso de tomar cada paso general del algoritmo y dividirlo en pasos más pequeños y detallados hasta poder implementarlos.'},
+  {q:'¿Cuál es la diferencia entre Pseudocódigo y Diagrama de Flujo?',a:'El pseudocódigo es textual (instrucciones en español). El diagrama de flujo es gráfico (figuras y flechas).'},
+  {q:'¿Para qué sirve la instrucción "Leer" en pseudocódigo?',a:'Para capturar un valor ingresado por el usuario y almacenarlo en una variable.'},
+  {q:'¿Para qué sirve la instrucción "Mostrar" en pseudocódigo?',a:'Para mostrar un valor o mensaje por pantalla (salida del programa).'},
+  {q:'¿Por qué los algoritmos son más importantes que los lenguajes de programación?',a:'Porque son independientes del lenguaje y del hardware. Un buen algoritmo puede implementarse en cualquier tecnología.'},
+  {q:'¿Qué quiere decir que un algoritmo es "no ambiguo"?',a:'Que si se sigue el algoritmo dos veces con los mismos datos de entrada, se obtendrá siempre el mismo resultado.'},
+  {q:'¿En qué se diferencia un algoritmo de un programa?',a:'El algoritmo es el diseño de la solución (independiente del lenguaje). El programa es la codificación del algoritmo en un lenguaje específico.'},
+];
+let fcIdx=0;
+function updateFC(){document.getElementById('fc-q').textContent=cards[fcIdx].q;document.getElementById('fc-a').textContent=cards[fcIdx].a;document.getElementById('fc-current').textContent=fcIdx+1;document.getElementById('fc-total').textContent=cards.length;document.getElementById('fc-bar').style.width=((fcIdx+1)/cards.length*100)+'%';document.getElementById('flashcard').classList.remove('flipped');}
+function fcNext(){fcIdx=(fcIdx+1)%cards.length;updateFC();}
+function fcPrev(){fcIdx=(fcIdx-1+cards.length)%cards.length;updateFC();}
+
+const fills=[
+  {sentence:'Un algoritmo es una secuencia ___ de instrucciones que resuelven un problema.',answer:'finita',hint:'Una de sus 3 características fundamentales.'},
+  {sentence:'Si se ejecuta el mismo algoritmo con los mismos datos, siempre se obtiene el ___ resultado.',answer:'mismo',hint:'Característica de no ambigüedad.'},
+  {sentence:'La técnica "divide y vencerás" en programación se llama Diseño ___.',answer:'descendente',hint:'De lo general a lo particular.'},
+  {sentence:'El ___ es una representación gráfica de un algoritmo con figuras y flechas.',answer:'diagrama de flujo',hint:'Se opone al pseudocódigo (textual).'},
+  {sentence:'Las 3 partes de todo algoritmo son: datos de ___, proceso y salida esperada.',answer:'entrada',hint:'Lo que necesita el algoritmo para funcionar.'},
+  {sentence:'La instrucción "___" en pseudocódigo captura un valor ingresado por el usuario.',answer:'leer',hint:'Operación de entrada.'},
+  {sentence:'La instrucción "___ " en pseudocódigo muestra un valor o mensaje por pantalla.',answer:'mostrar',hint:'Operación de salida.'},
+  {sentence:'El ___ sucesivo consiste en detallar progresivamente cada paso del algoritmo.',answer:'refinamiento',hint:'Proceso de descomposición gradual.'},
+  {sentence:'Un algoritmo debe ser ___, es decir, indicar el orden exacto de cada paso.',answer:'preciso',hint:'Primera característica fundamental.'},
+  {sentence:'Los algoritmos son independientes del lenguaje y del ___ en que se ejecutan.',answer:'hardware',hint:'La máquina que lo corre no importa.'},
+];
+const fillContainer=document.getElementById('fill-container');
+fills.forEach((f,i)=>{
+  const div=document.createElement('div');div.className='fill-item';div.id='fill-'+i;
+  div.innerHTML=`<div class="fill-sentence">${f.sentence.replace('___','<strong>___</strong>')}</div>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
+      <input class="fill-input" id="fi-${i}" placeholder="Respuesta..." onkeydown="if(event.key==='Enter')checkFill(${i})">
+      <button class="btn" style="font-size:.8rem;padding:.3rem .8rem;" onclick="checkFill(${i})">Verificar</button>
+    </div><div class="fill-feedback" id="ff-${i}"></div>`;
+  fillContainer.appendChild(div);
+});
+function checkFill(i){const val=document.getElementById('fi-'+i).value.trim().toLowerCase();const item=document.getElementById('fill-'+i);const fb=document.getElementById('ff-'+i);if(val===fills[i].answer.toLowerCase()){item.classList.remove('wrong');item.classList.add('correct');fb.textContent='✓ Correcto!';}else{item.classList.remove('correct');item.classList.add('wrong');fb.textContent=`✗ Respuesta: "${fills[i].answer}". ${fills[i].hint}`;}}
+
+const mcData=[
+  {q:'¿Cuál de las siguientes NO es una característica de un algoritmo?',options:['Preciso','No ambiguo','Finito','Dependiente del lenguaje de programación'],correct:3,exp:'Los algoritmos son INDEPENDIENTES del lenguaje de programación. El mismo algoritmo puede implementarse en Python, Java, C, etc.'},
+  {q:'¿Cuáles son las 3 partes de todo algoritmo?',options:['Inicio, Proceso, Fin','Entrada, Proceso, Salida','Problema, Solución, Verificación','Variables, Instrucciones, Resultado'],correct:1,exp:'Todo algoritmo debe describir: 1) Los datos de entrada, 2) El proceso (pasos), 3) La salida esperada.'},
+  {q:'¿Qué herramienta usa formas geométricas y flechas para representar un algoritmo?',options:['Pseudocódigo','Compilador','Diagrama de flujo','Lenguaje máquina'],correct:2,exp:'El diagrama de flujo (flowchart) es una representación GRÁFICA que usa figuras geométricas conectadas con flechas.'},
+  {q:'La técnica de Diseño Descendente se basa en:',options:['Escribir el código primero','Dividir el problema en subproblemas más simples','Usar un lenguaje de alto nivel','Verificar la solución antes de diseñarla'],correct:1,exp:'El Diseño Descendente ("divide y vencerás") consiste en dividir el problema en subproblemas cada vez más simples hasta poder codificarlos.'},
+  {q:'¿Qué hace la instrucción "Leer" en pseudocódigo?',options:['Muestra un mensaje por pantalla','Lee un archivo del disco','Captura un valor ingresado por el usuario','Define una variable'],correct:2,exp:'La instrucción "Leer" captura el valor que el usuario escribe por teclado y lo almacena en la variable especificada.'},
+];
+const mcContainer=document.getElementById('mc-container');
+mcData.forEach((mc,i)=>{const div=document.createElement('div');div.className='mc-item';div.id='mc-'+i;const L=['A','B','C','D'];div.innerHTML=`<div class="mc-question">${i+1}. ${mc.q}</div><div class="mc-options">${mc.options.map((o,j)=>`<div class="mc-option" onclick="checkMC(${i},${j})"><span class="mc-letter">${L[j]}</span>${o}</div>`).join('')}</div><div class="mc-explanation" id="mce-${i}">${mc.exp}</div>`;mcContainer.appendChild(div);});
+function checkMC(qi,oi){const item=document.getElementById('mc-'+qi);if(item.classList.contains('answered'))return;item.classList.add('answered');const opts=item.querySelectorAll('.mc-option');opts[oi].classList.add(oi===mcData[qi].correct?'selected-correct':'selected-wrong');if(oi!==mcData[qi].correct)opts[mcData[qi].correct].classList.add('reveal-correct');}
+</script>
+</body>
+</html>

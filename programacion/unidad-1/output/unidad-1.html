@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programación — Unidad 1: Conceptos Básicos</title>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --card: #1a2235;
+    --border: #2a3755;
+    --accent: #e85d04;
+    --accent-light: rgba(232,93,4,0.12);
+    --accent2: #60c5fa;
+    --accent2-light: rgba(96,197,250,0.1);
+    --green: #22d3ee;
+    --success: #22c55e;
+    --success-bg: rgba(34,197,94,0.12);
+    --error: #f87171;
+    --error-bg: rgba(248,113,113,0.12);
+    --text: #e2e8f0;
+    --text-muted: #7b8fa8;
+    --text-dim: #3d506b;
+    --mono: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", monospace;
+    --sans:"Lora","Georgia","Times New Roman",serif;
+    --serif: "Lora", "Georgia", serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--serif); font-size: 16px; line-height: 1.75; min-height: 100vh; }
+
+  header { background: linear-gradient(160deg, #0a0e1a 0%, #0f1520 40%, #1a0a05 100%); border-bottom: 1px solid var(--border); padding: 3rem 2rem 2.5rem; text-align: center; position: relative; overflow: hidden; }
+  header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(232,93,4,0.15) 0%, transparent 70%); pointer-events: none; }
+  .tag { display: inline-block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.15em; color: var(--accent); background: var(--accent-light); border: 1px solid rgba(232,93,4,0.35); padding: 0.25rem 0.85rem; border-radius: 99px; margin-bottom: 1.1rem; }
+  header h1 { font-family: var(--sans); font-size: clamp(1.8rem,4vw,3rem); font-weight: 800; letter-spacing: -0.03em; color: #fff; margin-bottom: 0.4rem; }
+  header h1 em { color: var(--accent); font-style: normal; }
+  header p { color: var(--text-muted); font-family: var(--sans); font-size: 0.88rem; }
+
+  .tabs-wrap { position: sticky; top: 0; z-index: 100; background: rgba(10,14,26,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 1rem; overflow-x: auto; scrollbar-width: none; }
+  .tabs-wrap::-webkit-scrollbar { display: none; }
+  .tabs { display: flex; min-width: max-content; }
+  .tab { font-family: var(--sans); font-size: 0.82rem; font-weight: 500; padding: 0.75rem 1.1rem; cursor: pointer; color: var(--text-muted); border: none; background: none; border-bottom: 2px solid transparent; transition: all .2s; white-space: nowrap; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .panel { display: none; max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+  .panel.active { display: block; }
+
+  h2 { font-family: var(--sans); font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 1.2rem; }
+  h3 { font-family: var(--sans); font-size: 1.05rem; font-weight: 700; color: var(--accent2); margin: 2rem 0 0.6rem; }
+  p { margin-bottom: 0.9rem; }
+  ul, ol { padding-left: 1.5rem; margin-bottom: 0.9rem; }
+  li { margin-bottom: 0.35rem; }
+
+  .summary-box { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 1.4rem 1.6rem; margin-bottom: 2rem; }
+
+  .concept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .concept-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem; transition: border-color .2s, transform .2s; }
+  .concept-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .concept-card .term { font-family: var(--mono); font-size: 0.78rem; font-weight: 700; color: var(--accent); margin-bottom: 0.5rem; }
+  .concept-card .def { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+
+  .step-flow { display: flex; gap: 0; align-items: stretch; flex-wrap: wrap; margin: 1.2rem 0; }
+  .step-item { flex: 1; min-width: 120px; background: var(--card); border: 1px solid var(--border); border-right: none; padding: 0.9rem 1rem; text-align: center; position: relative; }
+  .step-item:last-child { border-right: 1px solid var(--border); border-radius: 0 8px 8px 0; }
+  .step-item:first-child { border-radius: 8px 0 0 8px; }
+  .step-item::after { content: '→'; position: absolute; right: -12px; top: 50%; transform: translateY(-50%); color: var(--accent); font-size: 1.1rem; z-index: 1; }
+  .step-item:last-child::after { display: none; }
+  .step-num { font-family: var(--mono); font-size: 0.65rem; color: var(--accent); font-weight: 700; display: block; margin-bottom: 0.3rem; }
+  .step-label { font-family: var(--sans); font-size: 0.8rem; font-weight: 600; color: var(--text); }
+
+  .code-block { background: #0d1117; border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.4rem; font-family: var(--mono); font-size: 0.85rem; color: #c9d1d9; margin: 1rem 0 1.5rem; overflow-x: auto; line-height: 1.6; }
+  .kw { color: #ff7b72; }
+  .ty { color: #79c0ff; }
+  .cm { color: #8b949e; font-style: italic; }
+  .st { color: #a5d6ff; }
+
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: 0.9rem; }
+  th { background: var(--card); color: var(--text); font-family: var(--sans); font-weight: 600; padding: 0.6rem 1rem; border: 1px solid var(--border); }
+  td { padding: 0.5rem 1rem; border: 1px solid var(--border); color: var(--text-muted); }
+
+  .example-box { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--accent2); border-radius: 8px; padding: 1.1rem 1.4rem; margin: 1rem 0; }
+  .example-title { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent2); margin-bottom: 0.5rem; }
+
+  .progress-bar-wrap { background: var(--surface); border-radius: 99px; height: 4px; margin-bottom: 1.5rem; overflow: hidden; }
+  .progress-bar { height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s; }
+  .fc-controls { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .fc-progress { font-family: var(--mono); font-size: 0.85rem; color: var(--text-muted); }
+  .fc-progress span { color: var(--accent); font-weight: 700; }
+  .btn { font-family: var(--sans); font-size: 0.85rem; font-weight: 600; padding: 0.45rem 1.1rem; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; transition: all .15s; }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn-primary:hover { opacity: 0.9; }
+
+  .flashcard-scene { perspective: 1000px; height: 220px; cursor: pointer; margin-bottom: 1.5rem; user-select: none; }
+  .flashcard { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .5s cubic-bezier(.4,0,.2,1); }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .fc-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center; border: 1px solid var(--border); }
+  .fc-front { background: var(--card); }
+  .fc-back { background: linear-gradient(135deg, #1a0a05, var(--card)); border-color: var(--accent); transform: rotateY(180deg); }
+  .fc-hint { font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim); margin-bottom: 0.5rem; }
+  .fc-question { font-size: 1.05rem; font-weight: 600; color: var(--text); line-height: 1.5; }
+  .fc-answer { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; }
+
+  .fill-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem 1.5rem; margin-bottom: 1rem; }
+  .fill-item.correct { border-color: var(--success); background: var(--success-bg); }
+  .fill-item.wrong { border-color: var(--error); background: var(--error-bg); }
+  .fill-sentence { font-size: 0.97rem; margin-bottom: 0.7rem; line-height: 1.7; }
+  .fill-input { font-family: var(--mono); font-size: 0.88rem; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 0.4rem 0.8rem; border-radius: 5px; width: 220px; outline: none; }
+  .fill-input:focus { border-color: var(--accent2); }
+  .fill-feedback { font-family: var(--sans); font-size: 0.83rem; margin-top: 0.5rem; display: none; }
+  .fill-item.correct .fill-feedback { display: block; color: var(--success); }
+  .fill-item.wrong .fill-feedback { display: block; color: var(--error); }
+
+  .mc-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.4rem 1.5rem; margin-bottom: 1.2rem; }
+  .mc-question { font-size: 0.97rem; font-weight: 600; margin-bottom: 1rem; }
+  .mc-options { display: flex; flex-direction: column; gap: 0.5rem; }
+  .mc-option { display: flex; align-items: flex-start; gap: 0.7rem; padding: 0.6rem 0.9rem; border-radius: 7px; border: 1px solid var(--border); cursor: pointer; font-size: 0.9rem; transition: all .15s; background: var(--surface); }
+  .mc-option:hover { border-color: var(--accent); }
+  .mc-option.selected-correct { border-color: var(--success); background: var(--success-bg); color: var(--success); }
+  .mc-option.selected-wrong { border-color: var(--error); background: var(--error-bg); color: var(--error); }
+  .mc-option.reveal-correct { border-color: var(--success); background: var(--success-bg); }
+  .mc-letter { font-family: var(--mono); font-size: 0.75rem; font-weight: 700; color: var(--text-muted); min-width: 18px; padding-top: 1px; }
+  .mc-explanation { margin-top: 0.8rem; padding: 0.7rem 1rem; background: var(--surface); border-radius: 6px; font-size: 0.85rem; color: var(--text-muted); display: none; border-left: 2px solid var(--accent); }
+  .mc-item.answered .mc-explanation { display: block; }
+  .mc-item.answered .mc-option { pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <div class="tag">Programación · Unidad 1</div>
+  <h1>Conceptos <em>Básicos</em></h1>
+  <p>Resolución de problemas · Algoritmos · Lenguajes de programación</p>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('resumen')">Resumen</button>
+    <button class="tab" onclick="showTab('conceptos')">Conceptos Clave</button>
+    <button class="tab" onclick="showTab('detalle')">Explicación Detallada</button>
+    <button class="tab" onclick="showTab('flashcards')">Flashcards</button>
+    <button class="tab" onclick="showTab('completar')">Completar el Espacio</button>
+    <button class="tab" onclick="showTab('multiple')">Multiple Choice</button>
+  </div>
+</div>
+
+<div id="panel-resumen" class="panel active">
+  <h2>Resumen General</h2>
+  <div class="summary-box">
+    <p>Esta unidad introduce los conceptos fundamentales de la programación. Se explica qué significa programar y cómo resolver problemas con una computadora siguiendo 5 pasos: comprender, analizar, diseñar el algoritmo, codificar y verificar. También se estudian los tipos de datos, los lenguajes de programación (máquina, bajo nivel, alto nivel) y los tipos de programación: secuencial, estructurada, lógica y orientada a objetos.</p>
+  </div>
+  <h3>Pasos para resolver un problema</h3>
+  <div class="step-flow">
+    <div class="step-item"><span class="step-num">01</span><div class="step-label">Comprender</div></div>
+    <div class="step-item"><span class="step-num">02</span><div class="step-label">Analizar</div></div>
+    <div class="step-item"><span class="step-num">03</span><div class="step-label">Diseñar</div></div>
+    <div class="step-item"><span class="step-num">04</span><div class="step-label">Codificar</div></div>
+    <div class="step-item"><span class="step-num">05</span><div class="step-label">Verificar</div></div>
+  </div>
+</div>
+
+<div id="panel-conceptos" class="panel">
+  <h2>Conceptos Clave</h2>
+  <div class="concept-grid">
+    <div class="concept-card"><div class="term">Programar</div><div class="def">Planificar y preparar de antemano las actividades para llevar a cabo una tarea o resolución de problemas.</div></div>
+    <div class="concept-card"><div class="term">Problema</div><div class="def">El planteo de una situación a resolver mediante la aplicación de algún método.</div></div>
+    <div class="concept-card"><div class="term">Variable</div><div class="def">Dato de entrada cuyo valor puede cambiar durante la resolución del problema.</div></div>
+    <div class="concept-card"><div class="term">Constante</div><div class="def">Dato de entrada cuyo valor no cambia durante la resolución del problema.</div></div>
+    <div class="concept-card"><div class="term">Precondición</div><div class="def">Restricción que indica qué valores válidos puede tomar un dato de entrada de tipo variable.</div></div>
+    <div class="concept-card"><div class="term">Pseudocódigo</div><div class="def">Herramienta para diseñar soluciones: las instrucciones se escriben usando palabras en español.</div></div>
+    <div class="concept-card"><div class="term">Diagrama de Flujo</div><div class="def">Representación gráfica de un algoritmo mediante símbolos y flechas.</div></div>
+    <div class="concept-card"><div class="term">Lenguaje Máquina</div><div class="def">Lenguaje que entiende la computadora sin traducciones. Sus instrucciones son secuencias de 0 y 1.</div></div>
+    <div class="concept-card"><div class="term">Lenguaje de Alto Nivel</div><div class="def">Instrucciones formadas por palabras similares al lenguaje natural. Independientes del procesador. Ej: C, Java, Python.</div></div>
+    <div class="concept-card"><div class="term">Compilador</div><div class="def">Programa que traduce lenguaje de alto nivel a lenguaje máquina.</div></div>
+    <div class="concept-card"><div class="term">POO</div><div class="def">Programación Orientada a Objetos: diseño basado en objetos que interactúan entre sí, con datos y acciones.</div></div>
+    <div class="concept-card"><div class="term">Programación Estructurada</div><div class="def">Diseño modular descendente, usando las 3 estructuras básicas: secuencia, selección y repetición. Sin goto.</div></div>
+  </div>
+</div>
+
+<div id="panel-detalle" class="panel">
+  <h2>Explicación Detallada</h2>
+  <h3>¿Qué es programar?</h3>
+  <p>Programar es <strong>planificar</strong>: preparar de antemano las actividades para resolver un problema. En esta materia se resuelven problemas usando algoritmos, estructuras de datos y lenguajes de programación.</p>
+
+  <h3>Pasos para resolver un problema</h3>
+  <ol>
+    <li><strong>Comprender el problema:</strong> leer el enunciado hasta entender exactamente qué hay que resolver.</li>
+    <li><strong>Analizar el problema:</strong> identificar objetivo, datos de entrada (nombre, tipo, característica), precondiciones, datos de salida y lote de prueba.</li>
+    <li><strong>Diseñar el algoritmo:</strong> determinar el "cómo". Usar pseudocódigo o diagrama de flujo.</li>
+    <li><strong>Codificar:</strong> traducir el algoritmo a un lenguaje de programación.</li>
+    <li><strong>Verificar la solución:</strong> probar con datos normales, extremos y especiales usando la Prueba de Escritorio.</li>
+  </ol>
+
+  <h3>Tipos de Datos</h3>
+  <table>
+    <tr><th>Tipo</th><th>Nombre en inglés</th><th>Valores posibles</th></tr>
+    <tr><td>Entero</td><td>Integer</td><td>Número entero: -2, 0, 42</td></tr>
+    <tr><td>Real</td><td>Float</td><td>Número real: 3.14, -0.5</td></tr>
+    <tr><td>Caracter</td><td>Character</td><td>Un solo símbolo: 'a', '3', '#'</td></tr>
+    <tr><td>Cadena</td><td>String</td><td>Conjunto de caracteres: "Hola"</td></tr>
+    <tr><td>Lógico</td><td>Boolean</td><td>Verdadero o Falso</td></tr>
+  </table>
+
+  <h3>Análisis del Problema</h3>
+  <div class="example-box">
+    <div class="example-title">Ejemplo de análisis completo</div>
+    <p><em>Problema:</em> ingresar nombre y notas de 2 parciales, devolver VERDADERO si aprobó.</p>
+    <p><strong>Objetivo:</strong> saber si el alumno aprobó.<br>
+    <strong>Datos entrada:</strong> nombre (Cadena, Variable), notaParcial1 (Real, Variable), notaParcial2 (Real, Variable), CANTIDAD_EXAMENES (Entero, Constante = 2)<br>
+    <strong>Precondiciones:</strong> notaParcial1 > 0 Y ≤ 10; notaParcial2 > 0 Y ≤ 10<br>
+    <strong>Salida:</strong> alumno_aprobado (Lógico)</p>
+  </div>
+
+  <h3>Lenguajes de Programación</h3>
+  <ul>
+    <li><strong>Lenguaje Máquina:</strong> secuencias de 0 y 1. Muy difícil para personas. Ej: <code>0010 0000 0010 1000</code></li>
+    <li><strong>Lenguaje de Bajo Nivel (ensamblador):</strong> usa códigos nemotécnicos. Dependiente del procesador. Ej: <code>MOV R5, R6</code></li>
+    <li><strong>Lenguaje de Alto Nivel:</strong> instrucciones similares al lenguaje natural. Independiente del procesador. Requiere compilador. Ej: C, Java, Python, C#, PHP.</li>
+  </ul>
+
+  <h3>Tipos de Programación</h3>
+  <div class="example-box">
+    <div class="example-title">Programación Estructurada — Las 3 reglas</div>
+    <p>1. Diseño modular. 2. Cada módulo es diseñado de modo descendente. 3. Solo 3 estructuras básicas: <strong>secuencia, selección y repetición</strong> (no se permite goto).</p>
+  </div>
+  <ul>
+    <li><strong>Secuencial:</strong> instrucciones en orden, usa goto para bifurcaciones.</li>
+    <li><strong>Estructurada:</strong> modular, descendente, sin goto.</li>
+    <li><strong>Lógica:</strong> define hechos y relaciones (base de conocimiento).</li>
+    <li><strong>Orientada a Objetos (POO):</strong> objetos con datos y acciones que interactúan.</li>
+  </ul>
+</div>
+
+<div id="panel-flashcards" class="panel">
+  <h2>Flashcards</h2>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="fc-bar" style="width:8%"></div></div>
+  <div class="fc-controls">
+    <div class="fc-progress">Carta <span id="fc-current">1</span> / <span id="fc-total">12</span></div>
+    <div style="display:flex;gap:0.5rem;">
+      <button class="btn" onclick="fcPrev()">← Anterior</button>
+      <button class="btn btn-primary" onclick="fcNext()">Siguiente →</button>
+    </div>
+  </div>
+  <div class="flashcard-scene" onclick="document.getElementById('flashcard').classList.toggle('flipped')">
+    <div class="flashcard" id="flashcard">
+      <div class="fc-face fc-front"><div class="fc-hint">click para ver respuesta</div><div class="fc-question" id="fc-q">¿Qué es programar?</div></div>
+      <div class="fc-face fc-back"><div class="fc-hint">Respuesta</div><div class="fc-answer" id="fc-a">Planificar y preparar de antemano las actividades para llevar a cabo una tarea o resolución de problemas.</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-completar" class="panel">
+  <h2>Completar el Espacio</h2>
+  <p style="color:var(--text-muted);margin-bottom:1.5rem;font-family:var(--sans);font-size:0.9rem;">Escribí la palabra o frase que falta.</p>
+  <div id="fill-container"></div>
+</div>
+
+<div id="panel-multiple" class="panel">
+  <h2>Multiple Choice</h2>
+  <div id="mc-container"></div>
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+const cards = [
+  { q: '¿Qué es programar?', a: 'Planificar y preparar de antemano las actividades para llevar a cabo una tarea o resolución de problemas.' },
+  { q: '¿Qué es un problema?', a: 'El planteo de una situación a resolver mediante la aplicación de algún método.' },
+  { q: '¿Cuáles son los 5 pasos para resolver un problema?', a: '1) Comprender, 2) Analizar, 3) Diseñar el algoritmo, 4) Codificar, 5) Verificar la solución.' },
+  { q: '¿Cuál es la diferencia entre una Constante y una Variable?', a: 'Constante: su valor no cambia durante la resolución. Variable: su valor puede cambiar durante la resolución.' },
+  { q: '¿Qué es una Precondición?', a: 'Restricción que indica qué valores válidos puede tomar un dato de entrada variable.' },
+  { q: '¿Cuáles son los tipos de datos básicos?', a: 'Entero, Real, Caracter, Cadena y Lógico (Boolean).' },
+  { q: '¿Qué es el Pseudocódigo?', a: 'Herramienta para diseñar soluciones donde las instrucciones se escriben usando palabras en español (o lenguaje natural).' },
+  { q: '¿Qué es el Lenguaje Máquina?', a: 'El lenguaje que entiende la computadora sin traducción. Sus instrucciones son secuencias de 0 y 1.' },
+  { q: '¿Para qué sirve un Compilador?', a: 'Traduce un programa escrito en lenguaje de alto nivel a lenguaje máquina.' },
+  { q: '¿Cuáles son los lenguajes de alto nivel mencionados?', a: 'C, C++, C#, Java, PHP, Python.' },
+  { q: '¿Qué es la Prueba de Escritorio?', a: 'Herramienta que verifica si el programa produce la salida correcta, simulando la ejecución con datos de prueba en una tabla.' },
+  { q: '¿Cuáles son las 3 estructuras básicas de la Programación Estructurada?', a: 'Secuencia, selección (estructuras de control) y repetición. No se permite el uso de goto.' },
+];
+let fcIdx = 0;
+function updateFC() {
+  document.getElementById('fc-q').textContent = cards[fcIdx].q;
+  document.getElementById('fc-a').textContent = cards[fcIdx].a;
+  document.getElementById('fc-current').textContent = fcIdx + 1;
+  document.getElementById('fc-total').textContent = cards.length;
+  document.getElementById('fc-bar').style.width = ((fcIdx+1)/cards.length*100) + '%';
+  document.getElementById('flashcard').classList.remove('flipped');
+}
+function fcNext() { fcIdx = (fcIdx+1) % cards.length; updateFC(); }
+function fcPrev() { fcIdx = (fcIdx-1+cards.length) % cards.length; updateFC(); }
+
+const fills = [
+  { sentence: 'Programar es ___, es preparar de antemano las actividades para resolver un problema.', answer: 'planificar', hint: 'Sinónimo de anticipar.' },
+  { sentence: 'Un dato de entrada cuyo valor puede cambiar durante la resolución se clasifica como ___.', answer: 'variable', hint: 'Se opone a constante.' },
+  { sentence: 'Las ___ indican qué valores pueden tomar los datos de entrada para ser válidos.', answer: 'precondiciones', hint: 'Restricciones sobre los valores de entrada.' },
+  { sentence: 'El tipo de dato ___ solo puede contener Verdadero o Falso.', answer: 'lógico', hint: 'También llamado Boolean.' },
+  { sentence: 'El ___ es una representación gráfica de un algoritmo.', answer: 'diagrama de flujo', hint: 'Usa formas geométricas y flechas.' },
+  { sentence: 'El lenguaje que entiende la computadora sin traducciones se llama lenguaje ___.', answer: 'máquina', hint: 'Compuesto de ceros y unos.' },
+  { sentence: 'Un ___ traduce el código de alto nivel a lenguaje máquina.', answer: 'compilador', hint: 'Programa de traducción.' },
+  { sentence: 'La Programación ___ prohíbe el uso de instrucciones goto.', answer: 'estructurada', hint: 'Tipo de programación basada en módulos.' },
+  { sentence: 'En la ___ se verifican si los resultados del programa son correctos usando datos de prueba.', answer: 'prueba de escritorio', hint: 'Herramienta de verificación manual.' },
+  { sentence: 'La Programación ___ se basa en objetos que interactúan entre sí para resolver el problema.', answer: 'orientada a objetos', hint: 'Sus siglas son POO.' },
+];
+const fillContainer = document.getElementById('fill-container');
+fills.forEach((f, i) => {
+  const div = document.createElement('div');
+  div.className = 'fill-item'; div.id = 'fill-' + i;
+  div.innerHTML = `<div class="fill-sentence">${f.sentence.replace('___','<strong>___</strong>')}</div>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+      <input class="fill-input" id="fi-${i}" placeholder="Respuesta..." onkeydown="if(event.key==='Enter')checkFill(${i})">
+      <button class="btn" style="font-size:0.8rem;padding:0.3rem 0.8rem;" onclick="checkFill(${i})">Verificar</button>
+    </div>
+    <div class="fill-feedback" id="ff-${i}"></div>`;
+  fillContainer.appendChild(div);
+});
+function checkFill(i) {
+  const val = document.getElementById('fi-'+i).value.trim().toLowerCase();
+  const item = document.getElementById('fill-'+i);
+  const fb = document.getElementById('ff-'+i);
+  if (val === fills[i].answer.toLowerCase()) {
+    item.classList.remove('wrong'); item.classList.add('correct'); fb.textContent = '✓ Correcto!';
+  } else {
+    item.classList.remove('correct'); item.classList.add('wrong');
+    fb.textContent = `✗ Respuesta: "${fills[i].answer}". ${fills[i].hint}`;
+  }
+}
+
+const mcData = [
+  { q: '¿Cuál es el primer paso para resolver un problema con una computadora?', options: ['Codificar el programa', 'Comprender el problema', 'Diseñar el algoritmo', 'Verificar la solución'], correct: 1, exp: 'El primer paso es comprender el problema: no se puede resolver algo que no se entiende. Hay que leer el enunciado las veces que sea necesario.' },
+  { q: '¿Qué tipo de dato usarías para guardar el nombre de un alumno?', options: ['Entero', 'Real', 'Caracter', 'Cadena'], correct: 3, exp: 'Una Cadena (String) almacena un conjunto de caracteres, como un nombre o una frase.' },
+  { q: '¿Cuál de los siguientes es un lenguaje de bajo nivel?', options: ['Python', 'Java', 'Ensamblador (Assembler)', 'C#'], correct: 2, exp: 'Los lenguajes de bajo nivel (ensambladores) usan códigos nemotécnicos. Python, Java y C# son lenguajes de alto nivel.' },
+  { q: 'La CANTIDAD_EXAMENES = 2 en un programa es un ejemplo de:', options: ['Variable', 'Constante', 'Precondición', 'Tipo de dato'], correct: 1, exp: 'Es una Constante porque su valor (2) no cambia durante la ejecución del programa.' },
+  { q: '¿Qué tipo de programación NO permite el uso de instrucciones goto?', options: ['Secuencial', 'Lógica', 'Estructurada', 'Orientada a Objetos'], correct: 2, exp: 'La Programación Estructurada explícitamente prohíbe el uso de goto, usando en cambio las 3 estructuras básicas de control.' },
+  { q: 'El "Lote de datos de prueba" se usa para:', options: ['Definir los tipos de variables', 'Compilar el programa', 'Verificar que la solución produce la salida correcta', 'Diseñar el algoritmo'], correct: 2, exp: 'El lote de datos de prueba es un conjunto de valores de entrada que se usa en la Prueba de Escritorio para verificar que el programa funciona correctamente.' },
+];
+const mcContainer = document.getElementById('mc-container');
+mcData.forEach((mc, i) => {
+  const div = document.createElement('div');
+  div.className = 'mc-item'; div.id = 'mc-'+i;
+  const L = ['A','B','C','D'];
+  div.innerHTML = `<div class="mc-question">${i+1}. ${mc.q}</div>
+    <div class="mc-options">${mc.options.map((o,j)=>`<div class="mc-option" onclick="checkMC(${i},${j})"><span class="mc-letter">${L[j]}</span>${o}</div>`).join('')}</div>
+    <div class="mc-explanation" id="mce-${i}">${mc.exp}</div>`;
+  mcContainer.appendChild(div);
+});
+function checkMC(qi,oi) {
+  const item = document.getElementById('mc-'+qi);
+  if (item.classList.contains('answered')) return;
+  item.classList.add('answered');
+  const opts = item.querySelectorAll('.mc-option');
+  opts[oi].classList.add(oi===mcData[qi].correct?'selected-correct':'selected-wrong');
+  if (oi!==mcData[qi].correct) opts[mcData[qi].correct].classList.add('reveal-correct');
+}
+</script>
+</body>
+</html>

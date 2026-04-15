@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programación — Unidad 5: Estructuras de Repetición</title>
+<style>
+  :root{--bg:#0a0e1a;--surface:#111827;--card:#1a2235;--border:#2a3755;--accent:#06b6d4;--accent-light:rgba(6,182,212,.12);--accent2:#a78bfa;--accent2-light:rgba(167,139,250,.1);--success:#22c55e;--success-bg:rgba(34,197,94,.12);--error:#f87171;--error-bg:rgba(248,113,113,.12);--text:#e2e8f0;--text-muted:#7b8fa8;--text-dim:#3d506b;--mono:"JetBrains Mono","Fira Code","Consolas",monospace;--sans:"Lora","Georgia","Times New Roman",serif;--serif:"Lora","Georgia",serif;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--serif);font-size:16px;line-height:1.75;min-height:100vh;}
+  header{background:linear-gradient(160deg,#0a0e1a 0%,#001a1e 50%,#001215 100%);border-bottom:1px solid var(--border);padding:3rem 2rem 2.5rem;text-align:center;position:relative;overflow:hidden;}
+  header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(6,182,212,.15) 0%,transparent 70%);pointer-events:none;}
+  .tag{display:inline-block;font-family:var(--mono);font-size:.66rem;letter-spacing:.15em;color:var(--accent);background:var(--accent-light);border:1px solid rgba(6,182,212,.35);padding:.25rem .85rem;border-radius:99px;margin-bottom:1.1rem;}
+  header h1{font-family:var(--sans);font-size:clamp(1.8rem,4vw,3rem);font-weight:800;letter-spacing:-.03em;color:#fff;margin-bottom:.4rem;}
+  header h1 em{color:var(--accent);font-style:normal;}
+  header p{color:var(--text-muted);font-family:var(--sans);font-size:.88rem;}
+  .tabs-wrap{position:sticky;top:0;z-index:100;background:rgba(10,14,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 1rem;overflow-x:auto;scrollbar-width:none;}
+  .tabs-wrap::-webkit-scrollbar{display:none;}
+  .tabs{display:flex;min-width:max-content;}
+  .tab{font-family:var(--sans);font-size:.82rem;font-weight:500;padding:.75rem 1.1rem;cursor:pointer;color:var(--text-muted);border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+  .tab:hover{color:var(--text);}
+  .tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .panel{display:none;max-width:860px;margin:0 auto;padding:2.5rem 1.5rem 4rem;}
+  .panel.active{display:block;}
+  h2{font-family:var(--sans);font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:1.2rem;}
+  h3{font-family:var(--sans);font-size:1.05rem;font-weight:700;color:var(--accent2);margin:2rem 0 .6rem;}
+  p{margin-bottom:.9rem;}ul,ol{padding-left:1.5rem;margin-bottom:.9rem;}li{margin-bottom:.35rem;}
+  .summary-box{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;padding:1.4rem 1.6rem;margin-bottom:2rem;}
+  .concept-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem;margin-bottom:2rem;}
+  .concept-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem;transition:border-color .2s,transform .2s;}
+  .concept-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .concept-card .term{font-family:var(--mono);font-size:.78rem;font-weight:700;color:var(--accent);margin-bottom:.5rem;}
+  .concept-card .def{font-size:.9rem;color:var(--text-muted);line-height:1.5;}
+  .code-block{background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:1rem 1.4rem;font-family:var(--mono);font-size:.85rem;color:#c9d1d9;margin:1rem 0 1.5rem;overflow-x:auto;line-height:1.7;white-space:pre;}
+  .kw{color:#ff7b72;}.ty{color:#79c0ff;}.cm{color:#8b949e;font-style:italic;}.vr{color:#ffa657;}.st{color:#a5d6ff;}
+  .ciclos-compare{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;margin:1rem 0 1.5rem;}
+  .ciclo-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem;}
+  .ciclo-name{font-family:var(--mono);font-size:.9rem;font-weight:700;color:var(--accent);margin-bottom:.5rem;}
+  .ciclo-desc{font-size:.88rem;color:var(--text-muted);margin-bottom:.5rem;}
+  .ciclo-when{font-size:.82rem;color:var(--accent2);font-family:var(--sans);}
+  .progress-bar-wrap{background:var(--surface);border-radius:99px;height:4px;margin-bottom:1.5rem;overflow:hidden;}
+  .progress-bar{height:100%;background:var(--accent);border-radius:99px;transition:width .3s;}
+  .fc-controls{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+  .fc-progress{font-family:var(--mono);font-size:.85rem;color:var(--text-muted);}
+  .fc-progress span{color:var(--accent);font-weight:700;}
+  .btn{font-family:var(--sans);font-size:.85rem;font-weight:600;padding:.45rem 1.1rem;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;transition:all .15s;}
+  .btn:hover{border-color:var(--accent);color:var(--accent);}
+  .btn-primary{background:var(--accent);border-color:var(--accent);color:#000;font-weight:700;}
+  .flashcard-scene{perspective:1000px;height:220px;cursor:pointer;margin-bottom:1.5rem;user-select:none;}
+  .flashcard{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
+  .flashcard.flipped{transform:rotateY(180deg);}
+  .fc-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;border:1px solid var(--border);}
+  .fc-front{background:var(--card);}
+  .fc-back{background:linear-gradient(135deg,#001a1e,var(--card));border-color:var(--accent);transform:rotateY(180deg);}
+  .fc-hint{font-family:var(--mono);font-size:.7rem;color:var(--text-dim);margin-bottom:.5rem;}
+  .fc-question{font-size:1.05rem;font-weight:600;color:var(--text);line-height:1.5;}
+  .fc-answer{font-size:.95rem;color:var(--text-muted);line-height:1.6;}
+  .fill-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.5rem;margin-bottom:1rem;}
+  .fill-item.correct{border-color:var(--success);background:var(--success-bg);}
+  .fill-item.wrong{border-color:var(--error);background:var(--error-bg);}
+  .fill-sentence{font-size:.97rem;margin-bottom:.7rem;line-height:1.7;}
+  .fill-input{font-family:var(--mono);font-size:.88rem;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:.4rem .8rem;border-radius:5px;width:220px;outline:none;}
+  .fill-input:focus{border-color:var(--accent2);}
+  .fill-feedback{font-family:var(--sans);font-size:.83rem;margin-top:.5rem;display:none;}
+  .fill-item.correct .fill-feedback{display:block;color:var(--success);}
+  .fill-item.wrong .fill-feedback{display:block;color:var(--error);}
+  .mc-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem 1.5rem;margin-bottom:1.2rem;}
+  .mc-question{font-size:.97rem;font-weight:600;margin-bottom:1rem;}
+  .mc-options{display:flex;flex-direction:column;gap:.5rem;}
+  .mc-option{display:flex;align-items:flex-start;gap:.7rem;padding:.6rem .9rem;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-size:.9rem;transition:all .15s;background:var(--surface);}
+  .mc-option:hover{border-color:var(--accent);}
+  .mc-option.selected-correct{border-color:var(--success);background:var(--success-bg);color:var(--success);}
+  .mc-option.selected-wrong{border-color:var(--error);background:var(--error-bg);color:var(--error);}
+  .mc-option.reveal-correct{border-color:var(--success);background:var(--success-bg);}
+  .mc-letter{font-family:var(--mono);font-size:.75rem;font-weight:700;color:var(--text-muted);min-width:18px;padding-top:1px;}
+  .mc-explanation{margin-top:.8rem;padding:.7rem 1rem;background:var(--surface);border-radius:6px;font-size:.85rem;color:var(--text-muted);display:none;border-left:2px solid var(--accent);}
+  .mc-item.answered .mc-explanation{display:block;}
+  .mc-item.answered .mc-option{pointer-events:none;}
+</style>
+</head>
+<body>
+<header>
+  <div class="tag">Programación · Unidad 5</div>
+  <h1>Estructuras de <em>Repetición</em></h1>
+  <p>Mientras (While) · Para (For) · Repetir...Hasta (Do-While) · Contadores y Acumuladores</p>
+</header>
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('resumen')">Resumen</button>
+    <button class="tab" onclick="showTab('conceptos')">Conceptos Clave</button>
+    <button class="tab" onclick="showTab('detalle')">Explicación Detallada</button>
+    <button class="tab" onclick="showTab('flashcards')">Flashcards</button>
+    <button class="tab" onclick="showTab('completar')">Completar el Espacio</button>
+    <button class="tab" onclick="showTab('multiple')">Multiple Choice</button>
+  </div>
+</div>
+
+<div id="panel-resumen" class="panel active">
+  <h2>Resumen General</h2>
+  <div class="summary-box">
+    <p>Las <strong>estructuras de repetición</strong> (también llamadas ciclos o bucles) permiten ejecutar un bloque de instrucciones más de una vez. Sin ellas, habría que repetir manualmente el código N veces. Se estudian tres ciclos: <strong>Mientras (While)</strong>, <strong>Para (For)</strong> y <strong>Repetir...Hasta (Do-While)</strong>. También se trabaja con <strong>contadores</strong> (cuentan iteraciones) y <strong>acumuladores</strong> (suman valores).</p>
+  </div>
+  <div class="ciclos-compare">
+    <div class="ciclo-card"><div class="ciclo-name">Mientras (While)</div><div class="ciclo-desc">Repite mientras la condición sea Verdadera. Puede no ejecutarse nunca.</div><div class="ciclo-when">Cuando no sé cuántas veces repetir.</div></div>
+    <div class="ciclo-card"><div class="ciclo-name">Para (For)</div><div class="ciclo-desc">Repite un número conocido de veces. Ideal cuando se sabe la cantidad exacta.</div><div class="ciclo-when">Cuando sé exactamente cuántas veces repetir.</div></div>
+    <div class="ciclo-card"><div class="ciclo-name">Repetir...Hasta (Do-While)</div><div class="ciclo-desc">Ejecuta al menos una vez. Repite HASTA que la condición sea Verdadera.</div><div class="ciclo-when">Cuando necesito ejecutar al menos una vez.</div></div>
+  </div>
+</div>
+
+<div id="panel-conceptos" class="panel">
+  <h2>Conceptos Clave</h2>
+  <div class="concept-grid">
+    <div class="concept-card"><div class="term">Ciclo (Bucle)</div><div class="def">Estructura que repite un bloque de instrucciones mientras se cumpla una condición.</div></div>
+    <div class="concept-card"><div class="term">Iteración</div><div class="def">Cada ejecución del cuerpo del ciclo. 10 iteraciones = el bloque se ejecutó 10 veces.</div></div>
+    <div class="concept-card"><div class="term">Contador</div><div class="def">Variable que se incrementa en cada iteración para contar cuántas veces se ejecutó el ciclo. Inicializado en 0 (o 1).</div></div>
+    <div class="concept-card"><div class="term">Acumulador</div><div class="def">Variable que suma valores en cada iteración. Inicializado en 0.</div></div>
+    <div class="concept-card"><div class="term">Mientras (While)</div><div class="def">Evalúa la condición ANTES de cada iteración. Puede no ejecutarse si la condición es Falsa desde el inicio.</div></div>
+    <div class="concept-card"><div class="term">Para (For)</div><div class="def">Incluye inicialización, condición e incremento en una sola línea. Ideal para rangos conocidos.</div></div>
+    <div class="concept-card"><div class="term">Repetir...Hasta</div><div class="def">Evalúa la condición DESPUÉS de cada iteración. Se ejecuta al menos una vez.</div></div>
+    <div class="concept-card"><div class="term">Bucle Infinito</div><div class="def">Ciclo cuya condición nunca se vuelve Falsa. Es un error de programación (salvo casos específicos).</div></div>
+  </div>
+</div>
+
+<div id="panel-detalle" class="panel">
+  <h2>Explicación Detallada</h2>
+  <h3>¿Por qué necesitamos ciclos?</h3>
+  <p>Sin ciclos, para hacer la misma operación con 10 personas habría que repetir el código 10 veces. Con un ciclo, basta con escribirlo una vez y decirle cuántas veces repetirlo.</p>
+
+  <h3>Mientras (While)</h3>
+  <p>Evalúa la condición <strong>antes</strong> de cada iteración. Si es Falsa desde el principio, el bloque nunca se ejecuta.</p>
+  <div class="code-block"><span class="cm">// Pseudocódigo:</span>
+<span class="kw">Mientras</span> (contador &lt; 10) <span class="kw">Hacer</span>
+    <span class="kw">Mostrar</span> <span class="st">"Ingrese la edad: "</span>;
+    <span class="kw">Leer</span> <span class="vr">edad</span>;
+    <span class="kw">Si</span> ( <span class="vr">edad</span> >= 18) <span class="kw">Entonces</span>
+        <span class="kw">Mostrar</span> <span class="st">"Es mayor de edad"</span>;
+    <span class="kw">Sino</span>
+        <span class="kw">Mostrar</span> <span class="st">"Es menor de edad"</span>;
+    <span class="kw">Fin Si</span>
+    <span class="vr">contador</span> = <span class="vr">contador</span> + 1;
+<span class="kw">FinMientras</span>
+
+<span class="cm">// En C++:</span>
+<span class="kw">while</span> (contador &lt; 10) {
+    <span class="cm">// ... instrucciones ...</span>
+    contador++;
+}</div>
+
+  <h3>Para (For)</h3>
+  <p>Concentra inicialización, condición e incremento en una sola línea. Ideal cuando se conoce la cantidad de iteraciones.</p>
+  <div class="code-block"><span class="cm">// Pseudocódigo:</span>
+<span class="kw">Para</span> i <span class="kw">desde</span> 1 <span class="kw">hasta</span> 5 <span class="kw">Hacer</span>
+    <span class="kw">Mostrar</span> <span class="st">"Hola"</span>;
+<span class="kw">FinPara</span>
+
+<span class="cm">// En C++:</span>
+<span class="kw">for</span> (<span class="ty">int</span> i = 1; i &lt;= 5; i++) {
+    cout &lt;&lt; <span class="st">"Hola"</span>;
+}</div>
+
+  <h3>Repetir...Hasta (Do-While)</h3>
+  <p>Ejecuta el bloque <strong>al menos una vez</strong> y evalúa la condición al final de cada iteración.</p>
+  <div class="code-block"><span class="cm">// Pseudocódigo:</span>
+<span class="kw">Repetir</span>
+    <span class="kw">Mostrar</span> <span class="st">"Ingrese un número positivo: "</span>;
+    <span class="kw">Leer</span> <span class="vr">num</span>;
+<span class="kw">Hasta Que</span> ( <span class="vr">num</span> > 0 )
+
+<span class="cm">// En C++:</span>
+<span class="kw">do</span> {
+    cout &lt;&lt; <span class="st">"Ingrese un número positivo: "</span>;
+    cin &gt;&gt; num;
+} <span class="kw">while</span> (num &lt;= 0);</div>
+
+  <h3>Contador y Acumulador</h3>
+  <div class="code-block"><span class="kw">Definir</span> <span class="vr">contador</span> <span class="kw">como</span> <span class="ty">Entero</span>;
+<span class="kw">Definir</span> <span class="vr">suma</span> <span class="kw">como</span> <span class="ty">Entero</span>;
+<span class="vr">contador</span> = 0;  <span class="cm">// inicializar contador</span>
+<span class="vr">suma</span> = 0;      <span class="cm">// inicializar acumulador</span>
+
+<span class="kw">Mientras</span> (<span class="vr">contador</span> &lt; 5) <span class="kw">Hacer</span>
+    <span class="kw">Leer</span> <span class="vr">numero</span>;
+    <span class="vr">suma</span> = <span class="vr">suma</span> + <span class="vr">numero</span>;   <span class="cm">// acumula</span>
+    <span class="vr">contador</span> = <span class="vr">contador</span> + 1; <span class="cm">// cuenta</span>
+<span class="kw">FinMientras</span>
+<span class="kw">Mostrar</span> <span class="st">"Suma total: "</span>, <span class="vr">suma</span>;</div>
+</div>
+
+<div id="panel-flashcards" class="panel">
+  <h2>Flashcards</h2>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="fc-bar" style="width:8%"></div></div>
+  <div class="fc-controls">
+    <div class="fc-progress">Carta <span id="fc-current">1</span> / <span id="fc-total">12</span></div>
+    <div style="display:flex;gap:.5rem;">
+      <button class="btn" onclick="fcPrev()">← Anterior</button>
+      <button class="btn btn-primary" onclick="fcNext()">Siguiente →</button>
+    </div>
+  </div>
+  <div class="flashcard-scene" onclick="document.getElementById('flashcard').classList.toggle('flipped')">
+    <div class="flashcard" id="flashcard">
+      <div class="fc-face fc-front"><div class="fc-hint">click para ver respuesta</div><div class="fc-question" id="fc-q">¿Para qué sirven las estructuras de repetición?</div></div>
+      <div class="fc-face fc-back"><div class="fc-hint">Respuesta</div><div class="fc-answer" id="fc-a">Permiten ejecutar un bloque de instrucciones más de una vez, evitando repetir código manualmente.</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-completar" class="panel">
+  <h2>Completar el Espacio</h2>
+  <p style="color:var(--text-muted);margin-bottom:1.5rem;font-family:var(--sans);font-size:.9rem;">Completá con la respuesta correcta.</p>
+  <div id="fill-container"></div>
+</div>
+<div id="panel-multiple" class="panel">
+  <h2>Multiple Choice</h2>
+  <div id="mc-container"></div>
+</div>
+
+<script>
+function showTab(id){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('panel-'+id).classList.add('active');event.target.classList.add('active');}
+const cards=[
+  {q:'¿Para qué sirven las estructuras de repetición?',a:'Permiten ejecutar un bloque de instrucciones más de una vez, evitando repetir código manualmente.'},
+  {q:'¿Cuándo puede NO ejecutarse el ciclo Mientras?',a:'Cuando la condición es Falsa desde el inicio: el ciclo Mientras evalúa la condición ANTES de la primera iteración.'},
+  {q:'¿Cuál es la diferencia principal entre Mientras y Repetir...Hasta?',a:'Mientras evalúa la condición ANTES de cada iteración (puede no ejecutarse). Repetir...Hasta evalúa DESPUÉS (siempre se ejecuta al menos una vez).'},
+  {q:'¿Qué es un Contador?',a:'Variable que se incrementa en cada iteración para contar cuántas veces se ejecutó el ciclo. Se inicializa en 0.'},
+  {q:'¿Qué es un Acumulador?',a:'Variable que suma valores en cada iteración (ej: para calcular una sumatoria). Se inicializa en 0.'},
+  {q:'¿Cuándo conviene usar el ciclo Para (For)?',a:'Cuando se conoce de antemano la cantidad exacta de iteraciones.'},
+  {q:'¿Cuándo conviene usar el ciclo Mientras (While)?',a:'Cuando no se sabe cuántas iteraciones habrá: se repite mientras se cumpla la condición.'},
+  {q:'¿Qué es una iteración?',a:'Una ejecución del cuerpo del ciclo. Si el ciclo se ejecuta 5 veces, hubo 5 iteraciones.'},
+  {q:'¿Qué es un bucle infinito?',a:'Un ciclo cuya condición nunca se vuelve Falsa (o Verdadera en Do-While), por lo que el programa se queda "atrapado" repitiéndose eternamente. Es un error.'},
+  {q:'En un ciclo Mientras con contador, ¿qué pasa si olvidás incrementar el contador?',a:'Se genera un bucle infinito: la condición nunca cambia a Falso porque el contador nunca aumenta.'},
+  {q:'¿Cuáles son los 3 elementos de un ciclo Para (For) en C++?',a:'for (inicialización; condición; incremento). Ej: for (int i = 0; i < 10; i++)'},
+  {q:'¿Cuándo usar Repetir...Hasta en lugar de Mientras?',a:'Cuando necesito que el cuerpo del ciclo se ejecute AL MENOS UNA VEZ, sin importar si la condición se cumple o no al principio.'},
+];
+let fcIdx=0;
+function updateFC(){document.getElementById('fc-q').textContent=cards[fcIdx].q;document.getElementById('fc-a').textContent=cards[fcIdx].a;document.getElementById('fc-current').textContent=fcIdx+1;document.getElementById('fc-total').textContent=cards.length;document.getElementById('fc-bar').style.width=((fcIdx+1)/cards.length*100)+'%';document.getElementById('flashcard').classList.remove('flipped');}
+function fcNext(){fcIdx=(fcIdx+1)%cards.length;updateFC();}function fcPrev(){fcIdx=(fcIdx-1+cards.length)%cards.length;updateFC();}
+
+const fills=[
+  {sentence:'Un ___ es un bloque de instrucciones que se repite mientras se cumpla una condición.',answer:'ciclo',hint:'También llamado bucle o loop.'},
+  {sentence:'El ciclo ___ evalúa la condición ANTES de cada iteración y puede no ejecutarse nunca.',answer:'mientras',hint:'Traducción de while.'},
+  {sentence:'El ciclo ___ se ejecuta al menos una vez porque evalúa la condición al final.',answer:'repetir hasta',hint:'Traducción de do-while.'},
+  {sentence:'Un ___ es una variable que se incrementa en cada vuelta para contar iteraciones.',answer:'contador',hint:'Se inicializa en 0.'},
+  {sentence:'Un ___ es una variable que suma valores en cada iteración.',answer:'acumulador',hint:'También se inicializa en 0.'},
+  {sentence:'Si olvidás incrementar el contador en un Mientras, generás un bucle ___.',answer:'infinito',hint:'El programa nunca termina.'},
+  {sentence:'El ciclo Para (For) es ideal cuando se conoce de antemano la cantidad ___ de iteraciones.',answer:'exacta',hint:'Se sabe cuántas veces repetir.'},
+  {sentence:'Cada ejecución del cuerpo de un ciclo se llama ___.',answer:'iteración',hint:'10 veces → 10 iteraciones.'},
+  {sentence:'En C++, el ciclo Mientras se escribe como: ___ (condicion) { ... }',answer:'while',hint:'Palabra clave en inglés.'},
+  {sentence:'En C++, el ciclo Repetir...Hasta se escribe como: ___ { ... } while (condicion);',answer:'do',hint:'Primero hace, luego evalúa.'},
+];
+const fillContainer=document.getElementById('fill-container');
+fills.forEach((f,i)=>{const div=document.createElement('div');div.className='fill-item';div.id='fill-'+i;div.innerHTML=`<div class="fill-sentence">${f.sentence.replace('___','<strong>___</strong>')}</div><div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;"><input class="fill-input" id="fi-${i}" placeholder="Respuesta..." onkeydown="if(event.key==='Enter')checkFill(${i})"><button class="btn" style="font-size:.8rem;padding:.3rem .8rem;" onclick="checkFill(${i})">Verificar</button></div><div class="fill-feedback" id="ff-${i}"></div>`;fillContainer.appendChild(div);});
+function checkFill(i){const val=document.getElementById('fi-'+i).value.trim().toLowerCase();const item=document.getElementById('fill-'+i);const fb=document.getElementById('ff-'+i);if(val===fills[i].answer.toLowerCase()){item.classList.remove('wrong');item.classList.add('correct');fb.textContent='✓ Correcto!';}else{item.classList.remove('correct');item.classList.add('wrong');fb.textContent=`✗ Respuesta: "${fills[i].answer}". ${fills[i].hint}`;}}
+
+const mcData=[
+  {q:'¿Cuál de los siguientes ciclos garantiza ejecutarse al menos una vez?',options:['Mientras (While)','Para (For)','Repetir...Hasta (Do-While)','Ninguno garantiza esto'],correct:2,exp:'El ciclo Do-While evalúa la condición DESPUÉS de ejecutar el cuerpo, por lo que siempre se ejecuta al menos una vez, incluso si la condición es falsa desde el inicio.'},
+  {q:'¿Qué imprime este código? int i=0; while(i<3){ cout<<i; i++; }',options:['012','123','0123','Bucle infinito'],correct:0,exp:'i empieza en 0 y se imprime antes de incrementar: imprime 0, luego 1, luego 2. Cuando i=3, la condición 3<3 es falsa y termina. Resultado: 012.'},
+  {q:'¿Para qué sirve un contador en un ciclo?',options:['Para acumular la suma de valores','Para contar cuántas iteraciones ejecutó el ciclo','Para almacenar el resultado final','Para evaluar la condición'],correct:1,exp:'Un contador es una variable que se incrementa en cada iteración para llevar la cuenta de cuántas veces se ejecutó el ciclo.'},
+  {q:'¿Cuándo es más apropiado usar el ciclo Para (For)?',options:['Cuando no se sabe cuántas iteraciones habrá','Cuando la condición depende de la entrada del usuario','Cuando se conoce de antemano la cantidad exacta de iteraciones','Cuando el bloque debe ejecutarse al menos una vez'],correct:2,exp:'El ciclo For es ideal cuando se conoce exactamente cuántas veces repetir, ya que concentra inicialización, condición e incremento en una sola línea.'},
+  {q:'¿Qué ocurre si la condición de un ciclo Mientras es Falsa desde el principio?',options:['El cuerpo se ejecuta una vez','El cuerpo se ejecuta dos veces','El cuerpo no se ejecuta nunca','El programa lanza un error'],correct:2,exp:'El ciclo Mientras evalúa la condición ANTES de la primera iteración. Si es Falsa, el cuerpo del ciclo nunca se ejecuta.'},
+];
+const mcContainer=document.getElementById('mc-container');
+mcData.forEach((mc,i)=>{const div=document.createElement('div');div.className='mc-item';div.id='mc-'+i;const L=['A','B','C','D'];div.innerHTML=`<div class="mc-question">${i+1}. ${mc.q}</div><div class="mc-options">${mc.options.map((o,j)=>`<div class="mc-option" onclick="checkMC(${i},${j})"><span class="mc-letter">${L[j]}</span>${o}</div>`).join('')}</div><div class="mc-explanation" id="mce-${i}">${mc.exp}</div>`;mcContainer.appendChild(div);});
+function checkMC(qi,oi){const item=document.getElementById('mc-'+qi);if(item.classList.contains('answered'))return;item.classList.add('answered');const opts=item.querySelectorAll('.mc-option');opts[oi].classList.add(oi===mcData[qi].correct?'selected-correct':'selected-wrong');if(oi!==mcData[qi].correct)opts[mcData[qi].correct].classList.add('reveal-correct');}
+</script>
+</body>
+</html>

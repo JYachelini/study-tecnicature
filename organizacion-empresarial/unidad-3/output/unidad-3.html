@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unidad 3 — Organización, Empresa y Plan de Cuentas</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --card: #1c2333;
+    --border: #30363d;
+    --accent: #f0883e;
+    --accent-light: rgba(240,136,62,0.12);
+    --accent2: #58a6ff;
+    --accent2-light: rgba(88,166,255,0.1);
+    --success: #3fb950;
+    --success-bg: rgba(63,185,80,0.12);
+    --error: #f85149;
+    --error-bg: rgba(248,81,73,0.12);
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-dim: #484f58;
+    --font: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    --mono: "SFMono-Regular", Consolas, monospace;
+    --sans: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.75; min-height: 100vh; }
+
+  header { background: linear-gradient(135deg, #0d1117 0%, #1a1410 60%, #1c1a10 100%); border-bottom: 1px solid var(--border); padding: 3rem 2rem 2.5rem; text-align: center; position: relative; overflow: hidden; }
+  header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(240,136,62,0.1) 0%, transparent 70%); pointer-events: none; }
+  .tag { display: inline-block; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); background: var(--accent-light); border: 1px solid rgba(240,136,62,0.3); padding: 0.2rem 0.8rem; border-radius: 2rem; margin-bottom: 1rem; }
+  header h1 { font-family: var(--sans); font-size: clamp(1.7rem,4vw,2.8rem); font-weight: 700; letter-spacing: -0.02em; color: #fff; margin-bottom: 0.4rem; }
+  header h1 em { color: var(--accent); font-style: normal; }
+  header p { color: var(--text-muted); font-family: var(--sans); font-size: 0.9rem; }
+
+  .tabs-wrap { position: sticky; top: 0; z-index: 100; background: rgba(13,17,23,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); padding: 0 1rem; overflow-x: auto; scrollbar-width: none; }
+  .tabs-wrap::-webkit-scrollbar { display: none; }
+  .tabs { display: flex; gap: 0.15rem; min-width: max-content; }
+  .tab { font-family: var(--sans); font-size: 0.82rem; font-weight: 500; padding: 0.75rem 1.1rem; cursor: pointer; color: var(--text-muted); border: none; background: none; border-bottom: 2px solid transparent; transition: color .2s, border-color .2s; white-space: nowrap; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .panel { display: none; max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+  .panel.active { display: block; }
+
+  h2 { font-family: var(--sans); font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 1.2rem; }
+  h3 { font-family: var(--sans); font-size: 1.1rem; font-weight: 600; color: var(--accent2); margin: 1.8rem 0 0.6rem; }
+  h4 { font-family: var(--sans); font-size: 0.95rem; font-weight: 600; color: var(--accent); margin: 1.2rem 0 0.4rem; }
+  p { margin-bottom: 0.9rem; }
+  ul, ol { padding-left: 1.5rem; margin-bottom: 0.9rem; }
+  li { margin-bottom: 0.3rem; }
+
+  .summary-box { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 1.4rem 1.6rem; margin-bottom: 2rem; }
+
+  .concept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .concept-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem; transition: border-color .2s, transform .2s; }
+  .concept-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .concept-card .term { font-family: var(--sans); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 0.4rem; }
+  .concept-card .def { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+
+  .process-steps { display: flex; flex-direction: column; gap: 0.6rem; margin: 1rem 0 1.5rem; }
+  .step { display: flex; gap: 1rem; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 0.9rem 1.2rem; }
+  .step-num { min-width: 28px; height: 28px; background: var(--accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--sans); font-size: 0.8rem; font-weight: 700; flex-shrink: 0; }
+  .step-text { font-size: 0.93rem; color: var(--text-muted); }
+  .step-text strong { color: var(--text); }
+
+  .cuenta-box { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.3rem; margin: 0.5rem 0; }
+  .cuenta-name { font-family: var(--mono); font-size: 0.9rem; color: var(--accent); font-weight: 600; margin-bottom: 0.3rem; }
+  .cuenta-desc { font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; }
+
+  .example-box { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 1.2rem 1.5rem; margin: 1rem 0 1.5rem; }
+  .example-title { font-family: var(--sans); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 0.6rem; }
+
+  .fc-controls { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .fc-progress { font-family: var(--mono); font-size: 0.85rem; color: var(--text-muted); }
+  .fc-progress span { color: var(--accent); font-weight: 700; }
+  .btn { font-family: var(--sans); font-size: 0.85rem; font-weight: 600; padding: 0.45rem 1.1rem; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; transition: all .15s; }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn-primary:hover { opacity: 0.9; }
+  .progress-bar-wrap { background: var(--surface); border-radius: 99px; height: 4px; margin-bottom: 1.5rem; overflow: hidden; }
+  .progress-bar { height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s; }
+
+  .flashcard-scene { perspective: 1000px; height: 220px; cursor: pointer; margin-bottom: 1.5rem; user-select: none; }
+  .flashcard { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .5s cubic-bezier(.4,0,.2,1); }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .fc-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center; border: 1px solid var(--border); }
+  .fc-front { background: var(--card); }
+  .fc-back { background: linear-gradient(135deg, #1a1410, var(--card)); border-color: var(--accent); transform: rotateY(180deg); }
+  .fc-hint { font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim); margin-bottom: 0.5rem; }
+  .fc-question { font-size: 1.05rem; font-weight: 600; color: var(--text); line-height: 1.5; }
+  .fc-answer { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; }
+
+  .fill-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem 1.5rem; margin-bottom: 1rem; }
+  .fill-item.correct { border-color: var(--success); background: var(--success-bg); }
+  .fill-item.wrong { border-color: var(--error); background: var(--error-bg); }
+  .fill-sentence { font-size: 0.97rem; margin-bottom: 0.7rem; line-height: 1.7; }
+  .fill-input { font-family: var(--mono); font-size: 0.9rem; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 0.4rem 0.8rem; border-radius: 5px; width: 220px; outline: none; }
+  .fill-input:focus { border-color: var(--accent2); }
+  .fill-feedback { font-family: var(--sans); font-size: 0.83rem; margin-top: 0.5rem; display: none; }
+  .fill-item.correct .fill-feedback { display: block; color: var(--success); }
+  .fill-item.wrong .fill-feedback { display: block; color: var(--error); }
+
+  .mc-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.4rem 1.5rem; margin-bottom: 1.2rem; }
+  .mc-question { font-size: 0.97rem; font-weight: 600; margin-bottom: 1rem; }
+  .mc-options { display: flex; flex-direction: column; gap: 0.5rem; }
+  .mc-option { display: flex; align-items: flex-start; gap: 0.7rem; padding: 0.6rem 0.9rem; border-radius: 7px; border: 1px solid var(--border); cursor: pointer; font-size: 0.9rem; transition: all .15s; background: var(--surface); }
+  .mc-option:hover { border-color: var(--accent); }
+  .mc-option.selected-correct { border-color: var(--success); background: var(--success-bg); color: var(--success); }
+  .mc-option.selected-wrong { border-color: var(--error); background: var(--error-bg); color: var(--error); }
+  .mc-option.reveal-correct { border-color: var(--success); background: var(--success-bg); }
+  .mc-letter { font-family: var(--mono); font-size: 0.75rem; font-weight: 700; color: var(--text-muted); min-width: 18px; padding-top: 1px; }
+  .mc-explanation { margin-top: 0.8rem; padding: 0.7rem 1rem; background: var(--surface); border-radius: 6px; font-size: 0.85rem; color: var(--text-muted); display: none; border-left: 2px solid var(--accent); }
+  .mc-item.answered .mc-explanation { display: block; }
+  .mc-item.answered .mc-option { pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <div class="tag">Organización Empresarial · Unidad 3</div>
+  <h1>Organización, <em>Empresa</em> y Plan de Cuentas</h1>
+  <p>Las Organizaciones · Proceso Administrativo · Análisis de Cuentas Contables</p>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('resumen')">Resumen</button>
+    <button class="tab" onclick="showTab('conceptos')">Conceptos Clave</button>
+    <button class="tab" onclick="showTab('detalle')">Explicación Detallada</button>
+    <button class="tab" onclick="showTab('flashcards')">Flashcards</button>
+    <button class="tab" onclick="showTab('completar')">Completar el Espacio</button>
+    <button class="tab" onclick="showTab('multiple')">Multiple Choice</button>
+  </div>
+</div>
+
+<div id="panel-resumen" class="panel active">
+  <h2>Resumen General</h2>
+  <div class="summary-box">
+    <p>Esta unidad aborda qué son las organizaciones, cómo se administran y cómo se clasifican las cuentas contables. Una organización es un conjunto de personas con metas comunes que necesitan recursos y coordinación. La administración involucra planificar, organizar, dirigir y controlar. El Plan de Cuentas clasifica los elementos patrimoniales (Activo, Pasivo y PN) con cuentas específicas para Caja, Banco, Deudores, Mercaderías, Inmuebles, y más.</p>
+  </div>
+  <h3>Temas principales</h3>
+  <ul>
+    <li>Definición y características de las organizaciones</li>
+    <li>El proceso administrativo (planificación, organización, dirección, control)</li>
+    <li>El Plan de Cuentas y su estructura</li>
+    <li>Cuentas del Activo: Caja, Banco, Deudores, Mercaderías, Bienes de Uso</li>
+    <li>Rubros contables: Caja y Bancos, Inversiones, Cuentas por Cobrar, Bienes de Cambio, Bienes de Uso</li>
+  </ul>
+</div>
+
+<div id="panel-conceptos" class="panel">
+  <h2>Conceptos Clave</h2>
+  <div class="concept-grid">
+    <div class="concept-card"><div class="term">Organización</div><div class="def">Conjunto de personas que, actuando según un orden, tienen una meta común y recursos para alcanzarla.</div></div>
+    <div class="concept-card"><div class="term">Administración</div><div class="def">Ciencia que elabora teorías sobre las organizaciones para posibilitar decisiones correctas a partir de información precisa.</div></div>
+    <div class="concept-card"><div class="term">Planificación</div><div class="def">Fijar objetivos y determinar cómo alcanzarlos. Responde al "Qué hacer" y "Cómo hacerlo".</div></div>
+    <div class="concept-card"><div class="term">Gestión</div><div class="def">Realizar actividades conducentes al logro de los objetivos propuestos.</div></div>
+    <div class="concept-card"><div class="term">Control</div><div class="def">Comprobación, inspección, fiscalización e intervención sobre los procesos de la organización.</div></div>
+    <div class="concept-card"><div class="term">Plan de Cuentas</div><div class="def">Listado de cuentas que la organización usa para realizar registraciones contables, ordenado por Activo, Pasivo y PN con codificación numérica.</div></div>
+    <div class="concept-card"><div class="term">Cuenta Caja</div><div class="def">Se debita cuando ingresa dinero; se acredita cuando se paga en efectivo. Saldo deudor = dinero disponible.</div></div>
+    <div class="concept-card"><div class="term">Deudores por Ventas</div><div class="def">Se debita cuando nos deben por venta de mercaderías. Se acredita cuando pagan. Saldo deudor.</div></div>
+    <div class="concept-card"><div class="term">Mercaderías</div><div class="def">Se debita al comprar productos para venta; se acredita en el asiento de costo de ventas. Saldo deudor = stock.</div></div>
+    <div class="concept-card"><div class="term">Saldo Deudor</div><div class="def">Indica un activo: la empresa tiene ese importe a su favor o en su poder.</div></div>
+    <div class="concept-card"><div class="term">Débito</div><div class="def">Registro en el debe de una cuenta. Aumenta cuentas de Activo; disminuye cuentas de Pasivo y PN.</div></div>
+    <div class="concept-card"><div class="term">Crédito (Acreditar)</div><div class="def">Registro en el haber de una cuenta. Disminuye cuentas de Activo; aumenta cuentas de Pasivo y PN.</div></div>
+  </div>
+</div>
+
+<div id="panel-detalle" class="panel">
+  <h2>Explicación Detallada</h2>
+  <h3>Las Organizaciones</h3>
+  <p>Se llama <strong>organización</strong> al conjunto de personas que, actuando según un orden establecido, se juntan porque poseen una meta en común. Para alcanzar sus objetivos necesitan recursos (humanos, materiales, etc.) que actúan con coherencia, eficacia y coordinación.</p>
+  <div class="example-box">
+    <div class="example-title">¿Un hospital es una organización?</div>
+    <p>Sí: tiene un grupo de personas (director, médicos, enfermeras), un orden establecido (horarios y funciones específicas) y una meta común: atender la salud de la comunidad. Un colectivo de pasajeros NO es una organización porque cada pasajero tiene un destino diferente; no comparten la misma meta.</p>
+  </div>
+
+  <h3>El Proceso Administrativo</h3>
+  <p>Administrar una organización significa:</p>
+  <div class="process-steps">
+    <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Fijar objetivos</strong> — Decidir qué hacer</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Planificar</strong> — Determinar cómo hacerlo</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Gestión</strong> — Hacerlo: ejecutar las actividades planificadas</div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Control</strong> — Verificar lo que se ha hecho</div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-text"><strong>Evaluación</strong> — Valorar los procesos anteriores (retroalimentación)</div></div>
+  </div>
+
+  <h3>El Plan de Cuentas</h3>
+  <p>Es un listado de cuentas ordenado según normas contables (Activo → Pasivo → PN), con codificación numérica. Cada empresa lo adapta a su actividad.</p>
+
+  <h4>Rubro Caja y Bancos (Activo Corriente)</h4>
+  <div class="cuenta-box"><div class="cuenta-name">Caja</div><div class="cuenta-desc">Débito: ingresa dinero efectivo. Crédito: se paga en efectivo. Saldo deudor = efectivo disponible.</div></div>
+  <div class="cuenta-box"><div class="cuenta-name">Banco x Cuenta Corriente</div><div class="cuenta-desc">Débito: depósitos y cheques recibidos. Crédito: pagos con cheque. Saldo deudor = saldo bancario.</div></div>
+  <div class="cuenta-box"><div class="cuenta-name">Valores a Depositar</div><div class="cuenta-desc">Débito: recibo cheque de tercero. Crédito: lo deposito, cobro o endoso. Saldo deudor = cheques pendientes.</div></div>
+
+  <h4>Rubro Inversiones (Activo No Corriente)</h4>
+  <div class="cuenta-box"><div class="cuenta-name">Banco x Caja de Ahorros</div><div class="cuenta-desc">Débito: depósito. Crédito: retiro. Saldo = dinero en Caja de Ahorros.</div></div>
+  <div class="cuenta-box"><div class="cuenta-name">Banco x Plazo Fijo</div><div class="cuenta-desc">Débito: depósito en plazo fijo. Crédito: retiro o renovación. Saldo = dinero a plazo fijo.</div></div>
+
+  <h4>Rubro Cuentas por Cobrar</h4>
+  <div class="cuenta-box"><div class="cuenta-name">Deudores por Ventas</div><div class="cuenta-desc">Débito: venta de mercaderías en cuenta corriente. Crédito: cobro o conversión en incobrable. Saldo deudor = dinero que nos deben por ventas.</div></div>
+  <div class="cuenta-box"><div class="cuenta-name">Documentos a Cobrar</div><div class="cuenta-desc">Débito: recibo pagaré. Crédito: cobro o mora. Saldo = documentos pendientes de cobro.</div></div>
+  <div class="cuenta-box"><div class="cuenta-name">Tarjetas de Crédito</div><div class="cuenta-desc">Débito: venta con tarjeta. Crédito: depósito de cupones. Saldo = cupones a cobrar.</div></div>
+
+  <h4>Rubro Bienes de Cambio</h4>
+  <div class="cuenta-box"><div class="cuenta-name">Mercaderías</div><div class="cuenta-desc">Débito: compra de productos para venta. Crédito: asiento de costo de ventas. Saldo deudor = stock en depósito.</div></div>
+  <div class="cuenta-box"><div class="cuenta-name">Materias Primas</div><div class="cuenta-desc">Débito: compra. Crédito: envío a producción. Saldo = materias primas en poder de la empresa.</div></div>
+
+  <h4>Rubro Bienes de Uso</h4>
+  <div class="cuenta-box"><div class="cuenta-name">Rodados</div><div class="cuenta-desc">Débito: adquisición. Crédito: venta. Saldo = vehículos de la empresa.</div></div>
+  <div class="cuenta-box"><div class="cuenta-name">Inmuebles</div><div class="cuenta-desc">Débito: compra (terreno + edificio). Crédito: venta. Saldo = propiedades de la empresa.</div></div>
+</div>
+
+<div id="panel-flashcards" class="panel">
+  <h2>Flashcards</h2>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="fc-bar" style="width:9%"></div></div>
+  <div class="fc-controls">
+    <div class="fc-progress">Carta <span id="fc-current">1</span> / <span id="fc-total">11</span></div>
+    <div style="display:flex;gap:0.5rem;">
+      <button class="btn" onclick="fcPrev()">← Anterior</button>
+      <button class="btn btn-primary" onclick="fcNext()">Siguiente →</button>
+    </div>
+  </div>
+  <div class="flashcard-scene" onclick="document.getElementById('flashcard').classList.toggle('flipped')">
+    <div class="flashcard" id="flashcard">
+      <div class="fc-face fc-front"><div class="fc-hint">Pregunta — click para ver respuesta</div><div class="fc-question" id="fc-q">¿Qué es una organización?</div></div>
+      <div class="fc-face fc-back"><div class="fc-hint">Respuesta</div><div class="fc-answer" id="fc-a">Conjunto de personas que actúan según un orden establecido, tienen una meta común y utilizan recursos con coherencia y coordinación.</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-completar" class="panel">
+  <h2>Completar el Espacio</h2>
+  <p style="color:var(--text-muted);margin-bottom:1.5rem;font-family:var(--sans);font-size:0.9rem;">Escribí la palabra correcta y presioná Enter.</p>
+  <div id="fill-container"></div>
+</div>
+
+<div id="panel-multiple" class="panel">
+  <h2>Multiple Choice</h2>
+  <div id="mc-container"></div>
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+const cards = [
+  { q: '¿Qué es una organización?', a: 'Conjunto de personas que actúan según un orden, tienen una meta común y recursos para alcanzarla.' },
+  { q: '¿Por qué el colectivo de pasajeros NO es una organización?', a: 'Porque los pasajeros no tienen una meta en común: cada uno va a un destino diferente.' },
+  { q: '¿Qué significa "Gestión" en el proceso administrativo?', a: 'Realizar actividades conducentes al logro de los objetivos propuestos.' },
+  { q: '¿Qué es el Plan de Cuentas?', a: 'Listado de cuentas que usa la empresa para sus registraciones contables, ordenado en Activo, Pasivo y PN con codificación numérica.' },
+  { q: '¿Cuándo se debita la cuenta Caja?', a: 'Cuando ingresa dinero efectivo a la empresa.' },
+  { q: '¿Qué indica el saldo deudor de la cuenta Caja?', a: 'El dinero en efectivo que aún tiene la empresa disponible.' },
+  { q: '¿Qué son los "Deudores por Ventas"?', a: 'Cuentas de activo que representan el dinero que nos deben los clientes por venta de mercaderías en cuenta corriente.' },
+  { q: '¿Qué diferencia hay entre "Bienes de Cambio" y "Bienes de Uso"?', a: 'Bienes de Cambio son para venta (mercaderías, materias primas). Bienes de Uso son para uso de la empresa (rodados, inmuebles, maquinaria).' },
+  { q: '¿Cuándo se acredita la cuenta Mercaderías?', a: 'En el asiento de costo de las mercaderías vendidas.' },
+  { q: '¿Qué etapas incluye el proceso administrativo?', a: 'Fijar objetivos → Planificar → Gestión → Control → Evaluación (con retroalimentación).' },
+  { q: '¿Qué son los "Valores a Depositar"?', a: 'Cheques de terceros recibidos pero aún no depositados. Se acreditan al depositarlos, cobrarlos o endosarlos.' },
+];
+let fcIdx = 0;
+function updateFC() {
+  const c = cards[fcIdx];
+  document.getElementById('fc-q').textContent = c.q;
+  document.getElementById('fc-a').textContent = c.a;
+  document.getElementById('fc-current').textContent = fcIdx + 1;
+  document.getElementById('fc-total').textContent = cards.length;
+  document.getElementById('fc-bar').style.width = ((fcIdx+1)/cards.length*100) + '%';
+  document.getElementById('flashcard').classList.remove('flipped');
+}
+function fcNext() { fcIdx = (fcIdx + 1) % cards.length; updateFC(); }
+function fcPrev() { fcIdx = (fcIdx - 1 + cards.length) % cards.length; updateFC(); }
+
+const fills = [
+  { sentence: 'Una ___ es un conjunto de personas con meta común que actúan según un orden establecido.', answer: 'organización', hint: 'Concepto central de la unidad.' },
+  { sentence: 'La ___ es la función de fijar objetivos y determinar cómo alcanzarlos.', answer: 'planificación', hint: 'Primera etapa del proceso administrativo.' },
+  { sentence: 'El ___ es un listado de cuentas con codificación numérica para registraciones contables.', answer: 'plan de cuentas', hint: 'Herramienta contable clave.' },
+  { sentence: 'La cuenta ___ se debita cuando ingresa dinero en efectivo y su saldo deudor indica el efectivo disponible.', answer: 'caja', hint: 'Cuenta del rubro Caja y Bancos.' },
+  { sentence: 'La cuenta Mercaderías se acredita en el asiento de ___ de las mercaderías vendidas.', answer: 'costo', hint: 'Registración cuando se vende.' },
+  { sentence: 'Los ___ de Uso son bienes que la empresa utiliza (no vende): rodados, inmuebles, maquinaria.', answer: 'bienes', hint: 'Rubro del activo no corriente.' },
+  { sentence: 'La cuenta "Deudores por Ventas" tiene saldo ___ y representa el dinero que nos deben los clientes.', answer: 'deudor', hint: 'Tipo de saldo de las cuentas del activo.' },
+  { sentence: 'La ___ es la función de verificar lo que se ha hecho en la organización.', answer: 'control', hint: 'Cuarta etapa del proceso administrativo.' },
+  { sentence: 'El Banco x ___ ___ se acredita cuando se paga con cheque.', answer: 'cuenta corriente', hint: 'Modalidad bancaria corriente.' },
+  { sentence: 'Los "Valores a Depositar" representan ___ de terceros aún no depositados.', answer: 'cheques', hint: 'Documento bancario de pago.' },
+];
+const fillContainer = document.getElementById('fill-container');
+fills.forEach((f, i) => {
+  const div = document.createElement('div');
+  div.className = 'fill-item';
+  div.id = 'fill-' + i;
+  div.innerHTML = `
+    <div class="fill-sentence">${f.sentence.replace('___', '<strong>___</strong>')}</div>
+    <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+      <input class="fill-input" id="fi-${i}" placeholder="Respuesta..." onkeydown="if(event.key==='Enter')checkFill(${i})">
+      <button class="btn" style="font-size:0.8rem;padding:0.3rem 0.8rem;" onclick="checkFill(${i})">Verificar</button>
+    </div>
+    <div class="fill-feedback" id="ff-${i}"></div>`;
+  fillContainer.appendChild(div);
+});
+function checkFill(i) {
+  const val = document.getElementById('fi-'+i).value.trim().toLowerCase();
+  const correct = fills[i].answer.toLowerCase();
+  const item = document.getElementById('fill-'+i);
+  const fb = document.getElementById('ff-'+i);
+  if (val === correct) {
+    item.classList.remove('wrong'); item.classList.add('correct');
+    fb.textContent = '✓ Correcto!';
+  } else {
+    item.classList.remove('correct'); item.classList.add('wrong');
+    fb.textContent = `✗ Respuesta correcta: "${fills[i].answer}". ${fills[i].hint}`;
+  }
+}
+
+const mcData = [
+  { q: '¿Cuál de los siguientes NO es una organización según los criterios de la unidad?', options: ['Un hospital', 'Una empresa de transporte', 'Un colectivo de pasajeros en viaje', 'Una escuela'], correct: 2, exp: 'Los pasajeros de un colectivo no comparten la misma meta: cada uno va a un destino distinto. La empresa de transporte sí es una organización.' },
+  { q: '¿Qué significa "Gestión" en administración?', options: ['Fijar los objetivos de la empresa', 'Realizar actividades para lograr los objetivos propuestos', 'Verificar los resultados obtenidos', 'Contratar personal'], correct: 1, exp: 'La gestión es la ejecución: hacer las actividades planificadas para alcanzar los objetivos.' },
+  { q: 'Una empresa compra mercaderías para revender. ¿En qué cuenta se registra?', options: ['Bienes de Uso', 'Caja', 'Mercaderías', 'Banco'], correct: 2, exp: 'Mercaderías es la cuenta del rubro Bienes de Cambio destinada a productos para la venta.' },
+  { q: '¿Qué sucede con la cuenta "Banco x Cuenta Corriente" cuando se emite un cheque para pagar?', options: ['Se debita (aumenta)', 'Se acredita (disminuye)', 'No se modifica', 'Se debita y acredita por igual'], correct: 1, exp: 'Al pagar con cheque se usa el dinero del banco, por lo que la cuenta se acredita (disminuye el saldo deudor).' },
+  { q: '¿En qué rubro contable se clasifica la cuenta "Banco x Plazo Fijo"?', options: ['Caja y Bancos', 'Inversiones', 'Cuentas por Cobrar', 'Bienes de Uso'], correct: 1, exp: 'El plazo fijo es una inversión temporal, por lo que se clasifica en el rubro Inversiones del activo.' },
+  { q: '¿Cuál es el orden correcto del proceso administrativo?', options: ['Gestión → Planificación → Control → Objetivos', 'Objetivos → Planificación → Gestión → Control → Evaluación', 'Control → Planificación → Gestión → Evaluación', 'Evaluación → Planificación → Control → Gestión'], correct: 1, exp: 'El proceso sigue: fijar objetivos → planificar → gestión (hacer) → control (verificar) → evaluación (valorar), con retroalimentación.' },
+];
+const mcContainer = document.getElementById('mc-container');
+mcData.forEach((mc, i) => {
+  const div = document.createElement('div');
+  div.className = 'mc-item';
+  div.id = 'mc-' + i;
+  const L = ['A','B','C','D'];
+  div.innerHTML = `<div class="mc-question">${i+1}. ${mc.q}</div>
+    <div class="mc-options">${mc.options.map((o,j)=>`<div class="mc-option" onclick="checkMC(${i},${j})"><span class="mc-letter">${L[j]}</span>${o}</div>`).join('')}</div>
+    <div class="mc-explanation" id="mce-${i}">${mc.exp}</div>`;
+  mcContainer.appendChild(div);
+});
+function checkMC(qi, oi) {
+  const item = document.getElementById('mc-'+qi);
+  if (item.classList.contains('answered')) return;
+  item.classList.add('answered');
+  const opts = item.querySelectorAll('.mc-option');
+  opts[oi].classList.add(oi === mcData[qi].correct ? 'selected-correct' : 'selected-wrong');
+  if (oi !== mcData[qi].correct) opts[mcData[qi].correct].classList.add('reveal-correct');
+}
+</script>
+</body>
+</html>

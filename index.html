@@ -556,11 +556,11 @@
   <!-- ── STATS BAR ────────────────────────────────────── -->
   <div class="statsbar">
     <div class="stat">
-      <span class="stat-num g">7</span>
+      <span class="stat-num g">15</span>
       <span class="stat-lbl">Generadas</span>
     </div>
     <div class="stat">
-      <span class="stat-num p">2</span>
+      <span class="stat-num p">0</span>
       <span class="stat-lbl">Pendientes</span>
     </div>
     <div class="stat">
@@ -577,7 +577,7 @@
 
   <!-- ── CARDS ────────────────────────────────────────── -->
   <main>
-    <div class="section-hd">// Materias disponibles — 4 registros</div>
+    <div class="section-hd">// Materias disponibles — 4 registros — cobertura 100%</div>
     <div class="grid">
 
       <!-- ① Arquitectura y Sistemas Operativos -->
@@ -669,7 +669,7 @@
           </div>
           <div class="card-right">
             <div class="card-id">DRW-03</div>
-            <div class="card-ratio">1<sup>/3</sup></div>
+            <div class="card-ratio">3<sup>/3</sup></div>
           </div>
         </div>
         <ul class="units">
@@ -680,15 +680,19 @@
             </a>
             <span class="u-badge ok">OK</span>
           </li>
-          <li class="u-item lock-item">
-            <span class="u-dot lock"></span>
-            <span class="u-label">Unidad 2</span>
-            <span class="u-badge lock">—</span>
+          <li class="u-item">
+            <span class="u-dot ok"></span>
+            <a class="u-link" href="organizacion-empresarial/unidad-2/output/unidad-2.html">
+              <span class="u-label">Unidad 2</span>
+            </a>
+            <span class="u-badge ok">OK</span>
           </li>
-          <li class="u-item lock-item">
-            <span class="u-dot lock"></span>
-            <span class="u-label">Unidad 3</span>
-            <span class="u-badge lock">—</span>
+          <li class="u-item">
+            <span class="u-dot ok"></span>
+            <a class="u-link" href="organizacion-empresarial/unidad-3/output/unidad-3.html">
+              <span class="u-label">Unidad 3</span>
+            </a>
+            <span class="u-badge ok">OK</span>
           </li>
         </ul>
       </div>
@@ -704,10 +708,53 @@
           </div>
           <div class="card-right">
             <div class="card-id">DRW-04</div>
-            <div class="card-ratio">0<sup>/—</sup></div>
+            <div class="card-ratio">6<sup>/6</sup></div>
           </div>
         </div>
-        <p class="no-units">// Sin unidades configuradas</p>
+        <ul class="units">
+          <li class="u-item">
+            <span class="u-dot ok"></span>
+            <a class="u-link" href="programacion/unidad-1/output/unidad-1.html">
+              <span class="u-label">Unidad 1</span>
+            </a>
+            <span class="u-badge ok">OK</span>
+          </li>
+          <li class="u-item">
+            <span class="u-dot ok"></span>
+            <a class="u-link" href="programacion/unidad-2/output/unidad-2.html">
+              <span class="u-label">Unidad 2</span>
+            </a>
+            <span class="u-badge ok">OK</span>
+          </li>
+          <li class="u-item">
+            <span class="u-dot ok"></span>
+            <a class="u-link" href="programacion/unidad-3/output/unidad-3.html">
+              <span class="u-label">Unidad 3</span>
+            </a>
+            <span class="u-badge ok">OK</span>
+          </li>
+          <li class="u-item">
+            <span class="u-dot ok"></span>
+            <a class="u-link" href="programacion/unidad-4/output/unidad-4.html">
+              <span class="u-label">Unidad 4</span>
+            </a>
+            <span class="u-badge ok">OK</span>
+          </li>
+          <li class="u-item">
+            <span class="u-dot ok"></span>
+            <a class="u-link" href="programacion/unidad-5/output/unidad-5.html">
+              <span class="u-label">Unidad 5</span>
+            </a>
+            <span class="u-badge ok">OK</span>
+          </li>
+          <li class="u-item">
+            <span class="u-dot ok"></span>
+            <a class="u-link" href="programacion/unidad-6/output/unidad-6.html">
+              <span class="u-label">Unidad 6</span>
+            </a>
+            <span class="u-badge ok">OK</span>
+          </li>
+        </ul>
       </div>
 
     </div>
@@ -719,13 +766,13 @@
       <dl class="title-block">
         <dt>Proyecto</dt>  <dd>Tecnicatura</dd>
         <dt>Sistema</dt>   <dd>Generador de HTMLs</dd>
-        <dt>Fecha</dt>     <dd>2026-04-14</dd>
+        <dt>Fecha</dt>     <dd>2026-04-15</dd>
         <dt>Revisión</dt>  <dd>A</dd>
       </dl>
       <div class="footer-total">
         Cobertura total
         <br>
-        <strong>7</strong> / 9 unidades generadas
+        <strong>15</strong> / 15 unidades generadas
         <div class="bar">
           <div class="bar-track">
             <div class="bar-fill" id="footerBar"></div>
@@ -738,7 +785,7 @@
 
   <script>
     (function () {
-      const generated = 7, total = 9;
+      const generated = 15, total = 15;
       const pct = Math.round((generated / total) * 100);
 
       function animateBars() {

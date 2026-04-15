@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programación — Unidad 2: Variables y Operadores</title>
+<style>
+  :root {
+    --bg: #0a0e1a; --surface: #111827; --card: #1a2235; --border: #2a3755;
+    --accent: #a78bfa; --accent-light: rgba(167,139,250,0.12);
+    --accent2: #60c5fa; --accent2-light: rgba(96,197,250,0.1);
+    --success: #22c55e; --success-bg: rgba(34,197,94,0.12);
+    --error: #f87171; --error-bg: rgba(248,113,113,0.12);
+    --text: #e2e8f0; --text-muted: #7b8fa8; --text-dim: #3d506b;
+    --mono: "JetBrains Mono","Fira Code","Cascadia Code","Consolas",monospace;
+    --sans:"Lora","Georgia","Times New Roman",serif;
+    --serif: "Lora","Georgia",serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--serif); font-size: 16px; line-height: 1.75; min-height: 100vh; }
+  header { background: linear-gradient(160deg,#0a0e1a 0%,#100a1a 50%,#130f22 100%); border-bottom: 1px solid var(--border); padding: 3rem 2rem 2.5rem; text-align: center; position: relative; overflow: hidden; }
+  header::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(167,139,250,0.15) 0%,transparent 70%); pointer-events:none; }
+  .tag { display:inline-block; font-family:var(--mono); font-size:0.66rem; letter-spacing:0.15em; color:var(--accent); background:var(--accent-light); border:1px solid rgba(167,139,250,.35); padding:.25rem .85rem; border-radius:99px; margin-bottom:1.1rem; }
+  header h1 { font-family:var(--sans); font-size:clamp(1.8rem,4vw,3rem); font-weight:800; letter-spacing:-0.03em; color:#fff; margin-bottom:.4rem; }
+  header h1 em { color:var(--accent); font-style:normal; }
+  header p { color:var(--text-muted); font-family:var(--sans); font-size:.88rem; }
+  .tabs-wrap { position:sticky; top:0; z-index:100; background:rgba(10,14,26,.95); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:0 1rem; overflow-x:auto; scrollbar-width:none; }
+  .tabs-wrap::-webkit-scrollbar { display:none; }
+  .tabs { display:flex; min-width:max-content; }
+  .tab { font-family:var(--sans); font-size:.82rem; font-weight:500; padding:.75rem 1.1rem; cursor:pointer; color:var(--text-muted); border:none; background:none; border-bottom:2px solid transparent; transition:all .2s; white-space:nowrap; }
+  .tab:hover { color:var(--text); }
+  .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+  .panel { display:none; max-width:860px; margin:0 auto; padding:2.5rem 1.5rem 4rem; }
+  .panel.active { display:block; }
+  h2 { font-family:var(--sans); font-size:1.5rem; font-weight:800; color:#fff; margin-bottom:1.2rem; }
+  h3 { font-family:var(--sans); font-size:1.05rem; font-weight:700; color:var(--accent2); margin:2rem 0 .6rem; }
+  p { margin-bottom:.9rem; }
+  ul,ol { padding-left:1.5rem; margin-bottom:.9rem; }
+  li { margin-bottom:.35rem; }
+  .summary-box { background:var(--card); border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:8px; padding:1.4rem 1.6rem; margin-bottom:2rem; }
+  .concept-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:1rem; margin-bottom:2rem; }
+  .concept-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.2rem; transition:border-color .2s,transform .2s; }
+  .concept-card:hover { border-color:var(--accent); transform:translateY(-2px); }
+  .concept-card .term { font-family:var(--mono); font-size:.78rem; font-weight:700; color:var(--accent); margin-bottom:.5rem; }
+  .concept-card .def { font-size:.9rem; color:var(--text-muted); line-height:1.5; }
+  .code-block { background:#0d1117; border:1px solid var(--border); border-radius:8px; padding:1rem 1.4rem; font-family:var(--mono); font-size:.85rem; color:#c9d1d9; margin:1rem 0 1.5rem; overflow-x:auto; line-height:1.7; white-space:pre; }
+  .kw { color:#ff7b72; } .ty { color:#79c0ff; } .cm { color:#8b949e; font-style:italic; } .vr { color:#ffa657; } .st { color:#a5d6ff; }
+  table { width:100%; border-collapse:collapse; margin:1rem 0 1.5rem; font-size:.9rem; }
+  th { background:var(--card); color:var(--text); font-family:var(--sans); font-weight:600; padding:.6rem 1rem; border:1px solid var(--border); }
+  td { padding:.5rem 1rem; border:1px solid var(--border); color:var(--text-muted); font-family:var(--mono); font-size:.85rem; }
+  .example-box { background:var(--card); border:1px solid var(--border); border-left:3px solid var(--accent2); border-radius:8px; padding:1.1rem 1.4rem; margin:1rem 0; }
+  .example-title { font-family:var(--mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; color:var(--accent2); margin-bottom:.5rem; }
+  .progress-bar-wrap { background:var(--surface); border-radius:99px; height:4px; margin-bottom:1.5rem; overflow:hidden; }
+  .progress-bar { height:100%; background:var(--accent); border-radius:99px; transition:width .3s; }
+  .fc-controls { display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+  .fc-progress { font-family:var(--mono); font-size:.85rem; color:var(--text-muted); }
+  .fc-progress span { color:var(--accent); font-weight:700; }
+  .btn { font-family:var(--sans); font-size:.85rem; font-weight:600; padding:.45rem 1.1rem; border-radius:6px; border:1px solid var(--border); background:var(--card); color:var(--text); cursor:pointer; transition:all .15s; }
+  .btn:hover { border-color:var(--accent); color:var(--accent); }
+  .btn-primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .flashcard-scene { perspective:1000px; height:220px; cursor:pointer; margin-bottom:1.5rem; user-select:none; }
+  .flashcard { position:relative; width:100%; height:100%; transform-style:preserve-3d; transition:transform .5s cubic-bezier(.4,0,.2,1); }
+  .flashcard.flipped { transform:rotateY(180deg); }
+  .fc-face { position:absolute; inset:0; backface-visibility:hidden; border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2rem; text-align:center; border:1px solid var(--border); }
+  .fc-front { background:var(--card); }
+  .fc-back { background:linear-gradient(135deg,#100a1a,var(--card)); border-color:var(--accent); transform:rotateY(180deg); }
+  .fc-hint { font-family:var(--mono); font-size:.7rem; color:var(--text-dim); margin-bottom:.5rem; }
+  .fc-question { font-size:1.05rem; font-weight:600; color:var(--text); line-height:1.5; }
+  .fc-answer { font-size:.95rem; color:var(--text-muted); line-height:1.6; }
+  .fill-item { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.2rem 1.5rem; margin-bottom:1rem; }
+  .fill-item.correct { border-color:var(--success); background:var(--success-bg); }
+  .fill-item.wrong { border-color:var(--error); background:var(--error-bg); }
+  .fill-sentence { font-size:.97rem; margin-bottom:.7rem; line-height:1.7; }
+  .fill-input { font-family:var(--mono); font-size:.88rem; background:var(--surface); border:1px solid var(--border); color:var(--text); padding:.4rem .8rem; border-radius:5px; width:220px; outline:none; }
+  .fill-input:focus { border-color:var(--accent2); }
+  .fill-feedback { font-family:var(--sans); font-size:.83rem; margin-top:.5rem; display:none; }
+  .fill-item.correct .fill-feedback { display:block; color:var(--success); }
+  .fill-item.wrong .fill-feedback { display:block; color:var(--error); }
+  .mc-item { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.4rem 1.5rem; margin-bottom:1.2rem; }
+  .mc-question { font-size:.97rem; font-weight:600; margin-bottom:1rem; }
+  .mc-options { display:flex; flex-direction:column; gap:.5rem; }
+  .mc-option { display:flex; align-items:flex-start; gap:.7rem; padding:.6rem .9rem; border-radius:7px; border:1px solid var(--border); cursor:pointer; font-size:.9rem; transition:all .15s; background:var(--surface); }
+  .mc-option:hover { border-color:var(--accent); }
+  .mc-option.selected-correct { border-color:var(--success); background:var(--success-bg); color:var(--success); }
+  .mc-option.selected-wrong { border-color:var(--error); background:var(--error-bg); color:var(--error); }
+  .mc-option.reveal-correct { border-color:var(--success); background:var(--success-bg); }
+  .mc-letter { font-family:var(--mono); font-size:.75rem; font-weight:700; color:var(--text-muted); min-width:18px; padding-top:1px; }
+  .mc-explanation { margin-top:.8rem; padding:.7rem 1rem; background:var(--surface); border-radius:6px; font-size:.85rem; color:var(--text-muted); display:none; border-left:2px solid var(--accent); }
+  .mc-item.answered .mc-explanation { display:block; }
+  .mc-item.answered .mc-option { pointer-events:none; }
+  .valid-box { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem; }
+  .valid { background:rgba(34,197,94,.08); border:1px solid rgba(34,197,94,.3); border-radius:6px; padding:.5rem 1rem; font-family:var(--mono); font-size:.85rem; color:var(--success); }
+  .invalid { background:rgba(248,113,113,.08); border:1px solid rgba(248,113,113,.3); border-radius:6px; padding:.5rem 1rem; font-family:var(--mono); font-size:.85rem; color:var(--error); }
+</style>
+</head>
+<body>
+<header>
+  <div class="tag">Programación · Unidad 2</div>
+  <h1>Variables y <em>Operadores</em></h1>
+  <p>Tipos de datos · Nombres de variables · Operadores aritméticos, relacionales y lógicos</p>
+</header>
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('resumen')">Resumen</button>
+    <button class="tab" onclick="showTab('conceptos')">Conceptos Clave</button>
+    <button class="tab" onclick="showTab('detalle')">Explicación Detallada</button>
+    <button class="tab" onclick="showTab('flashcards')">Flashcards</button>
+    <button class="tab" onclick="showTab('completar')">Completar el Espacio</button>
+    <button class="tab" onclick="showTab('multiple')">Multiple Choice</button>
+  </div>
+</div>
+
+<div id="panel-resumen" class="panel active">
+  <h2>Resumen General</h2>
+  <div class="summary-box">
+    <p>Esta unidad profundiza el concepto de <strong>variable</strong>: un espacio en memoria RAM al que el programa le asocia un nombre para leer y modificar su valor. Se estudian las reglas para nombrar variables (incluyendo camelCase), los tipos de datos, las diferencias entre variables y constantes, y los tres tipos de operadores: aritméticos (+, -, *, /, %), relacionales (>, <, ==, !=) y lógicos (Y, O, NO).</p>
+  </div>
+  <h3>Reglas para nombres de variables</h3>
+  <div class="valid-box">
+    <div class="valid">✓ _salario</div><div class="valid">✓ nombre_alumno</div><div class="valid">✓ cuentaBancaria</div>
+    <div class="invalid">✗ el salario (espacio)</div><div class="invalid">✗ 4_letra (número al inicio)</div><div class="invalid">✗ esVocal? (caracter especial)</div>
+  </div>
+</div>
+
+<div id="panel-conceptos" class="panel">
+  <h2>Conceptos Clave</h2>
+  <div class="concept-grid">
+    <div class="concept-card"><div class="term">Variable</div><div class="def">Posición en memoria RAM a la que se asocia un nombre para leer y/o modificar su valor.</div></div>
+    <div class="concept-card"><div class="term">Constante</div><div class="def">Valor que no cambia durante la ejecución del programa. Se define una vez y no se modifica.</div></div>
+    <div class="concept-card"><div class="term">Tipo de dato</div><div class="def">Define el rango de valores posibles y las operaciones que se pueden hacer sobre una variable.</div></div>
+    <div class="concept-card"><div class="term">camelCase</div><div class="def">Convención para nombres de variables: primera letra minúscula, cada palabra siguiente empieza en mayúscula. Ej: cuentaBancaria.</div></div>
+    <div class="concept-card"><div class="term">Definir variable</div><div class="def">Declarar la variable antes de usarla. En pseudocódigo: "Definir nombre como Tipo;"</div></div>
+    <div class="concept-card"><div class="term">Operadores Aritméticos</div><div class="def">+, -, *, /, % (módulo/resto). Realizan cálculos matemáticos sobre valores numéricos.</div></div>
+    <div class="concept-card"><div class="term">Operadores Relacionales</div><div class="def">>, <, >=, <=, ==, !=. Comparan dos valores y devuelven Verdadero o Falso.</div></div>
+    <div class="concept-card"><div class="term">Operadores Lógicos</div><div class="def">Y (AND), O (OR), NO (NOT). Combinan expresiones lógicas. Devuelven Verdadero o Falso.</div></div>
+    <div class="concept-card"><div class="term">Asignación</div><div class="def">Operación que guarda un valor en una variable. En pseudocódigo: nombre ← valor o nombre = valor.</div></div>
+  </div>
+</div>
+
+<div id="panel-detalle" class="panel">
+  <h2>Explicación Detallada</h2>
+  <h3>¿Qué es una Variable?</h3>
+  <p>Una <strong>variable</strong> es una posición en memoria RAM a la que desde nuestro programa le asociamos un nombre para poder accederla, leer y/o modificar su valor. Toda variable tiene un <strong>tipo de dato</strong> y un <strong>nombre (identificador)</strong>.</p>
+
+  <h3>Reglas para nombrar una variable</h3>
+  <ol>
+    <li>Debe comenzar con una letra (a-z) o el carácter _ (guión bajo).</li>
+    <li>Luego del primer carácter solo puede contener letras, números o _ .</li>
+    <li>No puede contener espacios en blanco ni caracteres especiales (?, -, etc.).</li>
+  </ol>
+  <p>La convención <strong>camelCase</strong> es la más usada: primera letra minúscula, cada palabra siguiente empieza con mayúscula.</p>
+
+  <h3>Tipos de Dato</h3>
+  <table>
+    <tr><th>Tipo</th><th>Inglés</th><th>Valores</th><th>Operaciones</th></tr>
+    <tr><td>Entero</td><td>Integer</td><td>-2, 0, 42</td><td>+, -, *, /, %</td></tr>
+    <tr><td>Real</td><td>Float</td><td>3.14, -0.5</td><td>+, -, *, /</td></tr>
+    <tr><td>Caracter</td><td>Character</td><td>'a', '3'</td><td>Comparación</td></tr>
+    <tr><td>Cadena</td><td>String</td><td>"Hola mundo"</td><td>Concatenación</td></tr>
+    <tr><td>Lógico</td><td>Boolean</td><td>Verdadero/Falso</td><td>Y, O, NO</td></tr>
+  </table>
+
+  <h3>Definir y Usar Variables en Pseudocódigo</h3>
+  <div class="code-block"><span class="cm">// Correcto: se define antes de usar</span>
+<span class="kw">Definir</span> <span class="vr">edad</span> <span class="kw">como</span> <span class="ty">Entero</span>;
+<span class="vr">edad</span> <span class="kw">←</span> 25;
+<span class="kw">Mostrar</span> <span class="vr">edad</span>;
+
+<span class="cm">// Con camelCase:</span>
+<span class="kw">Definir</span> <span class="vr">nombreAlumno</span> <span class="kw">como</span> <span class="ty">Cadena</span>;
+<span class="kw">Definir</span> <span class="vr">notaFinal</span> <span class="kw">como</span> <span class="ty">Real</span>;
+<span class="kw">Definir</span> <span class="vr">esAprobado</span> <span class="kw">como</span> <span class="ty">Booleano</span>;</div>
+
+  <h3>Operadores Aritméticos</h3>
+  <table>
+    <tr><th>Operador</th><th>Operación</th><th>Ejemplo</th><th>Resultado</th></tr>
+    <tr><td>+</td><td>Suma</td><td>5 + 3</td><td>8</td></tr>
+    <tr><td>-</td><td>Resta</td><td>10 - 4</td><td>6</td></tr>
+    <tr><td>*</td><td>Multiplicación</td><td>3 * 7</td><td>21</td></tr>
+    <tr><td>/</td><td>División</td><td>10 / 4</td><td>2.5</td></tr>
+    <tr><td>%</td><td>Módulo (resto)</td><td>10 % 3</td><td>1</td></tr>
+  </table>
+
+  <h3>Operadores Relacionales</h3>
+  <table>
+    <tr><th>Operador</th><th>Significado</th><th>Ejemplo</th></tr>
+    <tr><td>></td><td>Mayor que</td><td>5 > 3 → Verdadero</td></tr>
+    <tr><td><</td><td>Menor que</td><td>2 < 8 → Verdadero</td></tr>
+    <tr><td>>=</td><td>Mayor o igual</td><td>6 >= 6 → Verdadero</td></tr>
+    <tr><td><=</td><td>Menor o igual</td><td>3 <= 2 → Falso</td></tr>
+    <tr><td>==</td><td>Igual a</td><td>5 == 5 → Verdadero</td></tr>
+    <tr><td>!=</td><td>Distinto de</td><td>5 != 3 → Verdadero</td></tr>
+  </table>
+
+  <h3>Operadores Lógicos</h3>
+  <div class="example-box">
+    <div class="example-title">Tablas de verdad</div>
+    <p><strong>Y (AND):</strong> Verdadero solo si AMBAS condiciones son verdaderas.<br>
+    <strong>O (OR):</strong> Verdadero si AL MENOS UNA condición es verdadera.<br>
+    <strong>NO (NOT):</strong> Invierte el valor lógico.</p>
+    <p>Ejemplo: <code>nota >= 4 Y nota &lt;= 6</code> → Verdadero solo si nota está entre 4 y 6.</p>
+  </div>
+</div>
+
+<div id="panel-flashcards" class="panel">
+  <h2>Flashcards</h2>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="fc-bar" style="width:9%"></div></div>
+  <div class="fc-controls">
+    <div class="fc-progress">Carta <span id="fc-current">1</span> / <span id="fc-total">11</span></div>
+    <div style="display:flex;gap:.5rem;">
+      <button class="btn" onclick="fcPrev()">← Anterior</button>
+      <button class="btn btn-primary" onclick="fcNext()">Siguiente →</button>
+    </div>
+  </div>
+  <div class="flashcard-scene" onclick="document.getElementById('flashcard').classList.toggle('flipped')">
+    <div class="flashcard" id="flashcard">
+      <div class="fc-face fc-front"><div class="fc-hint">click para ver respuesta</div><div class="fc-question" id="fc-q">¿Qué es una variable?</div></div>
+      <div class="fc-face fc-back"><div class="fc-hint">Respuesta</div><div class="fc-answer" id="fc-a">Una posición en memoria RAM a la que se asocia un nombre para poder acceder, leer y/o modificar su valor.</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-completar" class="panel">
+  <h2>Completar el Espacio</h2>
+  <p style="color:var(--text-muted);margin-bottom:1.5rem;font-family:var(--sans);font-size:.9rem;">Escribí la respuesta correcta.</p>
+  <div id="fill-container"></div>
+</div>
+
+<div id="panel-multiple" class="panel">
+  <h2>Multiple Choice</h2>
+  <div id="mc-container"></div>
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+const cards=[
+  {q:'¿Qué es una variable?',a:'Posición en memoria RAM a la que se asocia un nombre para acceder, leer y/o modificar su valor.'},
+  {q:'¿Cuáles son las 3 reglas para nombrar una variable?',a:'1) Debe comenzar con letra o _. 2) Solo puede contener letras, números o _. 3) No puede tener espacios ni caracteres especiales.'},
+  {q:'¿Qué es camelCase?',a:'Convención de escritura: primera letra minúscula, las primeras letras de las palabras siguientes en mayúscula. Ej: cuentaBancaria.'},
+  {q:'¿Para qué sirve el tipo de dato de una variable?',a:'Define el rango de valores posibles y qué operaciones se pueden ejecutar sobre la variable.'},
+  {q:'¿Qué hace el operador % (módulo)?',a:'Devuelve el resto de la división entera. Ej: 10 % 3 = 1.'},
+  {q:'¿Qué devuelven los operadores relacionales?',a:'Un valor lógico: Verdadero o Falso.'},
+  {q:'¿Cuándo es Verdadera la expresión A Y B?',a:'Solo cuando AMBAS condiciones A y B son verdaderas.'},
+  {q:'¿Cuándo es Verdadera la expresión A O B?',a:'Cuando AL MENOS UNA de las condiciones (A o B) es verdadera.'},
+  {q:'¿Qué hace el operador NO?',a:'Invierte el valor lógico: NO Verdadero = Falso; NO Falso = Verdadero.'},
+  {q:'¿Es válido el nombre de variable "4_letra"? ¿Por qué?',a:'NO es válido. Las variables no pueden comenzar con un número; deben comenzar con una letra o _.'},
+  {q:'¿Cuál es la diferencia entre = (asignación) y == (comparación)?',a:'= asigna un valor a una variable. == compara dos valores y devuelve Verdadero o Falso.'},
+];
+let fcIdx=0;
+function updateFC(){
+  document.getElementById('fc-q').textContent=cards[fcIdx].q;
+  document.getElementById('fc-a').textContent=cards[fcIdx].a;
+  document.getElementById('fc-current').textContent=fcIdx+1;
+  document.getElementById('fc-total').textContent=cards.length;
+  document.getElementById('fc-bar').style.width=((fcIdx+1)/cards.length*100)+'%';
+  document.getElementById('flashcard').classList.remove('flipped');
+}
+function fcNext(){fcIdx=(fcIdx+1)%cards.length;updateFC();}
+function fcPrev(){fcIdx=(fcIdx-1+cards.length)%cards.length;updateFC();}
+
+const fills=[
+  {sentence:'Una ___ es una posición en memoria RAM identificada por un nombre.',answer:'variable',hint:'Concepto central de la unidad.'},
+  {sentence:'La convención ___ escribe la primera letra en minúscula y las siguientes palabras con mayúscula inicial.',answer:'camelcase',hint:'nombreAlumno, cuentaBancaria.'},
+  {sentence:'El operador ___ devuelve el resto de la división entera.',answer:'%',hint:'Ej: 10 % 3 = 1. Módulo.'},
+  {sentence:'El operador == compara si dos valores son ___ entre sí.',answer:'iguales',hint:'Compara, no asigna.'},
+  {sentence:'Una variable de tipo ___ solo puede guardar Verdadero o Falso.',answer:'booleano',hint:'También llamado Lógico.'},
+  {sentence:'Toda variable debe ser ___ antes de poder ser utilizada.',answer:'definida',hint:'Primer paso: Definir nombre como Tipo.'},
+  {sentence:'El operador Y devuelve Verdadero solo si ___ las condiciones son verdaderas.',answer:'ambas',hint:'Lógica AND.'},
+  {sentence:'El nombre de variable "nombre alumno" es ___ porque contiene un espacio.',answer:'inválido',hint:'Regla 3: sin espacios.'},
+  {sentence:'El tipo de dato ___ almacena números con decimales como 3.14.',answer:'real',hint:'También llamado Float.'},
+  {sentence:'El operador ___ invierte el valor lógico de una expresión.',answer:'no',hint:'En inglés se llama NOT.'},
+];
+const fillContainer=document.getElementById('fill-container');
+fills.forEach((f,i)=>{
+  const div=document.createElement('div');
+  div.className='fill-item';div.id='fill-'+i;
+  div.innerHTML=`<div class="fill-sentence">${f.sentence.replace('___','<strong>___</strong>')}</div>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
+      <input class="fill-input" id="fi-${i}" placeholder="Respuesta..." onkeydown="if(event.key==='Enter')checkFill(${i})">
+      <button class="btn" style="font-size:.8rem;padding:.3rem .8rem;" onclick="checkFill(${i})">Verificar</button>
+    </div><div class="fill-feedback" id="ff-${i}"></div>`;
+  fillContainer.appendChild(div);
+});
+function checkFill(i){
+  const val=document.getElementById('fi-'+i).value.trim().toLowerCase();
+  const item=document.getElementById('fill-'+i);
+  const fb=document.getElementById('ff-'+i);
+  if(val===fills[i].answer.toLowerCase()){item.classList.remove('wrong');item.classList.add('correct');fb.textContent='✓ Correcto!';}
+  else{item.classList.remove('correct');item.classList.add('wrong');fb.textContent=`✗ Respuesta: "${fills[i].answer}". ${fills[i].hint}`;}
+}
+const mcData=[
+  {q:'¿Cuál de los siguientes nombres de variable es VÁLIDO?',options:['4_letra','el salario','_salario','nombre-alumno'],correct:2,exp:'_salario es válido porque comienza con _ (guión bajo). El resto tienen errores: número al inicio, espacio, y guión medio respectivamente.'},
+  {q:'¿Qué resultado da la expresión 17 % 5?',options:['3','2','1','0'],correct:1,exp:'17 dividido 5 da 3 con resto 2 (5×3=15, 17-15=2). El operador % devuelve ese resto: 2.'},
+  {q:'¿Cuándo el operador O (OR) devuelve Falso?',options:['Cuando una condición es Verdadera','Cuando ambas condiciones son Falsas','Cuando ambas son Verdaderas','Nunca'],correct:1,exp:'El operador O solo devuelve Falso cuando AMBAS condiciones son Falsas. En cualquier otro caso es Verdadero.'},
+  {q:'¿Qué tipo de dato usarías para la edad de una persona?',options:['Cadena','Real','Entero','Caracter'],correct:2,exp:'La edad es un número entero (no tiene decimales), por lo que el tipo Entero es el más apropiado.'},
+  {q:'¿Cuál es la diferencia entre una Variable y una Constante?',options:['No hay diferencia','Las constantes ocupan más memoria','La variable puede cambiar su valor, la constante no','Solo las constantes tienen tipo de dato'],correct:2,exp:'Una Variable puede cambiar su valor durante la ejecución del programa. Una Constante tiene un valor fijo que no se modifica.'},
+];
+const mcContainer=document.getElementById('mc-container');
+mcData.forEach((mc,i)=>{
+  const div=document.createElement('div');
+  div.className='mc-item';div.id='mc-'+i;
+  const L=['A','B','C','D'];
+  div.innerHTML=`<div class="mc-question">${i+1}. ${mc.q}</div>
+    <div class="mc-options">${mc.options.map((o,j)=>`<div class="mc-option" onclick="checkMC(${i},${j})"><span class="mc-letter">${L[j]}</span>${o}</div>`).join('')}</div>
+    <div class="mc-explanation" id="mce-${i}">${mc.exp}</div>`;
+  mcContainer.appendChild(div);
+});
+function checkMC(qi,oi){
+  const item=document.getElementById('mc-'+qi);
+  if(item.classList.contains('answered'))return;
+  item.classList.add('answered');
+  const opts=item.querySelectorAll('.mc-option');
+  opts[oi].classList.add(oi===mcData[qi].correct?'selected-correct':'selected-wrong');
+  if(oi!==mcData[qi].correct)opts[mcData[qi].correct].classList.add('reveal-correct');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programación — Unidad 4: Estructuras de Control</title>
+<style>
+  :root{--bg:#0a0e1a;--surface:#111827;--card:#1a2235;--border:#2a3755;--accent:#f59e0b;--accent-light:rgba(245,158,11,.12);--accent2:#60c5fa;--accent2-light:rgba(96,197,250,.1);--success:#22c55e;--success-bg:rgba(34,197,94,.12);--error:#f87171;--error-bg:rgba(248,113,113,.12);--text:#e2e8f0;--text-muted:#7b8fa8;--text-dim:#3d506b;--mono:"JetBrains Mono","Fira Code","Consolas",monospace;--sans:"Lora","Georgia","Times New Roman",serif;--serif:"Lora","Georgia",serif;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--serif);font-size:16px;line-height:1.75;min-height:100vh;}
+  header{background:linear-gradient(160deg,#0a0e1a 0%,#1a1200 50%,#1a1505 100%);border-bottom:1px solid var(--border);padding:3rem 2rem 2.5rem;text-align:center;position:relative;overflow:hidden;}
+  header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(245,158,11,.15) 0%,transparent 70%);pointer-events:none;}
+  .tag{display:inline-block;font-family:var(--mono);font-size:.66rem;letter-spacing:.15em;color:var(--accent);background:var(--accent-light);border:1px solid rgba(245,158,11,.35);padding:.25rem .85rem;border-radius:99px;margin-bottom:1.1rem;}
+  header h1{font-family:var(--sans);font-size:clamp(1.8rem,4vw,3rem);font-weight:800;letter-spacing:-.03em;color:#fff;margin-bottom:.4rem;}
+  header h1 em{color:var(--accent);font-style:normal;}
+  header p{color:var(--text-muted);font-family:var(--sans);font-size:.88rem;}
+  .tabs-wrap{position:sticky;top:0;z-index:100;background:rgba(10,14,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 1rem;overflow-x:auto;scrollbar-width:none;}
+  .tabs-wrap::-webkit-scrollbar{display:none;}
+  .tabs{display:flex;min-width:max-content;}
+  .tab{font-family:var(--sans);font-size:.82rem;font-weight:500;padding:.75rem 1.1rem;cursor:pointer;color:var(--text-muted);border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+  .tab:hover{color:var(--text);}
+  .tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .panel{display:none;max-width:860px;margin:0 auto;padding:2.5rem 1.5rem 4rem;}
+  .panel.active{display:block;}
+  h2{font-family:var(--sans);font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:1.2rem;}
+  h3{font-family:var(--sans);font-size:1.05rem;font-weight:700;color:var(--accent2);margin:2rem 0 .6rem;}
+  p{margin-bottom:.9rem;}ul,ol{padding-left:1.5rem;margin-bottom:.9rem;}li{margin-bottom:.35rem;}
+  .summary-box{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;padding:1.4rem 1.6rem;margin-bottom:2rem;}
+  .concept-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem;margin-bottom:2rem;}
+  .concept-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem;transition:border-color .2s,transform .2s;}
+  .concept-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .concept-card .term{font-family:var(--mono);font-size:.78rem;font-weight:700;color:var(--accent);margin-bottom:.5rem;}
+  .concept-card .def{font-size:.9rem;color:var(--text-muted);line-height:1.5;}
+  .code-block{background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:1rem 1.4rem;font-family:var(--mono);font-size:.85rem;color:#c9d1d9;margin:1rem 0 1.5rem;overflow-x:auto;line-height:1.7;white-space:pre;}
+  .kw{color:#ff7b72;}.ty{color:#79c0ff;}.cm{color:#8b949e;font-style:italic;}.vr{color:#ffa657;}.st{color:#a5d6ff;}.nb{color:#f59e0b;}
+  .example-box{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent2);border-radius:8px;padding:1.1rem 1.4rem;margin:1rem 0;}
+  .example-title{font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent2);margin-bottom:.5rem;}
+  .progress-bar-wrap{background:var(--surface);border-radius:99px;height:4px;margin-bottom:1.5rem;overflow:hidden;}
+  .progress-bar{height:100%;background:var(--accent);border-radius:99px;transition:width .3s;}
+  .fc-controls{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+  .fc-progress{font-family:var(--mono);font-size:.85rem;color:var(--text-muted);}
+  .fc-progress span{color:var(--accent);font-weight:700;}
+  .btn{font-family:var(--sans);font-size:.85rem;font-weight:600;padding:.45rem 1.1rem;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;transition:all .15s;}
+  .btn:hover{border-color:var(--accent);color:var(--accent);}
+  .btn-primary{background:var(--accent);border-color:var(--accent);color:#000;font-weight:700;}
+  .flashcard-scene{perspective:1000px;height:220px;cursor:pointer;margin-bottom:1.5rem;user-select:none;}
+  .flashcard{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
+  .flashcard.flipped{transform:rotateY(180deg);}
+  .fc-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;border:1px solid var(--border);}
+  .fc-front{background:var(--card);}
+  .fc-back{background:linear-gradient(135deg,#1a1200,var(--card));border-color:var(--accent);transform:rotateY(180deg);}
+  .fc-hint{font-family:var(--mono);font-size:.7rem;color:var(--text-dim);margin-bottom:.5rem;}
+  .fc-question{font-size:1.05rem;font-weight:600;color:var(--text);line-height:1.5;}
+  .fc-answer{font-size:.95rem;color:var(--text-muted);line-height:1.6;}
+  .fill-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.5rem;margin-bottom:1rem;}
+  .fill-item.correct{border-color:var(--success);background:var(--success-bg);}
+  .fill-item.wrong{border-color:var(--error);background:var(--error-bg);}
+  .fill-sentence{font-size:.97rem;margin-bottom:.7rem;line-height:1.7;}
+  .fill-input{font-family:var(--mono);font-size:.88rem;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:.4rem .8rem;border-radius:5px;width:220px;outline:none;}
+  .fill-input:focus{border-color:var(--accent2);}
+  .fill-feedback{font-family:var(--sans);font-size:.83rem;margin-top:.5rem;display:none;}
+  .fill-item.correct .fill-feedback{display:block;color:var(--success);}
+  .fill-item.wrong .fill-feedback{display:block;color:var(--error);}
+  .mc-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem 1.5rem;margin-bottom:1.2rem;}
+  .mc-question{font-size:.97rem;font-weight:600;margin-bottom:1rem;}
+  .mc-options{display:flex;flex-direction:column;gap:.5rem;}
+  .mc-option{display:flex;align-items:flex-start;gap:.7rem;padding:.6rem .9rem;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-size:.9rem;transition:all .15s;background:var(--surface);}
+  .mc-option:hover{border-color:var(--accent);}
+  .mc-option.selected-correct{border-color:var(--success);background:var(--success-bg);color:var(--success);}
+  .mc-option.selected-wrong{border-color:var(--error);background:var(--error-bg);color:var(--error);}
+  .mc-option.reveal-correct{border-color:var(--success);background:var(--success-bg);}
+  .mc-letter{font-family:var(--mono);font-size:.75rem;font-weight:700;color:var(--text-muted);min-width:18px;padding-top:1px;}
+  .mc-explanation{margin-top:.8rem;padding:.7rem 1rem;background:var(--surface);border-radius:6px;font-size:.85rem;color:var(--text-muted);display:none;border-left:2px solid var(--accent);}
+  .mc-item.answered .mc-explanation{display:block;}
+  .mc-item.answered .mc-option{pointer-events:none;}
+</style>
+</head>
+<body>
+<header>
+  <div class="tag">Programación · Unidad 4</div>
+  <h1>Estructuras de <em>Control</em></h1>
+  <p>Si...Entonces · Si...Sino · Según sea · Condicionales anidadas</p>
+</header>
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('resumen')">Resumen</button>
+    <button class="tab" onclick="showTab('conceptos')">Conceptos Clave</button>
+    <button class="tab" onclick="showTab('detalle')">Explicación Detallada</button>
+    <button class="tab" onclick="showTab('flashcards')">Flashcards</button>
+    <button class="tab" onclick="showTab('completar')">Completar el Espacio</button>
+    <button class="tab" onclick="showTab('multiple')">Multiple Choice</button>
+  </div>
+</div>
+
+<div id="panel-resumen" class="panel active">
+  <h2>Resumen General</h2>
+  <div class="summary-box">
+    <p>Las <strong>estructuras de control</strong> permiten que un programa tome distintos caminos según se cumplan ciertas condiciones. Las condiciones son expresiones lógicas que arrojan Verdadero o Falso. Se estudian tres estructuras: <strong>Si...Entonces</strong> (una rama), <strong>Si...Entonces...Sino</strong> (dos ramas) y <strong>Según sea</strong> (múltiples opciones). También se estudian condicionales anidadas.</p>
+  </div>
+  <h3>Las 3 estructuras de control de selección</h3>
+  <ul>
+    <li><strong>Si...Entonces:</strong> ejecuta acciones solo si la condición es Verdadera.</li>
+    <li><strong>Si...Entonces...Sino:</strong> ejecuta un bloque si es Verdadera, otro si es Falsa.</li>
+    <li><strong>Según sea:</strong> evalúa una variable y ejecuta un bloque según su valor (como switch).</li>
+  </ul>
+</div>
+
+<div id="panel-conceptos" class="panel">
+  <h2>Conceptos Clave</h2>
+  <div class="concept-grid">
+    <div class="concept-card"><div class="term">Estructura de Control</div><div class="def">Instrucción que controla el flujo de ejecución del programa según condiciones. El programa puede "tomar decisiones".</div></div>
+    <div class="concept-card"><div class="term">Condición</div><div class="def">Expresión lógica que evalúa a Verdadero o Falso. Ej: (nota >= 6), (edad > 18).</div></div>
+    <div class="concept-card"><div class="term">Si...Entonces</div><div class="def">Si la condición es Verdadera, ejecuta las acciones del bloque. Si es Falsa, no ejecuta nada.</div></div>
+    <div class="concept-card"><div class="term">Si...Entonces...Sino</div><div class="def">Si la condición es Verdadera ejecuta el bloque "Entonces". Si es Falsa ejecuta el bloque "Sino".</div></div>
+    <div class="concept-card"><div class="term">Según sea (Switch)</div><div class="def">Evalúa el valor de una variable y ejecuta el bloque correspondiente a cada caso posible.</div></div>
+    <div class="concept-card"><div class="term">Condicional Anidada</div><div class="def">Una estructura Si...Entonces dentro de otra estructura Si...Entonces. Permite evaluar múltiples condiciones en cascada.</div></div>
+    <div class="concept-card"><div class="term">Flujo de Ejecución</div><div class="def">El orden en que se ejecutan las instrucciones del programa. Las estructuras de control lo modifican.</div></div>
+    <div class="concept-card"><div class="term">Operador &&, ||, !</div><div class="def">En C/C++: && (Y lógico), || (O lógico), ! (NO lógico). Combinan condiciones.</div></div>
+  </div>
+</div>
+
+<div id="panel-detalle" class="panel">
+  <h2>Explicación Detallada</h2>
+  <h3>Si...Entonces (una rama)</h3>
+  <p>Evalúa la condición. Si es <strong>Verdadera</strong>, ejecuta las acciones del bloque. Si es <strong>Falsa</strong>, las ignora y continúa.</p>
+  <div class="code-block"><span class="kw">Si</span> ( numero > 0 ) <span class="kw">Entonces</span>
+    <span class="kw">Mostrar</span> <span class="st">"Número mayor a 0"</span>;
+<span class="kw">Fin Si</span>
+
+<span class="cm">// En C++:</span>
+<span class="kw">if</span> (numero > 0) {
+    cout &lt;&lt; <span class="st">"Número mayor a 0"</span>;
+}</div>
+
+  <h3>Si...Entonces...Sino (dos ramas)</h3>
+  <p>Si la condición es <strong>Verdadera</strong> ejecuta el bloque "Entonces". Si es <strong>Falsa</strong>, ejecuta el bloque "Sino". Siempre se ejecuta uno u otro.</p>
+  <div class="code-block"><span class="kw">Si</span> ( nota >= 6 ) <span class="kw">Entonces</span>
+    <span class="kw">Mostrar</span> <span class="st">"Materia aprobada"</span>;
+<span class="kw">Sino</span>
+    <span class="kw">Mostrar</span> <span class="st">"Materia desaprobada"</span>;
+<span class="kw">Fin Si</span>
+
+<span class="cm">// En C++:</span>
+<span class="kw">if</span> (nota >= 6) {
+    cout &lt;&lt; <span class="st">"Materia aprobada"</span>;
+} <span class="kw">else</span> {
+    cout &lt;&lt; <span class="st">"Materia desaprobada"</span>;
+}</div>
+
+  <h3>Condicionales Anidadas</h3>
+  <p>Permiten evaluar múltiples rangos de valores. Cada "Sino" puede contener otro "Si...Entonces".</p>
+  <div class="code-block"><span class="kw">Si</span> ( promedio < 4 ) <span class="kw">Entonces</span>
+    <span class="kw">Mostrar</span> <span class="st">"Insuficiente"</span>;
+<span class="kw">Sino</span>
+    <span class="kw">Si</span> ( promedio < 6 ) <span class="kw">Entonces</span>
+        <span class="kw">Mostrar</span> <span class="st">"Regular"</span>;
+    <span class="kw">Sino</span>
+        <span class="kw">Si</span> ( promedio < 8 ) <span class="kw">Entonces</span>
+            <span class="kw">Mostrar</span> <span class="st">"Bien"</span>;
+        <span class="kw">Sino</span>
+            <span class="kw">Mostrar</span> <span class="st">"Muy Bien / Sobresaliente"</span>;
+        <span class="kw">Fin Si</span>
+    <span class="kw">Fin Si</span>
+<span class="kw">Fin Si</span></div>
+
+  <h3>Ejemplo: número positivo, negativo o cero</h3>
+  <div class="code-block"><span class="kw">Proceso</span> ValorIngresado
+    <span class="kw">Definir</span> <span class="vr">numero</span> <span class="kw">como</span> <span class="ty">Entero</span>;
+    <span class="kw">Mostrar</span> <span class="st">"Ingrese un número: "</span>;
+    <span class="kw">Leer</span> <span class="vr">numero</span>;
+    <span class="kw">Si</span> ( <span class="vr">numero</span> > 0 ) <span class="kw">Entonces</span>
+        <span class="kw">Mostrar</span> <span class="st">"Número mayor a 0"</span>;
+    <span class="kw">Fin Si</span>
+    <span class="kw">Si</span> ( <span class="vr">numero</span> &lt; 0 ) <span class="kw">Entonces</span>
+        <span class="kw">Mostrar</span> <span class="st">"Número menor a 0"</span>;
+    <span class="kw">Fin Si</span>
+    <span class="kw">Si</span> ( <span class="vr">numero</span> == 0 ) <span class="kw">Entonces</span>
+        <span class="kw">Mostrar</span> <span class="st">"Número igual a 0"</span>;
+    <span class="kw">Fin Si</span>
+<span class="kw">FinProceso</span></div>
+
+  <h3>Ejemplo: número de la suerte (operadores lógicos)</h3>
+  <div class="example-box">
+    <div class="example-title">Condición combinada</div>
+    <p>Un número es "de la suerte" si: es positivo Y impar Y múltiplo de 3, O si es 20 o 80.</p>
+    <p><code>(num > 0 && num % 2 != 0 && num % 3 == 0) || (num == 20 || num == 80)</code></p>
+  </div>
+</div>
+
+<div id="panel-flashcards" class="panel">
+  <h2>Flashcards</h2>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="fc-bar" style="width:9%"></div></div>
+  <div class="fc-controls">
+    <div class="fc-progress">Carta <span id="fc-current">1</span> / <span id="fc-total">11</span></div>
+    <div style="display:flex;gap:.5rem;">
+      <button class="btn" onclick="fcPrev()">← Anterior</button>
+      <button class="btn btn-primary" onclick="fcNext()">Siguiente →</button>
+    </div>
+  </div>
+  <div class="flashcard-scene" onclick="document.getElementById('flashcard').classList.toggle('flipped')">
+    <div class="flashcard" id="flashcard">
+      <div class="fc-face fc-front"><div class="fc-hint">click para ver respuesta</div><div class="fc-question" id="fc-q">¿Para qué sirven las estructuras de control?</div></div>
+      <div class="fc-face fc-back"><div class="fc-hint">Respuesta</div><div class="fc-answer" id="fc-a">Permiten controlar el flujo de ejecución del programa: el programa puede tomar distintos caminos según se cumplan ciertas condiciones lógicas.</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-completar" class="panel">
+  <h2>Completar el Espacio</h2>
+  <p style="color:var(--text-muted);margin-bottom:1.5rem;font-family:var(--sans);font-size:.9rem;">Completá con la palabra correcta.</p>
+  <div id="fill-container"></div>
+</div>
+<div id="panel-multiple" class="panel">
+  <h2>Multiple Choice</h2>
+  <div id="mc-container"></div>
+</div>
+
+<script>
+function showTab(id){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('panel-'+id).classList.add('active');event.target.classList.add('active');}
+const cards=[
+  {q:'¿Para qué sirven las estructuras de control?',a:'Controlan el flujo de ejecución: el programa toma distintos caminos según se cumplan condiciones lógicas (Verdadero/Falso).'},
+  {q:'¿Qué es una "condición" en una estructura Si...Entonces?',a:'Una expresión lógica que evalúa a Verdadero o Falso. Ej: (nota >= 6) o (edad > 18).'},
+  {q:'¿Qué hace Si...Entonces cuando la condición es Falsa?',a:'No ejecuta ninguna de las acciones del bloque y continúa con la siguiente instrucción del programa.'},
+  {q:'¿Cuál es la diferencia entre Si...Entonces y Si...Entonces...Sino?',a:'Si...Entonces solo tiene una rama (cuando es Verdadero). Si...Entonces...Sino tiene dos ramas: una para Verdadero y otra para Falso.'},
+  {q:'¿Qué es una condicional anidada?',a:'Una estructura Si...Entonces dentro de otra estructura Si...Entonces. Se usa para evaluar múltiples condiciones en cascada.'},
+  {q:'¿Cuál es el operador lógico Y en C/C++?',a:'El operador && (doble ampersand). Devuelve true solo si ambas condiciones son verdaderas.'},
+  {q:'¿Cuál es el operador lógico O en C/C++?',a:'El operador || (doble barra). Devuelve true si al menos una condición es verdadera.'},
+  {q:'Si un número es 4 y ejecuto "Si (numero > 0) Entonces Mostrar ...", ¿qué pasa?',a:'La condición 4 > 0 es Verdadera, entonces se muestra el mensaje.'},
+  {q:'¿Qué evalúa la estructura "Según sea"?',a:'Evalúa el valor de una variable y ejecuta el bloque de instrucciones correspondiente al caso que coincida.'},
+  {q:'¿Cuándo usar Si...Entonces...Sino en vez de dos Si...Entonces separados?',a:'Cuando una de las dos ramas debe ejecutarse obligatoriamente: si la condición es V se ejecuta una, si es F la otra. Con dos Si separados, ambos se evalúan independientemente.'},
+  {q:'¿Cuál es el operador NO en C/C++?',a:'El operador ! (signo de exclamación). Invierte el valor lógico: !true = false, !false = true.'},
+];
+let fcIdx=0;
+function updateFC(){document.getElementById('fc-q').textContent=cards[fcIdx].q;document.getElementById('fc-a').textContent=cards[fcIdx].a;document.getElementById('fc-current').textContent=fcIdx+1;document.getElementById('fc-total').textContent=cards.length;document.getElementById('fc-bar').style.width=((fcIdx+1)/cards.length*100)+'%';document.getElementById('flashcard').classList.remove('flipped');}
+function fcNext(){fcIdx=(fcIdx+1)%cards.length;updateFC();}function fcPrev(){fcIdx=(fcIdx-1+cards.length)%cards.length;updateFC();}
+
+const fills=[
+  {sentence:'Las estructuras de ___ permiten que el programa tome distintos caminos según se cumplan condiciones.',answer:'control',hint:'Control de flujo.'},
+  {sentence:'La estructura Si...Entonces ejecuta las acciones solo si la condición es ___ .',answer:'verdadera',hint:'Valor lógico positivo.'},
+  {sentence:'La estructura Si...Entonces...___ ejecuta un bloque si la condición es Verdadera y otro si es Falsa.',answer:'sino',hint:'La alternativa negativa.'},
+  {sentence:'En C++, el operador lógico Y se escribe ___.',answer:'&&',hint:'Doble símbolo.'},
+  {sentence:'En C++, el operador lógico O se escribe ___.',answer:'||',hint:'Doble barra vertical.'},
+  {sentence:'Una condicional ___ es una estructura Si dentro de otra estructura Si.',answer:'anidada',hint:'Una dentro de otra.'},
+  {sentence:'Las condiciones en las estructuras de control son expresiones que devuelven ___ o Falso.',answer:'verdadero',hint:'Valor lógico.'},
+  {sentence:'El operador == en una condición compara si dos valores son ___ entre sí.',answer:'iguales',hint:'Igualdad.'},
+  {sentence:'Si ejecuto "Si (5 > 10) Entonces Mostrar ...", el mensaje ___ se muestra.',answer:'no',hint:'5 no es mayor que 10.'},
+  {sentence:'La estructura "Según sea" es equivalente al ___ en C/C++.',answer:'switch',hint:'Estructura de casos múltiples.'},
+];
+const fillContainer=document.getElementById('fill-container');
+fills.forEach((f,i)=>{const div=document.createElement('div');div.className='fill-item';div.id='fill-'+i;div.innerHTML=`<div class="fill-sentence">${f.sentence.replace('___','<strong>___</strong>')}</div><div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;"><input class="fill-input" id="fi-${i}" placeholder="Respuesta..." onkeydown="if(event.key==='Enter')checkFill(${i})"><button class="btn" style="font-size:.8rem;padding:.3rem .8rem;" onclick="checkFill(${i})">Verificar</button></div><div class="fill-feedback" id="ff-${i}"></div>`;fillContainer.appendChild(div);});
+function checkFill(i){const val=document.getElementById('fi-'+i).value.trim().toLowerCase();const item=document.getElementById('fill-'+i);const fb=document.getElementById('ff-'+i);if(val===fills[i].answer.toLowerCase()){item.classList.remove('wrong');item.classList.add('correct');fb.textContent='✓ Correcto!';}else{item.classList.remove('correct');item.classList.add('wrong');fb.textContent=`✗ Respuesta: "${fills[i].answer}". ${fills[i].hint}`;}}
+
+const mcData=[
+  {q:'¿Qué ocurre si la condición de un "Si...Entonces" es Falsa?',options:['Se ejecuta el bloque de todas formas','Se ejecuta el bloque "Sino"','No se ejecuta ninguna acción del bloque','El programa termina'],correct:2,exp:'En Si...Entonces (sin Sino), si la condición es Falsa simplemente se omite el bloque y el programa continúa con la instrucción siguiente.'},
+  {q:'¿Cuál es la diferencia entre Si...Entonces y Si...Entonces...Sino?',options:['No hay diferencia','Si...Entonces tiene dos ramas, Si...Sino tiene una','Si...Entonces tiene una sola rama; Si...Sino tiene dos ramas','Solo Si...Sino puede tener condiciones'],correct:2,exp:'Si...Entonces solo ejecuta acciones cuando la condición es Verdadera. Si...Entonces...Sino siempre ejecuta algo: el bloque "Entonces" si es V, el "Sino" si es F.'},
+  {q:'Un alumno tiene promedio 7. ¿Qué imprime este algoritmo? Si (promedio >= 6) Entonces Mostrar "Aprobado" Sino Mostrar "Desaprobado"',options:['Desaprobado','Aprobado','Nada','Ambos mensajes'],correct:1,exp:'7 >= 6 es Verdadero, por lo tanto se ejecuta el bloque "Entonces" y se imprime "Aprobado".'},
+  {q:'¿Para qué sirve combinar operadores lógicos (&&, ||) en una condición?',options:['Para hacer el programa más lento','Para evaluar múltiples condiciones en una sola expresión','Para definir variables','Para mostrar mensajes'],correct:1,exp:'Los operadores && (Y) y || (O) permiten combinar múltiples condiciones en una sola expresión. Ej: edad >= 18 && edad <= 65.'},
+  {q:'¿Cuándo se usa una condicional anidada?',options:['Cuando hay un solo resultado posible','Para repetir instrucciones','Para evaluar múltiples condiciones en cascada, donde cada caso lleva a evaluar otra condición','Solo para comparar cadenas'],correct:2,exp:'Las condicionales anidadas permiten evaluar múltiples rangos o condiciones: si no cumple la primera, se evalúa la segunda dentro del "Sino", y así sucesivamente.'},
+];
+const mcContainer=document.getElementById('mc-container');
+mcData.forEach((mc,i)=>{const div=document.createElement('div');div.className='mc-item';div.id='mc-'+i;const L=['A','B','C','D'];div.innerHTML=`<div class="mc-question">${i+1}. ${mc.q}</div><div class="mc-options">${mc.options.map((o,j)=>`<div class="mc-option" onclick="checkMC(${i},${j})"><span class="mc-letter">${L[j]}</span>${o}</div>`).join('')}</div><div class="mc-explanation" id="mce-${i}">${mc.exp}</div>`;mcContainer.appendChild(div);});
+function checkMC(qi,oi){const item=document.getElementById('mc-'+qi);if(item.classList.contains('answered'))return;item.classList.add('answered');const opts=item.querySelectorAll('.mc-option');opts[oi].classList.add(oi===mcData[qi].correct?'selected-correct':'selected-wrong');if(oi!==mcData[qi].correct)opts[mcData[qi].correct].classList.add('reveal-correct');}
+</script>
+</body>
+</html>

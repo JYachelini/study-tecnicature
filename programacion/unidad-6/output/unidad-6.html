@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programación — Unidad 6: Funciones y Procedimientos</title>
+<style>
+  :root{--bg:#0a0e1a;--surface:#111827;--card:#1a2235;--border:#2a3755;--accent:#f472b6;--accent-light:rgba(244,114,182,.12);--accent2:#60c5fa;--accent2-light:rgba(96,197,250,.1);--success:#22c55e;--success-bg:rgba(34,197,94,.12);--error:#f87171;--error-bg:rgba(248,113,113,.12);--text:#e2e8f0;--text-muted:#7b8fa8;--text-dim:#3d506b;--mono:"JetBrains Mono","Fira Code","Consolas",monospace;--sans:"Lora","Georgia","Times New Roman",serif;--serif:"Lora","Georgia",serif;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--serif);font-size:16px;line-height:1.75;min-height:100vh;}
+  header{background:linear-gradient(160deg,#0a0e1a 0%,#1a0011 50%,#1a0018 100%);border-bottom:1px solid var(--border);padding:3rem 2rem 2.5rem;text-align:center;position:relative;overflow:hidden;}
+  header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(244,114,182,.15) 0%,transparent 70%);pointer-events:none;}
+  .tag{display:inline-block;font-family:var(--mono);font-size:.66rem;letter-spacing:.15em;color:var(--accent);background:var(--accent-light);border:1px solid rgba(244,114,182,.35);padding:.25rem .85rem;border-radius:99px;margin-bottom:1.1rem;}
+  header h1{font-family:var(--sans);font-size:clamp(1.8rem,4vw,3rem);font-weight:800;letter-spacing:-.03em;color:#fff;margin-bottom:.4rem;}
+  header h1 em{color:var(--accent);font-style:normal;}
+  header p{color:var(--text-muted);font-family:var(--sans);font-size:.88rem;}
+  .tabs-wrap{position:sticky;top:0;z-index:100;background:rgba(10,14,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 1rem;overflow-x:auto;scrollbar-width:none;}
+  .tabs-wrap::-webkit-scrollbar{display:none;}
+  .tabs{display:flex;min-width:max-content;}
+  .tab{font-family:var(--sans);font-size:.82rem;font-weight:500;padding:.75rem 1.1rem;cursor:pointer;color:var(--text-muted);border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+  .tab:hover{color:var(--text);}
+  .tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .panel{display:none;max-width:860px;margin:0 auto;padding:2.5rem 1.5rem 4rem;}
+  .panel.active{display:block;}
+  h2{font-family:var(--sans);font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:1.2rem;}
+  h3{font-family:var(--sans);font-size:1.05rem;font-weight:700;color:var(--accent2);margin:2rem 0 .6rem;}
+  p{margin-bottom:.9rem;}ul,ol{padding-left:1.5rem;margin-bottom:.9rem;}li{margin-bottom:.35rem;}
+  .summary-box{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;padding:1.4rem 1.6rem;margin-bottom:2rem;}
+  .concept-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem;margin-bottom:2rem;}
+  .concept-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem;transition:border-color .2s,transform .2s;}
+  .concept-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .concept-card .term{font-family:var(--mono);font-size:.78rem;font-weight:700;color:var(--accent);margin-bottom:.5rem;}
+  .concept-card .def{font-size:.9rem;color:var(--text-muted);line-height:1.5;}
+  .code-block{background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:1rem 1.4rem;font-family:var(--mono);font-size:.85rem;color:#c9d1d9;margin:1rem 0 1.5rem;overflow-x:auto;line-height:1.7;white-space:pre;}
+  .kw{color:#ff7b72;}.ty{color:#79c0ff;}.cm{color:#8b949e;font-style:italic;}.vr{color:#ffa657;}.st{color:#a5d6ff;}.fn{color:#f472b6;}
+  .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0 1.5rem;}
+  .compare-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem;}
+  .compare-title{font-family:var(--mono);font-size:.85rem;font-weight:700;color:var(--accent);margin-bottom:.7rem;}
+  .compare-item{font-size:.88rem;color:var(--text-muted);margin-bottom:.3rem;}
+  .example-box{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent2);border-radius:8px;padding:1.1rem 1.4rem;margin:1rem 0;}
+  .example-title{font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent2);margin-bottom:.5rem;}
+  .progress-bar-wrap{background:var(--surface);border-radius:99px;height:4px;margin-bottom:1.5rem;overflow:hidden;}
+  .progress-bar{height:100%;background:var(--accent);border-radius:99px;transition:width .3s;}
+  .fc-controls{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+  .fc-progress{font-family:var(--mono);font-size:.85rem;color:var(--text-muted);}
+  .fc-progress span{color:var(--accent);font-weight:700;}
+  .btn{font-family:var(--sans);font-size:.85rem;font-weight:600;padding:.45rem 1.1rem;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;transition:all .15s;}
+  .btn:hover{border-color:var(--accent);color:var(--accent);}
+  .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700;}
+  .flashcard-scene{perspective:1000px;height:220px;cursor:pointer;margin-bottom:1.5rem;user-select:none;}
+  .flashcard{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
+  .flashcard.flipped{transform:rotateY(180deg);}
+  .fc-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;border:1px solid var(--border);}
+  .fc-front{background:var(--card);}
+  .fc-back{background:linear-gradient(135deg,#1a0011,var(--card));border-color:var(--accent);transform:rotateY(180deg);}
+  .fc-hint{font-family:var(--mono);font-size:.7rem;color:var(--text-dim);margin-bottom:.5rem;}
+  .fc-question{font-size:1.05rem;font-weight:600;color:var(--text);line-height:1.5;}
+  .fc-answer{font-size:.95rem;color:var(--text-muted);line-height:1.6;}
+  .fill-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.5rem;margin-bottom:1rem;}
+  .fill-item.correct{border-color:var(--success);background:var(--success-bg);}
+  .fill-item.wrong{border-color:var(--error);background:var(--error-bg);}
+  .fill-sentence{font-size:.97rem;margin-bottom:.7rem;line-height:1.7;}
+  .fill-input{font-family:var(--mono);font-size:.88rem;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:.4rem .8rem;border-radius:5px;width:220px;outline:none;}
+  .fill-input:focus{border-color:var(--accent2);}
+  .fill-feedback{font-family:var(--sans);font-size:.83rem;margin-top:.5rem;display:none;}
+  .fill-item.correct .fill-feedback{display:block;color:var(--success);}
+  .fill-item.wrong .fill-feedback{display:block;color:var(--error);}
+  .mc-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem 1.5rem;margin-bottom:1.2rem;}
+  .mc-question{font-size:.97rem;font-weight:600;margin-bottom:1rem;}
+  .mc-options{display:flex;flex-direction:column;gap:.5rem;}
+  .mc-option{display:flex;align-items:flex-start;gap:.7rem;padding:.6rem .9rem;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-size:.9rem;transition:all .15s;background:var(--surface);}
+  .mc-option:hover{border-color:var(--accent);}
+  .mc-option.selected-correct{border-color:var(--success);background:var(--success-bg);color:var(--success);}
+  .mc-option.selected-wrong{border-color:var(--error);background:var(--error-bg);color:var(--error);}
+  .mc-option.reveal-correct{border-color:var(--success);background:var(--success-bg);}
+  .mc-letter{font-family:var(--mono);font-size:.75rem;font-weight:700;color:var(--text-muted);min-width:18px;padding-top:1px;}
+  .mc-explanation{margin-top:.8rem;padding:.7rem 1rem;background:var(--surface);border-radius:6px;font-size:.85rem;color:var(--text-muted);display:none;border-left:2px solid var(--accent);}
+  .mc-item.answered .mc-explanation{display:block;}
+  .mc-item.answered .mc-option{pointer-events:none;}
+  @media(max-width:600px){.compare-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="tag">Programación · Unidad 6</div>
+  <h1>Funciones y <em>Procedimientos</em></h1>
+  <p>Modularización · Top Down · Parámetros · Variables Locales y Globales</p>
+</header>
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('resumen')">Resumen</button>
+    <button class="tab" onclick="showTab('conceptos')">Conceptos Clave</button>
+    <button class="tab" onclick="showTab('detalle')">Explicación Detallada</button>
+    <button class="tab" onclick="showTab('flashcards')">Flashcards</button>
+    <button class="tab" onclick="showTab('completar')">Completar el Espacio</button>
+    <button class="tab" onclick="showTab('multiple')">Multiple Choice</button>
+  </div>
+</div>
+
+<div id="panel-resumen" class="panel active">
+  <h2>Resumen General</h2>
+  <div class="summary-box">
+    <p>La <strong>modularización</strong> (Desarrollo Top Down) consiste en dividir el problema en subproblemas más pequeños y resolverlos mediante <strong>funciones</strong> y <strong>procedimientos</strong>. Las funciones <em>retornan</em> un valor; los procedimientos <em>no retornan</em>. Ambos reciben <strong>parámetros</strong>. Las variables definidas dentro de un módulo son <strong>locales</strong> (no accesibles desde afuera). Esta técnica simplifica el código, permite la reutilización y mejora la legibilidad.</p>
+  </div>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-title">Función</div>
+      <div class="compare-item">✓ Recibe parámetros</div>
+      <div class="compare-item">✓ Realiza una tarea</div>
+      <div class="compare-item">✓ <strong>Retorna un valor</strong></div>
+      <div class="compare-item" style="color:var(--text-dim);">Ej: calcularRaiz(n)</div>
+    </div>
+    <div class="compare-card">
+      <div class="compare-title">Procedimiento</div>
+      <div class="compare-item">✓ Recibe parámetros</div>
+      <div class="compare-item">✓ Realiza una tarea</div>
+      <div class="compare-item" style="color:var(--text-dim);">✗ No retorna valor</div>
+      <div class="compare-item" style="color:var(--text-dim);">Ej: mostrarResultado(r)</div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-conceptos" class="panel">
+  <h2>Conceptos Clave</h2>
+  <div class="concept-grid">
+    <div class="concept-card"><div class="term">Modularización</div><div class="def">Dividir un programa en módulos más pequeños, cada uno con una tarea específica. "Divide y vencerás".</div></div>
+    <div class="concept-card"><div class="term">Desarrollo Top Down</div><div class="def">Metodología de ir del problema general a subproblemas específicos, descomponiéndolos progresivamente.</div></div>
+    <div class="concept-card"><div class="term">Módulo / Subprograma</div><div class="def">Unidad de código independiente con nombre, que puede llamarse desde el programa principal. Sinónimos: rutina, subrutina, función, procedimiento.</div></div>
+    <div class="concept-card"><div class="term">Función</div><div class="def">Módulo que realiza una tarea y RETORNA un valor al código que la llamó.</div></div>
+    <div class="concept-card"><div class="term">Procedimiento</div><div class="def">Módulo que realiza una tarea pero NO retorna ningún valor. En C++: función void.</div></div>
+    <div class="concept-card"><div class="term">Parámetro</div><div class="def">Dato que se le pasa a una función o procedimiento para que trabaje con él. Define la "interfaz" del módulo.</div></div>
+    <div class="concept-card"><div class="term">Variable Local</div><div class="def">Variable definida dentro de un módulo. Solo existe y es accesible dentro de ese módulo.</div></div>
+    <div class="concept-card"><div class="term">Variable Global</div><div class="def">Variable definida fuera de todos los módulos. Accesible desde cualquier parte del programa.</div></div>
+    <div class="concept-card"><div class="term">Reutilización de Código</div><div class="def">Un módulo ya escrito puede usarse múltiples veces en distintos programas sin reescribirlo. Evita "reinventar la rueda".</div></div>
+    <div class="concept-card"><div class="term">Algoritmo Principal</div><div class="def">El módulo raíz que llama a los subalgoritmos para resolver el problema completo.</div></div>
+  </div>
+</div>
+
+<div id="panel-detalle" class="panel">
+  <h2>Explicación Detallada</h2>
+
+  <h3>¿Por qué modularizar?</h3>
+  <p>A medida que los algoritmos se vuelven más complejos, necesitamos una estrategia para manejar esa complejidad. La <strong>modularización</strong> resuelve esto dividiendo el problema en partes más manejables.</p>
+  <div class="example-box">
+    <div class="example-title">Analogía de la mudanza</div>
+    <p>Mudarse = <strong>buscar hogar</strong> + <strong>adquirir propiedad</strong> + <strong>realizar mudanza</strong>.<br>
+    Buscar hogar = visitar inmobiliarias + comparar propiedades + decidir cuál adquirir.</p>
+    <p>Esto es el Desarrollo Top Down: dividir el problema grande en subproblemas cada vez más pequeños.</p>
+  </div>
+
+  <h3>Ventajas de la Modularización</h3>
+  <ul>
+    <li><strong>Simplifica el programa:</strong> cada módulo es más simple de programar que el problema completo.</li>
+    <li><strong>Permite la reutilización:</strong> un módulo escrito una vez puede usarse en otros programas.</li>
+    <li><strong>Más legible:</strong> el algoritmo principal es una lista corta de llamadas a módulos, fácil de leer.</li>
+    <li><strong>Más fácil de probar:</strong> cada módulo puede probarse de forma independiente.</li>
+    <li><strong>Trabajo en equipo:</strong> distintos módulos pueden ser desarrollados por distintas personas.</li>
+  </ul>
+
+  <h3>Función vs. Procedimiento en Pseudocódigo</h3>
+  <div class="code-block"><span class="cm">// FUNCIÓN: retorna un valor</span>
+<span class="ty">Real</span> <span class="fn">calcularPromedio</span>(<span class="ty">Real</span> <span class="vr">nota1</span>, <span class="ty">Real</span> <span class="vr">nota2</span>)
+    <span class="kw">Definir</span> <span class="vr">promedio</span> <span class="kw">como</span> <span class="ty">Real</span>;
+    <span class="vr">promedio</span> = (<span class="vr">nota1</span> + <span class="vr">nota2</span>) / 2;
+    <span class="kw">Retornar</span> <span class="vr">promedio</span>;
+<span class="kw">FinFunción</span>
+
+<span class="cm">// PROCEDIMIENTO: no retorna valor</span>
+<span class="fn">mostrarSaludo</span>(<span class="ty">Cadena</span> <span class="vr">nombre</span>)
+    <span class="kw">Mostrar</span> <span class="st">"Hola, "</span>, <span class="vr">nombre</span>;
+<span class="kw">FinProcedimiento</span>
+
+<span class="cm">// PROGRAMA PRINCIPAL que los usa:</span>
+<span class="kw">Proceso</span> Principal
+    <span class="kw">Definir</span> <span class="vr">prom</span> <span class="kw">como</span> <span class="ty">Real</span>;
+    <span class="vr">prom</span> = <span class="fn">calcularPromedio</span>(8, 6); <span class="cm">// llama a la función</span>
+    <span class="fn">mostrarSaludo</span>(<span class="st">"Ana"</span>);             <span class="cm">// llama al procedimiento</span>
+<span class="kw">FinProceso</span></div>
+
+  <h3>Variables Locales vs. Globales</h3>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-title">Variable Local</div>
+      <div class="compare-item">• Definida dentro de un módulo</div>
+      <div class="compare-item">• Solo existe durante la ejecución del módulo</div>
+      <div class="compare-item">• No puede accederse desde afuera</div>
+      <div class="compare-item">• Recomendada: evita efectos secundarios</div>
+    </div>
+    <div class="compare-card">
+      <div class="compare-title">Variable Global</div>
+      <div class="compare-item">• Definida fuera de todos los módulos</div>
+      <div class="compare-item">• Existe durante toda la ejecución</div>
+      <div class="compare-item">• Accesible desde cualquier módulo</div>
+      <div class="compare-item">• Usar con cuidado: puede causar errores difíciles de rastrear</div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-flashcards" class="panel">
+  <h2>Flashcards</h2>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="fc-bar" style="width:8%"></div></div>
+  <div class="fc-controls">
+    <div class="fc-progress">Carta <span id="fc-current">1</span> / <span id="fc-total">12</span></div>
+    <div style="display:flex;gap:.5rem;">
+      <button class="btn" onclick="fcPrev()">← Anterior</button>
+      <button class="btn btn-primary" onclick="fcNext()">Siguiente →</button>
+    </div>
+  </div>
+  <div class="flashcard-scene" onclick="document.getElementById('flashcard').classList.toggle('flipped')">
+    <div class="flashcard" id="flashcard">
+      <div class="fc-face fc-front"><div class="fc-hint">click para ver respuesta</div><div class="fc-question" id="fc-q">¿Qué es la modularización?</div></div>
+      <div class="fc-face fc-back"><div class="fc-hint">Respuesta</div><div class="fc-answer" id="fc-a">Dividir un programa en módulos más pequeños, donde cada uno realiza una tarea específica. Hace el código más simple, legible y reutilizable.</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-completar" class="panel">
+  <h2>Completar el Espacio</h2>
+  <p style="color:var(--text-muted);margin-bottom:1.5rem;font-family:var(--sans);font-size:.9rem;">Completá con la respuesta correcta.</p>
+  <div id="fill-container"></div>
+</div>
+<div id="panel-multiple" class="panel">
+  <h2>Multiple Choice</h2>
+  <div id="mc-container"></div>
+</div>
+
+<script>
+function showTab(id){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('panel-'+id).classList.add('active');event.target.classList.add('active');}
+const cards=[
+  {q:'¿Qué es la modularización?',a:'Dividir un programa en módulos más pequeños, cada uno con una tarea específica. Hace el código más simple, legible y reutilizable.'},
+  {q:'¿Cuál es la diferencia entre una Función y un Procedimiento?',a:'La función RETORNA un valor. El procedimiento realiza una tarea pero NO retorna ningún valor.'},
+  {q:'¿Qué es el Desarrollo Top Down?',a:'Metodología que va del problema general a subproblemas específicos: se descompone el problema de arriba hacia abajo, de lo general a lo particular.'},
+  {q:'¿Para qué sirven los parámetros?',a:'Para pasarle datos a una función o procedimiento. Definen la interfaz del módulo: qué información necesita para funcionar.'},
+  {q:'¿Qué es una variable local?',a:'Variable definida dentro de un módulo. Solo existe y es accesible durante la ejecución de ese módulo.'},
+  {q:'¿Qué es una variable global?',a:'Variable definida fuera de todos los módulos. Existe durante toda la ejecución y es accesible desde cualquier parte del programa.'},
+  {q:'¿Qué significa "reutilización de código"?',a:'Que un módulo ya escrito puede usarse múltiples veces, en distintos programas, sin necesidad de reescribirlo. Evita "reinventar la rueda".'},
+  {q:'¿Cómo se llaman los sinónimos de "módulo"?',a:'Subprograma, rutina, subrutina, función, procedimiento. Todos representan el mismo concepto: una unidad de código independiente con un propósito específico.'},
+  {q:'¿Por qué conviene usar variables locales en lugar de globales?',a:'Las variables locales evitan efectos secundarios: no pueden ser modificadas accidentalmente desde otros módulos, haciendo el código más predecible y seguro.'},
+  {q:'¿Qué es el algoritmo principal en un programa modularizado?',a:'El módulo raíz que llama a los subalgoritmos. Al leerlo se entiende la idea general del programa sin necesidad de ver los detalles de implementación.'},
+  {q:'¿Cómo se representa una función que no retorna valor en C++?',a:'Con el tipo de retorno void. Ej: void mostrarSaludo(string nombre) {...}'},
+  {q:'¿Cuál es la ventaja de trabajar con módulos en equipo?',a:'Distintos módulos pueden ser desarrollados en paralelo por distintas personas, ya que cada módulo tiene su interfaz definida (parámetros y retorno).'},
+];
+let fcIdx=0;
+function updateFC(){document.getElementById('fc-q').textContent=cards[fcIdx].q;document.getElementById('fc-a').textContent=cards[fcIdx].a;document.getElementById('fc-current').textContent=fcIdx+1;document.getElementById('fc-total').textContent=cards.length;document.getElementById('fc-bar').style.width=((fcIdx+1)/cards.length*100)+'%';document.getElementById('flashcard').classList.remove('flipped');}
+function fcNext(){fcIdx=(fcIdx+1)%cards.length;updateFC();}function fcPrev(){fcIdx=(fcIdx-1+cards.length)%cards.length;updateFC();}
+
+const fills=[
+  {sentence:'La ___ consiste en dividir un programa en módulos más pequeños con tareas específicas.',answer:'modularización',hint:'También llamada "divide y vencerás".'},
+  {sentence:'Una ___ es un módulo que retorna un valor al código que la llamó.',answer:'función',hint:'Se opone al procedimiento.'},
+  {sentence:'Un ___ es un módulo que realiza una tarea pero NO retorna ningún valor.',answer:'procedimiento',hint:'En C++ usa el tipo void.'},
+  {sentence:'Los ___ son los datos que se le pasan a una función para que trabaje con ellos.',answer:'parámetros',hint:'La interfaz del módulo.'},
+  {sentence:'Una variable ___ solo existe y es accesible dentro del módulo donde fue definida.',answer:'local',hint:'Se opone a global.'},
+  {sentence:'La metodología de ir del problema general a subproblemas se llama Desarrollo ___ ___.',answer:'top down',hint:'De arriba hacia abajo.'},
+  {sentence:'La ___ de código permite usar un módulo en distintos programas sin reescribirlo.',answer:'reutilización',hint:'Ventaja clave de la modularización.'},
+  {sentence:'En C++, un procedimiento (sin retorno) se declara con el tipo ___.',answer:'void',hint:'Significa "vacío" en inglés.'},
+  {sentence:'El algoritmo ___ es el módulo raíz que llama a todos los subalgoritmos.',answer:'principal',hint:'El punto de entrada del programa.'},
+  {sentence:'Función, procedimiento, rutina, subrutina y módulo son todos ___ del mismo concepto.',answer:'sinónimos',hint:'Distintos nombres para la misma idea.'},
+];
+const fillContainer=document.getElementById('fill-container');
+fills.forEach((f,i)=>{const div=document.createElement('div');div.className='fill-item';div.id='fill-'+i;div.innerHTML=`<div class="fill-sentence">${f.sentence.replace('___','<strong>___</strong>')}</div><div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;"><input class="fill-input" id="fi-${i}" placeholder="Respuesta..." onkeydown="if(event.key==='Enter')checkFill(${i})"><button class="btn" style="font-size:.8rem;padding:.3rem .8rem;" onclick="checkFill(${i})">Verificar</button></div><div class="fill-feedback" id="ff-${i}"></div>`;fillContainer.appendChild(div);});
+function checkFill(i){const val=document.getElementById('fi-'+i).value.trim().toLowerCase();const item=document.getElementById('fill-'+i);const fb=document.getElementById('ff-'+i);if(val===fills[i].answer.toLowerCase()){item.classList.remove('wrong');item.classList.add('correct');fb.textContent='✓ Correcto!';}else{item.classList.remove('correct');item.classList.add('wrong');fb.textContent=`✗ Respuesta: "${fills[i].answer}". ${fills[i].hint}`;}}
+
+const mcData=[
+  {q:'¿Cuál es la diferencia entre una Función y un Procedimiento?',options:['No hay diferencia','La función usa parámetros, el procedimiento no','La función retorna un valor, el procedimiento no','El procedimiento es más rápido'],correct:2,exp:'La función RETORNA un valor al código que la llamó. El procedimiento realiza una tarea pero no devuelve ningún valor (en C++ es void).'},
+  {q:'¿Qué ventaja tiene la reutilización de código?',options:['Hace el programa más lento','Permite usar un módulo en distintos programas sin reescribirlo','Aumenta el tamaño del código','Solo funciona con funciones, no con procedimientos'],correct:1,exp:'Una vez que se programa un módulo (ej: calcularRaizCuadrada), puede usarse en cualquier programa que lo necesite sin tener que volver a programarlo.'},
+  {q:'¿Qué son los parámetros de una función?',options:['Los resultados que devuelve','Los comentarios del código','Los datos que se le pasan para que trabaje con ellos','Las variables globales del programa'],correct:2,exp:'Los parámetros son los datos de entrada de una función o procedimiento. Definen su "interfaz": qué información necesita para realizar su tarea.'},
+  {q:'¿Qué es una variable local?',options:['Una variable que se puede usar en todo el programa','Una variable definida dentro de un módulo, accesible solo en él','Una variable de tipo entero','Una variable que no cambia'],correct:1,exp:'Una variable local se define dentro de un módulo (función o procedimiento) y solo existe durante la ejecución de ese módulo. No puede accederse desde afuera.'},
+  {q:'¿Qué describe mejor el Desarrollo Top Down?',options:['Escribir el código de abajo hacia arriba','Dividir el problema general en subproblemas cada vez más específicos','Usar solo variables globales','Programar sin módulos'],correct:1,exp:'El Desarrollo Top Down ("de arriba hacia abajo") comienza con el problema completo y lo va dividiendo en subproblemas más simples, hasta llegar a partes que pueden codificarse directamente.'},
+  {q:'¿Por qué se recomienda usar variables locales en lugar de globales?',options:['Son más rápidas','Ocupan menos memoria','Evitan efectos secundarios y hacen el código más predecible','Son más fáciles de declarar'],correct:2,exp:'Las variables locales solo pueden ser modificadas desde dentro de su módulo, evitando que otro módulo las cambie accidentalmente. Esto hace el código más confiable y los errores más fáciles de localizar.'},
+];
+const mcContainer=document.getElementById('mc-container');
+mcData.forEach((mc,i)=>{const div=document.createElement('div');div.className='mc-item';div.id='mc-'+i;const L=['A','B','C','D'];div.innerHTML=`<div class="mc-question">${i+1}. ${mc.q}</div><div class="mc-options">${mc.options.map((o,j)=>`<div class="mc-option" onclick="checkMC(${i},${j})"><span class="mc-letter">${L[j]}</span>${o}</div>`).join('')}</div><div class="mc-explanation" id="mce-${i}">${mc.exp}</div>`;mcContainer.appendChild(div);});
+function checkMC(qi,oi){const item=document.getElementById('mc-'+qi);if(item.classList.contains('answered'))return;item.classList.add('answered');const opts=item.querySelectorAll('.mc-option');opts[oi].classList.add(oi===mcData[qi].correct?'selected-correct':'selected-wrong');if(oi!==mcData[qi].correct)opts[mcData[qi].correct].classList.add('reveal-correct');}
+</script>
+</body>
+</html>
