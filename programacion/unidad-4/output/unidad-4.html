@@ -73,9 +73,31 @@
   .mc-explanation{margin-top:.8rem;padding:.7rem 1rem;background:var(--surface);border-radius:6px;font-size:.85rem;color:var(--text-muted);display:none;border-left:2px solid var(--accent);}
   .mc-item.answered .mc-explanation{display:block;}
   .mc-item.answered .mc-option{pointer-events:none;}
+
+  /* ── BACK BUTTON ── */
+  .back-btn{position:fixed;top:1rem;left:1rem;z-index:200;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted,#7b8fa8);text-decoration:none;padding:.38rem .72rem;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:color .2s,border-color .2s,background .2s;white-space:nowrap;line-height:1;}
+  .back-btn:hover{color:var(--accent,#4fc3f7);border-color:rgba(255,255,255,.28);background:rgba(0,0,0,.75);}
+
+  /* ── C++ EXERCISES ── */
+  .cpp-exercise{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.5rem;margin-bottom:1.2rem;}
+  .cpp-exercise.correct{border-color:var(--success,#22c55e);background:var(--success-bg,rgba(34,197,94,.12));}
+  .cpp-exercise.wrong{border-color:var(--error,#f87171);background:var(--error-bg,rgba(248,113,113,.12));}
+  .cpp-title{font-family:var(--mono,"Consolas",monospace);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:.7rem;}
+  .cpp-code{background:#0d1117;border:1px solid var(--border);border-radius:6px;padding:.9rem 1.1rem;font-family:var(--mono,"Consolas",monospace);font-size:.84rem;color:#c9d1d9;line-height:1.7;margin-bottom:.8rem;overflow-x:auto;white-space:pre;}
+  .cpp-blank-label{font-size:.88rem;color:var(--text-muted);margin-bottom:.5rem;}
+  .cpp-blank-label strong{color:var(--accent);}
+  .cpp-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+  .cpp-input{background:var(--surface,#111);border:1px solid var(--border);border-radius:5px;padding:.38rem .7rem;font-family:var(--mono,"Consolas",monospace);font-size:.88rem;color:var(--text);width:160px;outline:none;transition:border-color .15s;}
+  .cpp-input:focus{border-color:var(--accent);}
+  .cpp-feedback{margin-top:.55rem;font-size:.88rem;line-height:1.5;}
+  .cpp-feedback.ok{color:var(--success,#22c55e);}
+  .cpp-feedback.err{color:var(--error,#f87171);}
+
 </style>
 </head>
 <body>
+<a class="back-btn" href="../../../index.html">&#8592; Inicio</a>
+
 <header>
   <div class="tag">Programación · Unidad 4</div>
   <h1>Estructuras de <em>Control</em></h1>
@@ -89,6 +111,7 @@
     <button class="tab" onclick="showTab('flashcards')">Flashcards</button>
     <button class="tab" onclick="showTab('completar')">Completar el Espacio</button>
     <button class="tab" onclick="showTab('multiple')">Multiple Choice</button>
+    <button class="tab" onclick="showTab('cpp')">C++</button>
   </div>
 </div>
 
@@ -260,6 +283,81 @@ const mcData=[
 const mcContainer=document.getElementById('mc-container');
 mcData.forEach((mc,i)=>{const div=document.createElement('div');div.className='mc-item';div.id='mc-'+i;const L=['A','B','C','D'];div.innerHTML=`<div class="mc-question">${i+1}. ${mc.q}</div><div class="mc-options">${mc.options.map((o,j)=>`<div class="mc-option" onclick="checkMC(${i},${j})"><span class="mc-letter">${L[j]}</span>${o}</div>`).join('')}</div><div class="mc-explanation" id="mce-${i}">${mc.exp}</div>`;mcContainer.appendChild(div);});
 function checkMC(qi,oi){const item=document.getElementById('mc-'+qi);if(item.classList.contains('answered'))return;item.classList.add('answered');const opts=item.querySelectorAll('.mc-option');opts[oi].classList.add(oi===mcData[qi].correct?'selected-correct':'selected-wrong');if(oi!==mcData[qi].correct)opts[mcData[qi].correct].classList.add('reveal-correct');}
+const cppEx = [
+  { title: 'Condicional simple', code: `int temperatura = 35;
+if (temperatura ___ 30) {
+    cout << "Hace calor";
+}`, blank: '¿Qué operador compara temperatura con 30?', answer: '>', hint: 'Mayor que. El if se ejecuta cuando la temperatura supera 30.' },
+  { title: 'if-else', code: `int nota = 7;
+if (nota >= 6) {
+    cout << "Aprobado";
+} ___ {
+    cout << "Reprobado";
+}`, blank: '¿Qué palabra introduce el bloque alternativo?', answer: 'else', hint: 'else se ejecuta cuando la condición del if es falsa.' },
+  { title: 'else if encadenado', code: `int numero = 0;
+if (numero > 0) {
+    cout << "Positivo";
+} ___ if (numero < 0) {
+    cout << "Negativo";
+} else {
+    cout << "Cero";
+}`, blank: '¿Qué palabra une la segunda condición?', answer: 'else', hint: 'else if evalúa una nueva condición cuando la anterior fue falsa.' },
+  { title: 'switch', code: `int dia = 3;
+___ (dia) {
+    case 1: cout << "Lunes"; break;
+    case 2: cout << "Martes"; break;
+    case 3: cout << "Miercoles"; break;
+}`, blank: '¿Qué palabra inicia la estructura de selección múltiple?', answer: 'switch', hint: 'switch evalúa una expresión y salta al case que coincida.' },
+  { title: 'Operador lógico AND', code: `int edad = 20;
+bool tieneCarnet = true;
+if (edad >= 18 ___ tieneCarnet) {
+    cout << "Puede manejar";
+}`, blank: '¿Qué operador exige que ambas condiciones sean verdaderas?', answer: '&&', hint: 'En C++ el AND lógico se escribe &&. Ambas condiciones deben ser true.' },
+  { title: 'case con default', code: `switch (opcion) {
+    case 1: cout << "Opcion A"; break;
+    case 2: cout << "Opcion B"; break;
+    ___: cout << "Opcion invalida";
+}`, blank: '¿Qué caso se ejecuta si ninguno coincide?', answer: 'default', hint: 'default es el caso "por defecto", se ejecuta si ningún case coincide.' },
+];
+
+const cppContainer = document.getElementById('cpp-container');
+cppEx.forEach((ex, i) => {
+  const d = document.createElement('div');
+  d.className = 'cpp-exercise';
+  d.id = 'cpp-' + i;
+  // highlight ___ in code
+  const codeHtml = ex.code.replace(/___/g, '<span style="color:var(--accent);font-weight:700;">___</span>');
+  d.innerHTML = `
+    <div class="cpp-title">${i+1}. ${ex.title}</div>
+    <pre class="cpp-code">${codeHtml}</pre>
+    <div class="cpp-blank-label">${ex.blank}</div>
+    <div class="cpp-row">
+      <input class="cpp-input" id="cppi-${i}" placeholder="Respuesta..." onkeydown="if(event.key==='Enter')checkCpp(${i})">
+      <button class="btn" onclick="checkCpp(${i})">Verificar</button>
+    </div>
+    <div class="cpp-feedback" id="cppf-${i}"></div>`;
+  cppContainer.appendChild(d);
+});
+function checkCpp(i) {
+  const val = document.getElementById('cppi-'+i).value.trim();
+  const ex = cppEx[i];
+  const el = document.getElementById('cpp-'+i);
+  const fb = document.getElementById('cppf-'+i);
+  const ok = val.toLowerCase() === ex.answer.toLowerCase();
+  el.classList.toggle('correct', ok);
+  el.classList.toggle('wrong', !ok);
+  fb.className = 'cpp-feedback ' + (ok ? 'ok' : 'err');
+  fb.textContent = ok
+    ? '✓ Correcto! ' + ex.hint
+    : '✗ La respuesta es "' + ex.answer + '". ' + ex.hint;
+}
+
 </script>
+<div id="panel-cpp" class="panel">
+<h2>Ejercicios en C++</h2>
+<p style="color:var(--text-muted);font-size:.9rem;margin-bottom:1.5rem;">Completá el código: escribí la palabra o símbolo que falta en cada fragmento.</p>
+<div id="cpp-container"></div>
+</div>
+
 </body>
 </html>

@@ -78,9 +78,31 @@
   .mc-item.answered .mc-explanation{display:block;}
   .mc-item.answered .mc-option{pointer-events:none;}
   @media(max-width:600px){.compare-grid{grid-template-columns:1fr;}}
+
+  /* ── BACK BUTTON ── */
+  .back-btn{position:fixed;top:1rem;left:1rem;z-index:200;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted,#7b8fa8);text-decoration:none;padding:.38rem .72rem;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:color .2s,border-color .2s,background .2s;white-space:nowrap;line-height:1;}
+  .back-btn:hover{color:var(--accent,#4fc3f7);border-color:rgba(255,255,255,.28);background:rgba(0,0,0,.75);}
+
+  /* ── C++ EXERCISES ── */
+  .cpp-exercise{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.5rem;margin-bottom:1.2rem;}
+  .cpp-exercise.correct{border-color:var(--success,#22c55e);background:var(--success-bg,rgba(34,197,94,.12));}
+  .cpp-exercise.wrong{border-color:var(--error,#f87171);background:var(--error-bg,rgba(248,113,113,.12));}
+  .cpp-title{font-family:var(--mono,"Consolas",monospace);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:.7rem;}
+  .cpp-code{background:#0d1117;border:1px solid var(--border);border-radius:6px;padding:.9rem 1.1rem;font-family:var(--mono,"Consolas",monospace);font-size:.84rem;color:#c9d1d9;line-height:1.7;margin-bottom:.8rem;overflow-x:auto;white-space:pre;}
+  .cpp-blank-label{font-size:.88rem;color:var(--text-muted);margin-bottom:.5rem;}
+  .cpp-blank-label strong{color:var(--accent);}
+  .cpp-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+  .cpp-input{background:var(--surface,#111);border:1px solid var(--border);border-radius:5px;padding:.38rem .7rem;font-family:var(--mono,"Consolas",monospace);font-size:.88rem;color:var(--text);width:160px;outline:none;transition:border-color .15s;}
+  .cpp-input:focus{border-color:var(--accent);}
+  .cpp-feedback{margin-top:.55rem;font-size:.88rem;line-height:1.5;}
+  .cpp-feedback.ok{color:var(--success,#22c55e);}
+  .cpp-feedback.err{color:var(--error,#f87171);}
+
 </style>
 </head>
 <body>
+<a class="back-btn" href="../../../index.html">&#8592; Inicio</a>
+
 <header>
   <div class="tag">Programación · Unidad 6</div>
   <h1>Funciones y <em>Procedimientos</em></h1>
@@ -94,6 +116,7 @@
     <button class="tab" onclick="showTab('flashcards')">Flashcards</button>
     <button class="tab" onclick="showTab('completar')">Completar el Espacio</button>
     <button class="tab" onclick="showTab('multiple')">Multiple Choice</button>
+    <button class="tab" onclick="showTab('cpp')">C++</button>
   </div>
 </div>
 
@@ -271,6 +294,81 @@ const mcData=[
 const mcContainer=document.getElementById('mc-container');
 mcData.forEach((mc,i)=>{const div=document.createElement('div');div.className='mc-item';div.id='mc-'+i;const L=['A','B','C','D'];div.innerHTML=`<div class="mc-question">${i+1}. ${mc.q}</div><div class="mc-options">${mc.options.map((o,j)=>`<div class="mc-option" onclick="checkMC(${i},${j})"><span class="mc-letter">${L[j]}</span>${o}</div>`).join('')}</div><div class="mc-explanation" id="mce-${i}">${mc.exp}</div>`;mcContainer.appendChild(div);});
 function checkMC(qi,oi){const item=document.getElementById('mc-'+qi);if(item.classList.contains('answered'))return;item.classList.add('answered');const opts=item.querySelectorAll('.mc-option');opts[oi].classList.add(oi===mcData[qi].correct?'selected-correct':'selected-wrong');if(oi!==mcData[qi].correct)opts[mcData[qi].correct].classList.add('reveal-correct');}
+const cppEx = [
+  { title: 'Tipo de retorno', code: `___ suma(int a, int b) {
+    return a + b;
+}`, blank: '¿Qué tipo de retorno tiene esta función si devuelve un entero?', answer: 'int', hint: 'El tipo de retorno va antes del nombre. Como a + b es entero, el tipo es int.' },
+  { title: 'return', code: `int cuadrado(int n) {
+    ___ n * n;
+}`, blank: '¿Qué instrucción devuelve el resultado al que llamó?', answer: 'return', hint: 'return termina la función y envía el valor al punto de llamada.' },
+  { title: 'Función void', code: `___ saludar(string nombre) {
+    cout << "Hola, " << nombre;
+}`, blank: '¿Qué tipo indica que la función no retorna ningún valor?', answer: 'void', hint: 'void = vacío. Equivale a un procedimiento: ejecuta acciones pero no devuelve nada.' },
+  { title: 'Función max (del PDF)', code: `int max(int num1, int num2) {
+    int result;
+    if (num1 > num2)
+        result = num1;
+    ___
+        result = num2;
+    return result;
+}`, blank: '¿Qué palabra introduce el caso alternativo?', answer: 'else', hint: 'Si num1 no es mayor que num2, el else asigna num2 como resultado.' },
+  { title: 'Llamada a función', code: `int a = 100, b = 200;
+int ret = ___(a, b);
+cout << "Maximo: " << ret;`, blank: '¿Cómo se llama la función que retorna el máximo? (del PDF)', answer: 'max', hint: 'Se llama a la función por su nombre seguido de los argumentos entre paréntesis.' },
+  { title: 'Variable local', code: `int calcular() {
+    int ___ = 10;  // solo existe dentro de esta funcion
+    return local * 2;
+}`, blank: '¿Qué nombre tiene la variable local usada en el return?', answer: 'local', hint: 'Una variable local solo existe dentro de la función. No es accesible desde afuera.' },
+  { title: 'Declaración de firma (PDF)', code: `#include <iostream>
+using namespace std;
+
+___ max(int num1, int num2);  // firma declarada antes del main
+
+int main() {
+    int ret = max(100, 200);
+    cout << ret;
+    return 0;
+}`, blank: '¿Qué tipo de retorno tiene la función max?', answer: 'int', hint: 'La firma anticipa al compilador qué función existe. max compara enteros y devuelve uno.' },
+];
+
+const cppContainer = document.getElementById('cpp-container');
+cppEx.forEach((ex, i) => {
+  const d = document.createElement('div');
+  d.className = 'cpp-exercise';
+  d.id = 'cpp-' + i;
+  // highlight ___ in code
+  const codeHtml = ex.code.replace(/___/g, '<span style="color:var(--accent);font-weight:700;">___</span>');
+  d.innerHTML = `
+    <div class="cpp-title">${i+1}. ${ex.title}</div>
+    <pre class="cpp-code">${codeHtml}</pre>
+    <div class="cpp-blank-label">${ex.blank}</div>
+    <div class="cpp-row">
+      <input class="cpp-input" id="cppi-${i}" placeholder="Respuesta..." onkeydown="if(event.key==='Enter')checkCpp(${i})">
+      <button class="btn" onclick="checkCpp(${i})">Verificar</button>
+    </div>
+    <div class="cpp-feedback" id="cppf-${i}"></div>`;
+  cppContainer.appendChild(d);
+});
+function checkCpp(i) {
+  const val = document.getElementById('cppi-'+i).value.trim();
+  const ex = cppEx[i];
+  const el = document.getElementById('cpp-'+i);
+  const fb = document.getElementById('cppf-'+i);
+  const ok = val.toLowerCase() === ex.answer.toLowerCase();
+  el.classList.toggle('correct', ok);
+  el.classList.toggle('wrong', !ok);
+  fb.className = 'cpp-feedback ' + (ok ? 'ok' : 'err');
+  fb.textContent = ok
+    ? '✓ Correcto! ' + ex.hint
+    : '✗ La respuesta es "' + ex.answer + '". ' + ex.hint;
+}
+
 </script>
+<div id="panel-cpp" class="panel">
+<h2>Ejercicios en C++</h2>
+<p style="color:var(--text-muted);font-size:.9rem;margin-bottom:1.5rem;">Completá el código: escribí la palabra o símbolo que falta en cada fragmento.</p>
+<div id="cpp-container"></div>
+</div>
+
 </body>
 </html>
