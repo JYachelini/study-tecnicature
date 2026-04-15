@@ -320,6 +320,7 @@ for (int i = 1; i <= 5; i++) {
 cout << "Suma: " << suma;`, blank: '¿Qué variable acumula la suma?', answer: 'suma', hint: 'Un acumulador parte en 0 y se le agrega el valor en cada iteración.' },
 ];
 
+document.addEventListener('DOMContentLoaded', function() {
 const cppContainer = document.getElementById('cpp-container');
 cppEx.forEach((ex, i) => {
   const d = document.createElement('div');
@@ -338,6 +339,7 @@ cppEx.forEach((ex, i) => {
     <div class="cpp-feedback" id="cppf-${i}"></div>`;
   cppContainer.appendChild(d);
 });
+}); // DOMContentLoaded
 function checkCpp(i) {
   const val = document.getElementById('cppi-'+i).value.trim();
   const ex = cppEx[i];

@@ -320,6 +320,7 @@ if (edad >= 18 ___ tieneCarnet) {
 }`, blank: '¿Qué caso se ejecuta si ninguno coincide?', answer: 'default', hint: 'default es el caso "por defecto", se ejecuta si ningún case coincide.' },
 ];
 
+document.addEventListener('DOMContentLoaded', function() {
 const cppContainer = document.getElementById('cpp-container');
 cppEx.forEach((ex, i) => {
   const d = document.createElement('div');
@@ -338,6 +339,7 @@ cppEx.forEach((ex, i) => {
     <div class="cpp-feedback" id="cppf-${i}"></div>`;
   cppContainer.appendChild(d);
 });
+}); // DOMContentLoaded
 function checkCpp(i) {
   const val = document.getElementById('cppi-'+i).value.trim();
   const ex = cppEx[i];

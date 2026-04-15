@@ -331,6 +331,7 @@ int main() {
 }`, blank: '¿Qué tipo de retorno tiene la función max?', answer: 'int', hint: 'La firma anticipa al compilador qué función existe. max compara enteros y devuelve uno.' },
 ];
 
+document.addEventListener('DOMContentLoaded', function() {
 const cppContainer = document.getElementById('cpp-container');
 cppEx.forEach((ex, i) => {
   const d = document.createElement('div');
@@ -349,6 +350,7 @@ cppEx.forEach((ex, i) => {
     <div class="cpp-feedback" id="cppf-${i}"></div>`;
   cppContainer.appendChild(d);
 });
+}); // DOMContentLoaded
 function checkCpp(i) {
   const val = document.getElementById('cppi-'+i).value.trim();
   const ex = cppEx[i];
