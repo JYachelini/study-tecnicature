@@ -30,10 +30,12 @@ tecnicatura/
 
 ## Cómo agregar una nueva unidad
 
-1. Colocá el PDF fuente en `<materia>/unidad-N/material/`
+1. Colocá los PDFs fuente en `<materia>/unidad-N/material/`
 2. Usá el skill `generar-unidad` desde Claude Code para generar el HTML
 3. El archivo se guarda automáticamente en `<materia>/unidad-N/output/unidad-N.html`
 4. El `index.html` lo detecta y activa el link
+
+> Cada HTML incluye una barra de links al material original (PDFs) para acceso rápido.
 
 ## GitHub Pages
 

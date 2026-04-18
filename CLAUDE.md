@@ -39,3 +39,4 @@ tecnicatura/
 - Los HTMLs generados van siempre en la carpeta `output/` dentro de cada `Unidad-x/`.
 - El estilo debe ser limpio, legible y funcionar completamente offline (sin CDNs externos).
 - El template base está en `template/base.html`.
+- Cada HTML debe incluir una barra de material (`<div class="material-bar">`) justo después del `</header>`, con un `<a class="material-link">` por cada PDF encontrado en `../material/`. Los hrefs deben usar `urllib.parse.quote` (o equivalente) para escapar nombres con espacios o caracteres especiales.

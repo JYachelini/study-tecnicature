@@ -119,6 +119,9 @@
   /* ── BACK BUTTON ── */
   .back-btn{position:fixed;top:1rem;left:1rem;z-index:200;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted,#7b8fa8);text-decoration:none;padding:.38rem .72rem;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:color .2s,border-color .2s,background .2s;white-space:nowrap;line-height:1;}
   .back-btn:hover{color:var(--accent,#4fc3f7);border-color:rgba(255,255,255,.28);background:rgba(0,0,0,.75);}
+  .material-bar{background:rgba(255,255,255,.03);border-bottom:1px solid var(--border);padding:.6rem 1rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;justify-content:center;}
+  .material-link{display:inline-flex;align-items:center;gap:.3rem;font-family:var(--heading);font-size:.72rem;font-weight:500;color:var(--text-muted);text-decoration:none;background:rgba(255,255,255,.05);border:1px solid var(--border);padding:.22rem .65rem;border-radius:2rem;transition:color .2s,border-color .2s,background .2s;}
+  .material-link:hover{color:var(--accent);border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.08);}
 </style>
 </head>
 <body>
@@ -129,6 +132,12 @@
   <h1>Organización, <em>Empresa</em> y Plan de Cuentas</h1>
   <p>Las Organizaciones · Proceso Administrativo · Análisis de Cuentas Contables</p>
 </header>
+
+<div class="material-bar">
+  <span style="font-family:var(--heading);font-size:.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-right:.25rem;">📎 Material</span>
+  <a class="material-link" href="../material/%28F%29%20LA%20ORGANIZACIO%CC%81N%20.%20EMPRESA%20-%20CARACTERI%CC%80STICAS.pdf" target="_blank">📄 (F) LA ORGANIZACIÓN . EMPRESA - CARACTERÌSTICAS.pdf</a>
+  <a class="material-link" href="../material/ANALISIS%20DE%20CUENTAS.pdf" target="_blank">📄 ANALISIS DE CUENTAS.pdf</a>
+</div>
 
 <div class="tabs-wrap">
   <div class="tabs">
