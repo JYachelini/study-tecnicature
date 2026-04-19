@@ -1041,12 +1041,13 @@ function updateFillProgress() {
   document.getElementById('fill-progress').textContent = fillCorrect + ' / ' + fillData.length + ' correctas';
 }
 
+function norm(s){return s.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
 function checkFill(index) {
   const input = document.getElementById('fill-input-' + index);
   const item = document.getElementById('fill-item-' + index);
   const feedback = document.getElementById('fill-feedback-' + index);
-  const val = input.value.trim().toLowerCase();
-  const correct = fillData[index].blank.toLowerCase();
+  const val = norm(input.value);
+  const correct = norm(fillData[index].blank);
 
   // Accept partial matches for multi-word answers
   const isCorrect = val === correct || correct.includes(val) && val.length >= 4;

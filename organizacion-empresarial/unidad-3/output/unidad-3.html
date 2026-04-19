@@ -317,9 +317,10 @@ fills.forEach((f, i) => {
     <div class="fill-feedback" id="ff-${i}"></div>`;
   fillContainer.appendChild(div);
 });
+function norm(s){return s.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
 function checkFill(i) {
-  const val = document.getElementById('fi-'+i).value.trim().toLowerCase();
-  const correct = fills[i].answer.toLowerCase();
+  const val = norm(document.getElementById('fi-'+i).value);
+  const correct = norm(fills[i].answer);
   const item = document.getElementById('fill-'+i);
   const fb = document.getElementById('ff-'+i);
   if (val === correct) {

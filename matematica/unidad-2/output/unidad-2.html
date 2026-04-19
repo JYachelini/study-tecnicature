@@ -1693,6 +1693,7 @@ function buildFill() {
   });
 }
 
+function norm(s){return s.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
 function checkFill(i) {
   const inp = document.getElementById('fin-'+i);
   const fb = document.getElementById('fif-'+i);
@@ -1700,8 +1701,8 @@ function checkFill(i) {
   const btn = document.getElementById('fib-'+i);
   if (inp.disabled) return;
 
-  const val = inp.value.trim().toLowerCase();
-  const ok = FILLS[i].ans.some(a => a.toLowerCase() === val);
+  const val = norm(inp.value);
+  const ok = FILLS[i].ans.some(a => norm(a) === val);
 
   inp.disabled = true;
   btn.disabled = true;
