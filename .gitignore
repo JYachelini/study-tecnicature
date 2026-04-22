@@ -19,8 +19,8 @@ yarn-error.log*
 *.swo
 *~
 
-# Claude Code
-.claude/
+# Claude Code (solo excluir configuración local, las skills se trackean)
+.claude/settings.local.json
 
 # Compiled / temp
 *.out
