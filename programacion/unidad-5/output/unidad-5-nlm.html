@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programación · Unidad 5 — Estructuras de Repetición</title>
+<style>
+:root {
+  --bg: #08090f;
+  --surface: #0d1117;
+  --card: #131a24;
+  --card-hover: #182030;
+  --border: #1e2d3d;
+  --border-bright: #253545;
+  --accent: #00d9b8;
+  --accent-dim: rgba(0,217,184,0.14);
+  --accent-glow: rgba(0,217,184,0.3);
+  --accent2: #7c3aed;
+  --accent2-dim: rgba(124,58,237,0.14);
+  --success: #34d399;
+  --success-bg: rgba(52,211,153,0.1);
+  --error: #f87171;
+  --error-bg: rgba(248,113,113,0.1);
+  --warning: #fbbf24;
+  --text: #d4e0ee;
+  --text-muted: #6a8097;
+  --text-dim: #3a5065;
+  --mono: 'Courier New', Courier, monospace;
+  --sans: 'Trebuchet MS', 'Gill Sans', 'Century Gothic', sans-serif;
+  --body: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.75;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,217,184,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(0,217,184,.028) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+
+/* BACK */
+.back-btn{position:fixed;top:1rem;left:1rem;z-index:200;font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;padding:.38rem .72rem;border:1px solid rgba(0,217,184,.18);background:rgba(8,9,15,.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:color .2s,border-color .2s;white-space:nowrap;}
+.back-btn:hover{color:var(--accent);border-color:rgba(0,217,184,.5);}
+
+/* HEADER */
+header{position:relative;z-index:1;background:linear-gradient(160deg,#0d1117 0%,#0a0f18 60%,#081420 100%);border-bottom:1px solid var(--border);padding:3rem 2rem 2.5rem;text-align:center;overflow:hidden;}
+header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 70% at 50% -10%,rgba(0,217,184,.13) 0%,transparent 65%);pointer-events:none;}
+header::after{content:'{ }';position:absolute;right:5%;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:7rem;font-weight:900;color:rgba(0,217,184,.04);pointer-events:none;line-height:1;}
+.badge{display:inline-block;font-family:var(--mono);font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);background:rgba(0,217,184,.08);border:1px solid rgba(0,217,184,.3);padding:.3rem .85rem;border-radius:2rem;margin-bottom:1.2rem;}
+header h1{font-family:var(--sans);font-size:clamp(1.8rem,4.5vw,3rem);font-weight:700;letter-spacing:-.02em;color:#fff;margin-bottom:.6rem;line-height:1.15;}
+header h1 span{color:var(--accent);}
+header p{color:var(--text-muted);font-family:var(--mono);font-size:.8rem;letter-spacing:.06em;}
+
+/* MATERIAL BAR */
+.material-bar{position:relative;z-index:1;background:rgba(255,255,255,.025);border-bottom:1px solid var(--border);padding:.6rem 1rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;justify-content:center;}
+.material-lbl{font-family:var(--mono);font-size:.64rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.12em;margin-right:.2rem;}
+.material-link{display:inline-flex;align-items:center;gap:.3rem;font-family:var(--mono);font-size:.7rem;color:var(--text-muted);text-decoration:none;background:rgba(255,255,255,.04);border:1px solid var(--border);padding:.22rem .65rem;border-radius:2rem;transition:color .2s,border-color .2s,background .2s;}
+.material-link:hover{color:var(--accent);border-color:rgba(0,217,184,.4);background:rgba(0,217,184,.07);}
+
+/* TABS */
+.tabs-wrap{position:relative;z-index:1;background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;gap:.2rem;overflow-x:auto;scrollbar-width:none;}
+.tabs-wrap::-webkit-scrollbar{display:none;}
+.tab-btn{flex-shrink:0;font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);background:none;border:none;border-bottom:2px solid transparent;padding:.9rem .85rem;cursor:pointer;transition:color .2s,border-color .2s;white-space:nowrap;}
+.tab-btn:hover{color:var(--text);}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* MAIN */
+main{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:2.5rem 1.5rem 4rem;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* SECTION HEADER */
+.sec-hd{margin-bottom:2rem;}
+.sec-title{font-family:var(--sans);font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:.4rem;display:flex;align-items:center;gap:.6rem;}
+.sec-icon{width:2rem;height:2rem;background:var(--accent-dim);border:1px solid rgba(0,217,184,.3);border-radius:.4rem;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;}
+.sec-sub{color:var(--text-muted);font-family:var(--sans);font-size:.88rem;}
+
+/* OVERVIEW */
+.overview{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:.75rem;padding:1.75rem 2rem;position:relative;overflow:hidden;}
+.overview::before{content:'';position:absolute;top:0;right:0;width:150px;height:150px;background:radial-gradient(circle at 100% 0%,rgba(0,217,184,.06) 0%,transparent 70%);pointer-events:none;}
+.overview p{font-size:1rem;line-height:1.8;}
+
+/* CONCEPTS */
+.concepts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;}
+.concept{background:var(--card);border:1px solid var(--border);border-radius:.65rem;padding:1.2rem 1.4rem;transition:border-color .2s,background .2s,transform .2s;}
+.concept:hover{border-color:rgba(0,217,184,.3);background:var(--card-hover);transform:translateY(-2px);}
+.concept-term{font-family:var(--mono);font-size:.76rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.45rem;}
+.concept-def{font-size:.94rem;color:var(--text);line-height:1.65;}
+
+/* DETAIL */
+.detail{background:var(--card);border:1px solid var(--border);border-radius:.75rem;padding:1.75rem 2rem;margin-bottom:1.5rem;}
+.detail h3{font-family:var(--sans);font-size:1.1rem;font-weight:700;color:var(--accent);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;}
+.detail p,.detail li{font-size:.96rem;line-height:1.8;margin-bottom:.5rem;}
+.detail ul,.detail ol{padding-left:1.4rem;}
+.detail li{margin-bottom:.3rem;}
+.detail strong{color:#e2e8f0;}
+
+/* CODE */
+.code{background:#060a10;border:1px solid var(--border-bright);border-radius:.5rem;padding:1.2rem 1.4rem;margin:1rem 0;overflow-x:auto;}
+.code pre{font-family:var(--mono);font-size:.82rem;line-height:1.65;color:#a8d8c0;white-space:pre;}
+.kw{color:#79b8ff;}.cm{color:#4a6575;font-style:italic;}.str{color:#f0883e;}.num{color:#f0c040;}
+
+/* RULE / SUCCESS BOXES */
+.rule-box{display:flex;gap:.8rem;align-items:flex-start;background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.25);border-radius:.5rem;padding:1rem 1.25rem;margin:.75rem 0;}
+.rule-icon{font-size:1.1rem;flex-shrink:0;margin-top:.1rem;}
+.rule-box p{font-size:.89rem;color:#d4b76a;margin:0;}
+.rule-box strong{color:var(--warning);}
+.ok-box{background:rgba(0,217,184,.07);border:1px solid rgba(0,217,184,.2);border-radius:.5rem;padding:.75rem 1.25rem;margin:.75rem 0;font-size:.89rem;color:#7fdfd0;}
+
+/* FLASHCARDS */
+.fc-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:.75rem;}
+.fc-prog{font-family:var(--mono);font-size:.82rem;color:var(--text-muted);}
+.fc-prog span{color:var(--accent);font-size:1rem;}
+.fc-nav{display:flex;gap:.5rem;}
+.fc-btn{font-family:var(--mono);font-size:.73rem;color:var(--text-muted);background:var(--card);border:1px solid var(--border);padding:.45rem 1rem;border-radius:.4rem;cursor:pointer;transition:color .2s,border-color .2s,background .2s;}
+.fc-btn:hover{color:var(--accent);border-color:rgba(0,217,184,.4);background:var(--accent-dim);}
+.fc-btn:disabled{opacity:.3;cursor:not-allowed;}
+.fc-scene{perspective:1200px;height:260px;cursor:pointer;margin-bottom:1.5rem;}
+.flashcard{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1);}
+.flashcard.flipped{transform:rotateY(180deg);}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:.85rem;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 2.5rem;text-align:center;}
+.fc-front{background:var(--card);border:1px solid var(--border-bright);}
+.fc-front::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(0,217,184,.07) 0%,transparent 60%);border-radius:.85rem;pointer-events:none;}
+.fc-back{background:linear-gradient(135deg,#0f1e2a 0%,#0d1821 100%);border:1px solid rgba(0,217,184,.3);transform:rotateY(180deg);}
+.fc-lbl{font-family:var(--mono);font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);position:absolute;top:1rem;left:50%;transform:translateX(-50%);white-space:nowrap;}
+.fc-lbl.back{color:rgba(0,217,184,.4);}
+.fc-q{font-family:var(--sans);font-size:1.15rem;font-weight:600;color:#fff;line-height:1.5;}
+.fc-a{font-family:var(--body);font-size:1rem;color:var(--accent);line-height:1.65;}
+.fc-hint{font-family:var(--mono);font-size:.63rem;color:var(--text-dim);position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);white-space:nowrap;}
+.fc-dots{display:flex;justify-content:center;gap:.4rem;flex-wrap:wrap;}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--border-bright);cursor:pointer;transition:background .2s;}
+.dot.active{background:var(--accent);}
+.dot.seen{background:rgba(0,217,184,.32);}
+
+/* FILL */
+.score-bar-row{display:flex;align-items:center;gap:1rem;background:var(--card);border:1px solid var(--border);border-radius:.65rem;padding:1rem 1.5rem;margin-bottom:1.5rem;}
+.score-num{font-family:var(--mono);font-size:1.55rem;font-weight:700;color:var(--accent);}
+.score-lbl{font-family:var(--sans);font-size:.83rem;color:var(--text-muted);}
+.bar-wrap{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.bar-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .5s;}
+.reset-btn{font-family:var(--mono);font-size:.68rem;color:var(--text-dim);background:none;border:1px solid var(--border);border-radius:.4rem;padding:.33rem .8rem;cursor:pointer;transition:color .2s,border-color .2s;letter-spacing:.06em;}
+.reset-btn:hover{color:var(--error);border-color:rgba(248,113,113,.4);}
+
+.fill-item{background:var(--card);border:1px solid var(--border);border-radius:.65rem;padding:1.2rem 1.5rem;margin-bottom:.8rem;transition:border-color .2s;}
+.fill-item.ok-state{border-color:rgba(52,211,153,.5);background:rgba(52,211,153,.04);}
+.fill-item.bad-state{border-color:rgba(248,113,113,.5);background:rgba(248,113,113,.04);}
+.fill-sent{font-size:.96rem;color:var(--text);margin-bottom:.8rem;line-height:1.7;}
+.fill-sent code{font-family:var(--mono);font-size:.84rem;color:var(--accent);background:rgba(0,217,184,.08);padding:.1rem .35rem;border-radius:.25rem;}
+.fill-row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;}
+.fill-inp{flex:1;min-width:160px;max-width:280px;font-family:var(--mono);font-size:.9rem;color:var(--text);background:rgba(255,255,255,.05);border:1px solid var(--border-bright);border-radius:.4rem;padding:.5rem .85rem;outline:none;transition:border-color .2s;}
+.fill-inp:focus{border-color:var(--accent);}
+.fill-inp:disabled{opacity:.6;}
+.verify-btn{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(0,217,184,.35);border-radius:.4rem;padding:.5rem 1rem;cursor:pointer;transition:background .2s;white-space:nowrap;}
+.verify-btn:hover{background:rgba(0,217,184,.24);}
+.fill-fb{margin-top:.6rem;font-size:.87rem;display:none;}
+.fill-fb.show{display:block;}
+.fill-fb.ok-fb{color:var(--success);}
+.fill-fb.bad-fb{color:var(--error);}
+
+/* MC */
+.mc-item{background:var(--card);border:1px solid var(--border);border-radius:.7rem;padding:1.5rem;margin-bottom:1rem;}
+.mc-item.answered{border-color:var(--border-bright);}
+.mc-num{font-family:var(--mono);font-size:.68rem;color:var(--accent);margin-bottom:.4rem;display:block;}
+.mc-q{font-family:var(--sans);font-size:1rem;font-weight:600;color:#fff;margin-bottom:1rem;line-height:1.5;}
+.mc-opts{display:flex;flex-direction:column;gap:.4rem;}
+.mc-opt{display:flex;align-items:flex-start;gap:.75rem;padding:.7rem 1rem;border:1px solid var(--border-bright);border-radius:.45rem;cursor:pointer;transition:background .18s,border-color .18s;font-size:.94rem;line-height:1.5;}
+.mc-opt:hover{background:var(--card-hover);border-color:rgba(0,217,184,.25);}
+.mc-opt.correct{background:var(--success-bg);border-color:rgba(52,211,153,.45);color:var(--success);}
+.mc-opt.wrong{background:var(--error-bg);border-color:rgba(248,113,113,.45);color:var(--error);}
+.mc-opt.disabled{cursor:default;pointer-events:none;}
+.mc-letter{font-family:var(--mono);font-size:.73rem;font-weight:700;color:var(--accent);width:1.3rem;flex-shrink:0;margin-top:.1rem;}
+.mc-opt.correct .mc-letter,.mc-opt.wrong .mc-letter{color:inherit;}
+.mc-exp{display:none;margin-top:.8rem;padding:.72rem 1rem;background:rgba(255,255,255,.04);border-left:3px solid var(--accent);border-radius:0 .4rem .4rem 0;font-size:.87rem;color:var(--text-muted);line-height:1.65;}
+.mc-exp.show{display:block;}
+
+/* CPP */
+.cpp-item{background:var(--card);border:1px solid var(--border);border-radius:.7rem;padding:1.5rem;margin-bottom:1.2rem;}
+.cpp-item.ok-state{border-color:rgba(52,211,153,.4);}
+.cpp-item.bad-state{border-color:rgba(248,113,113,.4);}
+.cpp-num{font-family:var(--mono);font-size:.66rem;color:var(--accent2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem;}
+.cpp-desc{font-size:.94rem;color:var(--text);margin-bottom:1rem;line-height:1.65;}
+.cpp-code{background:#060a10;border:1px solid var(--border-bright);border-radius:.5rem;padding:1.1rem 1.3rem;overflow-x:auto;margin-bottom:1rem;font-family:var(--mono);font-size:.82rem;line-height:1.7;color:#a8d8c0;}
+.cpp-code .blank{display:inline-block;min-width:60px;height:1.2em;border-bottom:2px solid var(--accent);vertical-align:bottom;color:transparent;}
+.cpp-row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;}
+.cpp-inp{flex:1;min-width:160px;max-width:320px;font-family:var(--mono);font-size:.88rem;color:var(--text);background:rgba(255,255,255,.05);border:1px solid var(--border-bright);border-radius:.4rem;padding:.5rem .85rem;outline:none;transition:border-color .2s;}
+.cpp-inp:focus{border-color:var(--accent2);}
+.cpp-inp:disabled{opacity:.6;}
+.cpp-verify{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--accent2);background:var(--accent2-dim);border:1px solid rgba(124,58,237,.35);border-radius:.4rem;padding:.5rem 1rem;cursor:pointer;transition:background .2s;white-space:nowrap;}
+.cpp-verify:hover{background:rgba(124,58,237,.28);}
+.cpp-fb{margin-top:.6rem;font-size:.87rem;display:none;line-height:1.6;}
+.cpp-fb.show{display:block;}
+.cpp-fb.ok-fb{color:var(--success);}
+.cpp-fb.bad-fb{color:var(--error);}
+
+@media(max-width:640px){
+  main{padding:1.75rem 1rem 3rem;}
+  .fc-scene{height:300px;}
+  .fc-q{font-size:1rem;}
+  .fill-row{flex-direction:column;align-items:stretch;}
+  .fill-inp{max-width:100%;}
+}
+</style>
+</head>
+<body>
+
+<a class="back-btn" href="../../../index.html">&#8592; Inicio</a>
+
+<header>
+  <div class="badge">Programación · Unidad 5 · NLM</div>
+  <h1>Estructuras de<br><span>Repetición</span></h1>
+  <p>Tecnicatura Universitaria en Programación — generado con NotebookLM</p>
+</header>
+
+<div class="material-bar">
+  <span class="material-lbl">&#128206; Material</span>
+  <a class="material-link" href="../material/Clase_5.pdf" target="_blank">&#128196; Clase_5.pdf</a>
+  <a class="material-link" href="../material/Ejercitacion_Ciclos.pdf" target="_blank">&#128196; Ejercitacion_Ciclos.pdf</a>
+</div>
+
+<div class="tabs-wrap">
+  <button class="tab-btn active" onclick="showTab('resumen',this)">Resumen</button>
+  <button class="tab-btn" onclick="showTab('conceptos',this)">Conceptos</button>
+  <button class="tab-btn" onclick="showTab('detalle',this)">Explicación</button>
+  <button class="tab-btn" onclick="showTab('flashcards',this)">Flashcards</button>
+  <button class="tab-btn" onclick="showTab('completar',this)">Completar</button>
+  <button class="tab-btn" onclick="showTab('mc',this)">Multiple Choice</button>
+  <button class="tab-btn" onclick="showTab('cpp',this)">C++</button>
+</div>
+
+<main>
+
+<!-- RESUMEN -->
+<div class="tab-panel active" id="tab-resumen">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-icon">&#9851;</div>Resumen General</div>
+    <p class="sec-sub">Vista general de la unidad</p>
+  </div>
+  <div class="overview">
+    <p>La Unidad 5 introduce las <strong>estructuras de repetición</strong> (ciclos), que permiten ejecutar un bloque de instrucciones múltiples veces sin duplicar código. Se estudian dos tipos: el ciclo <strong>While</strong> ("Mientras"), que repite mientras una condición sea verdadera y puede no ejecutarse si la condición empieza en falso; y el ciclo <strong>For</strong> ("Para"), para iteraciones exactas cuando se conoce de antemano la cantidad de repeticiones. Se distinguen ciclos con contador fijo de los <strong>inexactos</strong> con valor de corte, donde el primer dato debe leerse antes del ciclo y repetirse al final de cada iteración. Finalmente se estudia el <strong>anidamiento</strong>: estructuras dentro de otras, donde las iteraciones totales se multiplican.</p>
+  </div>
+</div>
+
+<!-- CONCEPTOS -->
+<div class="tab-panel" id="tab-conceptos">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-icon">&#128273;</div>Conceptos Clave</div>
+    <p class="sec-sub">Términos y definiciones del material</p>
+  </div>
+  <div class="concepts-grid">
+    <div class="concept"><div class="concept-term">Estructura de Repetición</div><div class="concept-def">Genera iteraciones donde ciertas instrucciones se ejecutan una cantidad determinada de veces, evitando duplicar código.</div></div>
+    <div class="concept"><div class="concept-term">Ciclo / Iteración</div><div class="concept-def">Cada ejecución del bloque de instrucciones. Sinónimo de "vuelta" o "repetición".</div></div>
+    <div class="concept"><div class="concept-term">While — Mientras</div><div class="concept-def">Repite mientras la condición sea verdadera. Puede no ejecutarse si la condición es falsa desde el inicio.</div></div>
+    <div class="concept"><div class="concept-term">For — Para</div><div class="concept-def">Ciclo de iteraciones exactas. Lleva la variable de control y la incrementa automáticamente.</div></div>
+    <div class="concept"><div class="concept-term">Contador</div><div class="concept-def">Variable entera que registra cuántas veces se ejecutó el ciclo. En While se incrementa manualmente; en For, automáticamente.</div></div>
+    <div class="concept"><div class="concept-term">Ciclo Inexacto</div><div class="concept-def">Ciclo While donde no se conoce la cantidad de iteraciones de antemano; depende de lo que ingrese el usuario.</div></div>
+    <div class="concept"><div class="concept-term">Valor de Corte</div><div class="concept-def">Valor especial que indica el fin del ciclo (ej: -1 para edades, "Fin" para nombres).</div></div>
+    <div class="concept"><div class="concept-term">Paso / Incremento</div><div class="concept-def">Valor en que aumenta el contador del For en cada iteración. Por defecto es 1, pero puede cambiarse.</div></div>
+    <div class="concept"><div class="concept-term">Variable de Índice</div><div class="concept-def">Variable entera (i, j…) que controla las iteraciones del ciclo For.</div></div>
+    <div class="concept"><div class="concept-term">Anidamiento</div><div class="concept-def">Colocar una estructura de repetición dentro de otra. Las iteraciones totales se calculan multiplicando ambos contadores.</div></div>
+    <div class="concept"><div class="concept-term">Bucle Infinito</div><div class="concept-def">Error causado por no modificar la condición del While, haciendo que nunca se vuelva falsa.</div></div>
+    <div class="concept"><div class="concept-term">Límites Inclusivos</div><div class="concept-def">En el For, tanto el valor inicial como el final son válidos y se ejecutan.</div></div>
+  </div>
+</div>
+
+<!-- DETALLE -->
+<div class="tab-panel" id="tab-detalle">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-icon">&#128218;</div>Explicación Detallada</div>
+    <p class="sec-sub">Desarrollo de cada tema con ejemplos del material</p>
+  </div>
+
+  <div class="detail">
+    <h3>&#9851; ¿Por qué necesitamos ciclos?</h3>
+    <p>Hasta ahora, cada instrucción se ejecutaba como máximo una vez. Si necesitamos verificar 10 o 30 edades, copiar el mismo bloque repetidamente suma líneas sin resolver nada más complejo.</p>
+    <p>La solución son las <strong>estructuras iterativas, de repetición o ciclos</strong>: generan iteraciones donde ciertas instrucciones se ejecutan la cantidad de veces necesaria.</p>
+    <div class="ok-box">&#128161; "La repetición es la madre de la habilidad" — frase con la que abre el material.</div>
+  </div>
+
+  <div class="detail">
+    <h3>&#9654; Ciclo While — Mientras... Hacer</h3>
+    <p>Repite un bloque mientras se cumpla una condición específica.</p>
+    <div class="code"><pre><span class="kw">while</span> (condicion) {
+    instrucciones
+}</pre></div>
+    <p><strong>Funcionamiento:</strong></p>
+    <ol>
+      <li>Se evalúa la condición entre paréntesis.</li>
+      <li>Si es <strong>verdadera</strong>, entra y ejecuta las instrucciones.</li>
+      <li>Al terminar la iteración, vuelve a evaluar la condición.</li>
+      <li>Cuando es <strong>falsa</strong>, el bucle finaliza.</li>
+    </ol>
+    <div class="rule-box"><div class="rule-icon">&#9888;</div><p>Si la condición es falsa desde el principio, el bucle nunca se ejecuta (cero iteraciones).</p></div>
+
+    <p style="margin-top:1rem"><strong>Tipo 1 — Con contador (iteraciones conocidas):</strong></p>
+    <div class="code"><pre><span class="kw">int</span> contador = 0;
+<span class="kw">while</span> (contador &lt; 10) {
+    cout &lt;&lt; <span class="str">"Ingrese la edad"</span>;
+    cin &gt;&gt; edad;
+    <span class="kw">if</span> (edad &gt;= 18) cout &lt;&lt; <span class="str">"Mayor de edad"</span>;
+    <span class="kw">else</span>            cout &lt;&lt; <span class="str">"Menor de edad"</span>;
+    contador = contador + 1; <span class="cm">// ¡Obligatorio!</span>
+}</pre></div>
+    <div class="rule-box"><div class="rule-icon">&#9888;</div><p>Omitir el incremento del contador causa un <strong>bucle infinito</strong>.</p></div>
+
+    <p style="margin-top:1rem"><strong>Tipo 2 — Con valor de corte (iteraciones desconocidas):</strong></p>
+    <div class="code"><pre>cout &lt;&lt; <span class="str">"Ingrese edad (-1 para salir): "</span>;
+cin &gt;&gt; edad;                     <span class="cm">// ← Primer lectura ANTES del ciclo</span>
+<span class="kw">while</span> (edad &gt;= 0) {
+    <span class="kw">if</span> (edad &gt;= 18) cout &lt;&lt; <span class="str">"Mayor"</span>;
+    <span class="kw">else</span>            cout &lt;&lt; <span class="str">"Menor"</span>;
+    cout &lt;&lt; <span class="str">"Ingrese edad (-1 para salir): "</span>;
+    cin &gt;&gt; edad;                 <span class="cm">// ← Al FINAL de cada iteración</span>
+}</pre></div>
+    <div class="rule-box"><div class="rule-icon">&#128204;</div><p>El primer dato se pide <em>antes</em> del ciclo y se vuelve a pedir al <em>final</em> de cada iteración. Así el valor de corte no se procesa.</p></div>
+  </div>
+
+  <div class="detail">
+    <h3>&#9654; Ciclo For — Para... Hacer</h3>
+    <p>Para <strong>iteraciones exactas</strong>. La variable de control está incorporada y se incrementa automáticamente.</p>
+    <div class="code"><pre><span class="kw">for</span> (<span class="kw">int</span> i = 0; i &lt; N; i++) {
+    instrucciones
+}
+<span class="cm">// Las tres partes:
+// 1) int i = 0   → inicialización (una sola vez)
+// 2) i < N       → condición de corte (antes de cada iteración)
+// 3) i++         → incremento automático (al final de cada iteración)</span></pre></div>
+    <div class="rule-box"><div class="rule-icon">&#128683;</div><p><strong>Regla de oro:</strong> Nunca incrementar <code style="font-family:var(--mono)">i</code> manualmente dentro del cuerpo del For. La estructura ya lo hace; hacerlo produce saltos inesperados.</p></div>
+    <p style="margin-top:1rem"><strong>Paso personalizado — pares del 2 al 12:</strong></p>
+    <div class="code"><pre><span class="kw">for</span> (<span class="kw">int</span> i = 2; i &lt;= 12; i = i + 2) {
+    cout &lt;&lt; <span class="str">"Par: "</span> &lt;&lt; i;
+}
+<span class="cm">// Imprime: 2 4 6 8 10 12 — sin if interno</span></pre></div>
+  </div>
+
+  <div class="detail">
+    <h3>&#9654; Estructuras Anidadas</h3>
+    <p>Por cada iteración del bucle externo se ejecutan <strong>todas las iteraciones</strong> del bucle interno.</p>
+    <p><strong>Total = iteraciones_externo × iteraciones_interno</strong></p>
+    <p style="margin-top:.75rem"><strong>For/For — 30 alumnos, 4 notas cada uno:</strong></p>
+    <div class="code"><pre><span class="kw">for</span> (<span class="kw">int</span> i = 0; i &lt; 30; i++) {     <span class="cm">// 30 alumnos</span>
+    prom = 0;
+    <span class="kw">for</span> (<span class="kw">int</span> j = 0; j &lt; 4; j++) { <span class="cm">// 4 notas por alumno</span>
+        cin &gt;&gt; nota;
+        prom = prom + nota;
+    }
+    cout &lt;&lt; prom / 4;
+}
+<span class="cm">// Total: 30 × 4 = 120 iteraciones internas</span></pre></div>
+    <p style="margin-top:.75rem"><strong>For/While — cantidad de alumnos desconocida:</strong></p>
+    <div class="code"><pre>cin &gt;&gt; nombre;
+<span class="kw">while</span> (nombre != <span class="str">"Fin"</span>) {           <span class="cm">// While: cantidad desconocida</span>
+    prom = 0;
+    <span class="kw">for</span> (<span class="kw">int</span> j = 0; j &lt; 4; j++) { <span class="cm">// For: siempre 4 notas</span>
+        cin &gt;&gt; nota;
+        prom = prom + nota;
+    }
+    cout &lt;&lt; prom / 4 &lt;&lt; endl;
+    cin &gt;&gt; nombre; <span class="cm">// releer al final</span>
+}</pre></div>
+    <div class="ok-box">While externo cuando no se sabe cuántos alumnos hay; For interno porque siempre son exactamente 4 notas.</div>
+  </div>
+</div>
+
+<!-- FLASHCARDS -->
+<div class="tab-panel" id="tab-flashcards">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-icon">&#9776;</div>Flashcards</div>
+    <p class="sec-sub">Click en la carta para ver la respuesta</p>
+  </div>
+  <div class="fc-header">
+    <div class="fc-prog">Carta <span id="fc-cur">1</span> / <span id="fc-tot">12</span></div>
+    <div class="fc-nav">
+      <button class="fc-btn" id="fc-prev" onclick="fcNav(-1)" disabled>&#8592; Anterior</button>
+      <button class="fc-btn" id="fc-next" onclick="fcNav(1)">Siguiente &#8594;</button>
+    </div>
+  </div>
+  <div class="fc-scene" onclick="flipCard()">
+    <div class="flashcard" id="flashcard">
+      <div class="fc-face fc-front">
+        <span class="fc-lbl">Pregunta</span>
+        <div class="fc-q" id="fc-q"></div>
+        <span class="fc-hint">click para ver respuesta</span>
+      </div>
+      <div class="fc-face fc-back">
+        <span class="fc-lbl back">Respuesta</span>
+        <div class="fc-a" id="fc-a"></div>
+      </div>
+    </div>
+  </div>
+  <div class="fc-dots" id="fc-dots"></div>
+</div>
+
+<!-- COMPLETAR -->
+<div class="tab-panel" id="tab-completar">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-icon">&#9998;</div>Completar el Espacio</div>
+    <p class="sec-sub">Escribí la palabra que falta y presioná Enter o "Verificar"</p>
+  </div>
+  <div class="score-bar-row">
+    <div>
+      <div class="score-num"><span id="fill-sc">0</span>/<span id="fill-tot">12</span></div>
+      <div class="score-lbl">respuestas correctas</div>
+    </div>
+    <div class="bar-wrap"><div class="bar-fill" id="fill-bar" style="width:0%"></div></div>
+    <button class="reset-btn" onclick="resetFill()">Reiniciar</button>
+  </div>
+  <div id="fill-container"></div>
+</div>
+
+<!-- MC -->
+<div class="tab-panel" id="tab-mc">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-icon">&#9679;</div>Multiple Choice</div>
+    <p class="sec-sub">Seleccioná la opción correcta</p>
+  </div>
+  <div class="score-bar-row">
+    <div>
+      <div class="score-num"><span id="mc-sc">0</span>/<span id="mc-tot">7</span></div>
+      <div class="score-lbl">respuestas correctas</div>
+    </div>
+    <div class="bar-wrap"><div class="bar-fill" id="mc-bar" style="width:0%"></div></div>
+    <button class="reset-btn" onclick="resetMC()">Reiniciar</button>
+  </div>
+  <div id="mc-container"></div>
+</div>
+
+<!-- CPP -->
+<div class="tab-panel" id="tab-cpp">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-icon" style="background:var(--accent2-dim);border-color:rgba(124,58,237,.3)">&#128187;</div>Ejercicios C++</div>
+    <p class="sec-sub">Completá los espacios en blanco del código</p>
+  </div>
+  <div class="score-bar-row">
+    <div>
+      <div class="score-num" style="color:var(--accent2)"><span id="cpp-sc">0</span>/<span id="cpp-tot">7</span></div>
+      <div class="score-lbl">ejercicios correctos</div>
+    </div>
+    <div class="bar-wrap"><div class="bar-fill" id="cpp-bar" style="width:0%;background:var(--accent2)"></div></div>
+    <button class="reset-btn" onclick="resetCpp()">Reiniciar</button>
+  </div>
+  <div id="cpp-container"></div>
+</div>
+
+</main>
+
+<script>
+// ── TABS ──
+function showTab(id,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── FLASHCARDS ──
+const cards=[
+  {q:"¿Qué es una estructura de repetición?",a:"Estructura que genera iteraciones donde ciertas instrucciones se ejecutan una cantidad determinada de veces, evitando duplicar código."},
+  {q:"¿Cuándo se usa el ciclo While?",a:"Cuando se repite un bloque mientras una condición sea verdadera. Puede no ejecutarse si la condición es falsa desde el inicio."},
+  {q:"¿Cuándo se usa el ciclo For?",a:"Cuando se sabe exactamente cuántas iteraciones se necesitan (iteraciones exactas)."},
+  {q:"¿Qué es un ciclo inexacto?",a:"Un ciclo While donde no se conoce la cantidad de iteraciones de antemano; el bucle termina según lo que ingrese el usuario."},
+  {q:"¿Qué es el valor de corte?",a:"Valor especial que el usuario ingresa para indicar que el ciclo debe terminar (ej: -1 para edades, \"Fin\" para nombres)."},
+  {q:"¿Dónde se lee el primer dato en un While con valor de corte?",a:"Antes del ciclo. Al final de cada iteración se vuelve a leer el dato, para que el valor de corte no entre al procesamiento."},
+  {q:"¿Por qué NO incrementar la variable i dentro del cuerpo de un For?",a:"Porque la estructura For ya lo hace automáticamente. Hacerlo manualmente produce saltos inesperados en las iteraciones."},
+  {q:"¿Qué es el paso o incremento del ciclo For?",a:"El valor en que aumenta el contador en cada iteración. Por defecto es 1, pero puede cambiarse (ej: i = i + 2 para números pares)."},
+  {q:"¿Qué tipo debe tener la variable de índice del ciclo For?",a:"Debe ser de tipo entero (int)."},
+  {q:"¿Qué ocurre si olvidamos incrementar el contador en un While?",a:"Se genera un bucle infinito: la condición nunca se vuelve falsa y el programa no termina."},
+  {q:"¿Cómo se calculan las iteraciones totales al anidar dos ciclos?",a:"Se multiplican: iteraciones del bucle externo × iteraciones del bucle interno. Ej: 30 alumnos × 4 notas = 120 iteraciones."},
+  {q:"¿Son inclusivos los límites del ciclo For?",a:"Sí. Tanto el valor inicial como el final se ejecutan (la primera iteración arranca con el valor de inicio, la última llega al valor final)."}
+];
+let fcIdx=0;const seen=new Set();
+function renderCard(){
+  const c=cards[fcIdx];
+  document.getElementById('fc-q').textContent=c.q;
+  document.getElementById('fc-a').textContent=c.a;
+  document.getElementById('fc-cur').textContent=fcIdx+1;
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('fc-prev').disabled=fcIdx===0;
+  document.getElementById('fc-next').disabled=fcIdx===cards.length-1;
+  document.querySelectorAll('.dot').forEach((d,i)=>{
+    d.classList.toggle('active',i===fcIdx);
+    d.classList.toggle('seen',seen.has(i)&&i!==fcIdx);
+  });
+}
+function flipCard(){seen.add(fcIdx);document.getElementById('flashcard').classList.toggle('flipped');renderCard();}
+function fcNav(d){fcIdx=Math.max(0,Math.min(cards.length-1,fcIdx+d));renderCard();}
+(function(){
+  document.getElementById('fc-tot').textContent=cards.length;
+  const dots=document.getElementById('fc-dots');
+  cards.forEach((_,i)=>{
+    const d=document.createElement('div');d.className='dot'+(i===0?' active':'');
+    d.onclick=()=>{fcIdx=i;renderCard();};dots.appendChild(d);
+  });
+  renderCard();
+})();
+
+// ── FILL ──
+const fillData=[
+  {s:"La repetición es la madre de la ___.",ans:["habilidad"],exp:"El material abre con esta frase para motivar el uso de ciclos."},
+  {s:"Las estructuras iterativas también se llaman ___ o ciclos.",ans:["bucles","bucle","repetición","repeticion"],exp:"Son sinónimos: estructuras iterativas, de repetición, bucles o ciclos."},
+  {s:"El ciclo While repite sus instrucciones mientras la condición sea ___.",ans:["verdadera","verdadero","true"],exp:"Cuando la condición es falsa el ciclo termina."},
+  {s:"En un ciclo For el incremento de la variable i se realiza ___.",ans:["automáticamente","automaticamente","automático","solo"],exp:"El For incorpora el incremento; no hay que hacerlo a mano."},
+  {s:"Si no sabemos cuántas iteraciones habrá usamos un ciclo ___.",ans:["while","mientras"],exp:"El While es ideal para ciclos inexactos con cantidad de vueltas desconocida."},
+  {s:"Si sabemos exactamente cuántas iteraciones habrá usamos un ciclo ___.",ans:["for","para"],exp:"El For está diseñado para iteraciones exactas."},
+  {s:"En un While con valor de corte el primer dato se lee ___ del ciclo.",ans:["antes","afuera"],exp:"Así el valor de corte no se procesa como un dato real."},
+  {s:"El valor en que aumenta el contador del For en cada vuelta se llama paso o ___.",ans:["incremento"],exp:"Por defecto el paso es 1, pero puede cambiarse (ej: i = i + 2)."},
+  {s:"La variable de índice del ciclo For debe ser de tipo ___.",ans:["entero","int"],exp:"El material especifica que la variable de control debe ser entera."},
+  {s:"Un ciclo While puede ejecutarse ___ veces si la condición inicial es falsa.",ans:["cero","0","ninguna"],exp:"A diferencia del Do-While, el While puede no ejecutarse nunca."},
+  {s:"En anidamiento, las iteraciones totales se calculan ___ las iteraciones de ambos bucles.",ans:["multiplicando","multiplicar"],exp:"Ej: 30 externas × 4 internas = 120 iteraciones totales."},
+  {s:"En C++, el ciclo Para se escribe con la palabra reservada ___.",ans:["for"],exp:"Sintaxis: for (inicialización; condición; incremento) { ... }"}
+];
+let fillSc=0;
+function norm(s){return s.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');}
+function buildFill(){
+  const c=document.getElementById('fill-container');
+  document.getElementById('fill-tot').textContent=fillData.length;
+  fillData.forEach((item,i)=>{
+    const d=document.createElement('div');d.className='fill-item';d.id='fi-'+i;
+    d.innerHTML=`<div class="fill-sent">${item.s}</div>
+    <div class="fill-row">
+      <input class="fill-inp" type="text" placeholder="tu respuesta..." id="fi-inp-${i}" onkeydown="if(event.key==='Enter')checkFill(${i})">
+      <button class="verify-btn" onclick="checkFill(${i})">Verificar</button>
+    </div>
+    <div class="fill-fb" id="fi-fb-${i}"></div>`;
+    c.appendChild(d);
+  });
+}
+function checkFill(i){
+  const inp=document.getElementById('fi-inp-'+i);
+  const fb=document.getElementById('fi-fb-'+i);
+  const el=document.getElementById('fi-'+i);
+  if(el.classList.contains('ok-state')||el.classList.contains('bad-state'))return;
+  const v=norm(inp.value);
+  const ok=fillData[i].ans.some(a=>norm(a)===v);
+  fb.className='fill-fb show '+(ok?'ok-fb':'bad-fb');
+  if(ok){
+    fb.textContent='✓ Correcto. '+fillData[i].exp;
+    el.classList.add('ok-state');fillSc++;
+    document.getElementById('fill-sc').textContent=fillSc;
+    document.getElementById('fill-bar').style.width=(fillSc/fillData.length*100)+'%';
+  }else{
+    fb.innerHTML='✗ Incorrecto. Respuesta: <strong style="color:var(--success)">'+fillData[i].ans[0]+'</strong>. '+fillData[i].exp;
+    el.classList.add('bad-state');
+  }
+  inp.disabled=true;
+}
+function resetFill(){fillSc=0;document.getElementById('fill-sc').textContent=0;document.getElementById('fill-bar').style.width='0%';document.getElementById('fill-container').innerHTML='';buildFill();}
+buildFill();
+
+// ── MC ──
+const mcData=[
+  {q:"¿Cuál es la diferencia principal entre el ciclo While y el ciclo For?",opts:["While es más rápido en ejecución que For","For es para iteraciones exactas, While para cuando la cantidad es variable o desconocida","Solo While puede tener estructuras anidadas","Son idénticos, solo cambia la sintaxis"],c:1,exp:"El For se usa cuando se conoce la cantidad exacta de iteraciones. El While se usa cuando esa cantidad es variable o se determina por una condición de corte."},
+  {q:"¿Qué consecuencia tiene olvidar incrementar el contador en un ciclo While?",opts:["El programa lanza un error de compilación","El ciclo se ejecuta exactamente una vez","Se genera un bucle infinito porque la condición nunca se vuelve falsa","El programa salta el ciclo por completo"],c:2,exp:"Sin incrementar el contador, la condición siempre es verdadera y el ciclo nunca termina."},
+  {q:"¿Cuántas iteraciones totales genera un for(j=0;j<4;j++) anidado dentro de un for(i=0;i<30;i++)?",opts:["34 iteraciones","7 iteraciones","120 iteraciones","16 iteraciones"],c:2,exp:"En anidamiento las iteraciones se multiplican: 30 (externo) × 4 (interno) = 120."},
+  {q:"En un ciclo While con valor de corte, ¿en qué posición debe aparecer la lectura del dato?",opts:["Solo al inicio del ciclo","Solo al final del ciclo","Antes del ciclo Y al final de cada iteración","Después de todos los cálculos del ciclo"],c:2,exp:"Se lee antes para que el while evalúe la condición, y se vuelve a leer al final para no procesar el valor de corte."},
+  {q:"¿Cuál de los siguientes es un error al usar el ciclo For?",opts:["Inicializar la variable de índice en 0","Usar una condición de corte como i < N","Incrementar manualmente la variable i dentro del cuerpo del ciclo","Anidar otro For o While en su interior"],c:2,exp:"El For ya incrementa la variable automáticamente. Hacerlo también en el cuerpo produce saltos inesperados."},
+  {q:"¿Cuándo puede suceder que un ciclo While nunca se ejecute?",opts:["Cuando el contador empieza en 0","Cuando la condición es verdadera desde el inicio","Cuando la condición es falsa desde el inicio","Nunca, siempre se ejecuta al menos una vez"],c:2,exp:"El While evalúa la condición antes de entrar. Si es falsa desde el principio, el bloque nunca se ejecuta."},
+  {q:"Para imprimir los pares del 2 al 12 con un ciclo For, ¿qué paso debería usarse?",opts:["i = i + 1 con if interno","i = i + 2 partiendo de i = 2","i = i + 4","No es posible con For"],c:1,exp:"Con i = i + 2 e inicio en 2, el índice toma 2, 4, 6, 8, 10, 12 — sin necesidad de if interno."}
+];
+let mcSc=0;
+function buildMC(){
+  const c=document.getElementById('mc-container');
+  document.getElementById('mc-tot').textContent=mcData.length;
+  const L=['A','B','C','D'];
+  mcData.forEach((item,qi)=>{
+    const d=document.createElement('div');d.className='mc-item';d.id='mc-'+qi;
+    const opts=item.opts.map((o,oi)=>`<div class="mc-opt" id="mo-${qi}-${oi}" onclick="checkMC(${qi},${oi})"><span class="mc-letter">${L[oi]}</span><span>${o}</span></div>`).join('');
+    d.innerHTML=`<span class="mc-num">Pregunta ${qi+1} / ${mcData.length}</span><div class="mc-q">${item.q}</div><div class="mc-opts">${opts}</div><div class="mc-exp" id="me-${qi}">${item.exp}</div>`;
+    c.appendChild(d);
+  });
+}
+function checkMC(qi,oi){
+  const el=document.getElementById('mc-'+qi);
+  if(el.classList.contains('answered'))return;
+  el.classList.add('answered');
+  const cor=mcData[qi].c;
+  for(let i=0;i<4;i++){
+    const o=document.getElementById('mo-'+qi+'-'+i);o.classList.add('disabled');
+    if(i===cor)o.classList.add('correct');
+    else if(i===oi&&oi!==cor)o.classList.add('wrong');
+  }
+  document.getElementById('me-'+qi).classList.add('show');
+  if(oi===cor){mcSc++;document.getElementById('mc-sc').textContent=mcSc;document.getElementById('mc-bar').style.width=(mcSc/mcData.length*100)+'%';}
+}
+function resetMC(){mcSc=0;document.getElementById('mc-sc').textContent=0;document.getElementById('mc-bar').style.width='0%';document.getElementById('mc-container').innerHTML='';buildMC();}
+buildMC();
+
+// ── CPP ──
+const cppData=[
+  {t:"Ejercicio 1 — Condición del While",d:"Completá la condición para que el ciclo se ejecute exactamente 10 veces.",code:"int contador = 0;\nwhile ( ___ ) {\n    cin >> edad;\n    contador = contador + 1;\n}",ans:["contador < 10","contador<10"],exp:"La condición contador &lt; 10 ejecuta el ciclo con contador = 0, 1, 2 ... 9 → exactamente 10 veces."},
+  {t:"Ejercicio 2 — Incremento del For",d:"Completá el incremento estándar del ciclo For.",code:"for (int i = 0; i < N; ___ ) {\n    cout << i;\n}",ans:["i++","i = i + 1","i+=1"],exp:"i++ es el incremento estándar. El For lo ejecuta automáticamente al final de cada iteración."},
+  {t:"Ejercicio 3 — Valor de corte",d:"Completá la instrucción que vuelve a leer el dato al final de la iteración.",code:"cin >> edad;\nwhile (edad >= 0) {\n    if (edad >= 18) cout << \"Mayor\";\n    else            cout << \"Menor\";\n    cout << \"Ingrese edad: \";\n    ___ >> edad;\n}",ans:["cin","std::cin"],exp:"Se vuelve a leer con cin al final para que la condición se evalúe con el nuevo valor en la siguiente vuelta."},
+  {t:"Ejercicio 4 — Paso personalizado",d:"Completá el incremento para imprimir pares del 2 al 12.",code:"for (int i = 2; i <= 12; ___ ) {\n    cout << \"Par: \" << i;\n}",ans:["i = i + 2","i+=2","i = i+2"],exp:"Con i = i + 2, el índice toma 2, 4, 6, 8, 10, 12 — todos pares, sin if interno."},
+  {t:"Ejercicio 5 — For anidado",d:"Completá la inicialización del For interno para 4 notas por alumno.",code:"for (int i = 0; i < 30; i++) {\n    prom = 0;\n    for ( ___ ; j < 4; j++) {\n        cin >> nota;\n        prom = prom + nota;\n    }\n    cout << prom / 4;\n}",ans:["int j = 0","int j=0"],exp:"La inicialización declara j como entero partiendo de 0. Esto resetea el contador de notas para cada alumno."},
+  {t:"Ejercicio 6 — While con string de corte",d:"Completá la condición del While para que corte cuando el nombre sea \"Fin\".",code:"cin >> nombre;\nwhile ( ___ ) {\n    for (int j = 0; j < 4; j++) {\n        cin >> nota; prom += nota;\n    }\n    cout << prom / 4;\n    cin >> nombre;\n}",ans:['nombre != "Fin"','nombre!="Fin"'],exp:'La condición nombre != "Fin" continúa el ciclo mientras el usuario no ingrese "Fin".'},
+  {t:"Ejercicio 7 — Acumulador",d:"Completá la variable que acumula la suma en el For.",code:"int suma = 0;\nfor (int i = 1; i <= N; i++) {\n    ___ = suma + i;\n}\ncout << suma;",ans:["suma"],exp:"suma = suma + i acumula cada valor de i. Al finalizar el ciclo, suma contiene 1+2+3+...+N."}
+];
+let cppSc=0;
+function buildCpp(){
+  const c=document.getElementById('cpp-container');
+  document.getElementById('cpp-tot').textContent=cppData.length;
+  cppData.forEach((item,i)=>{
+    const d=document.createElement('div');d.className='cpp-item';d.id='ci-'+i;
+    const codeHtml=item.code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/___/g,'<span class="blank">___</span>');
+    d.innerHTML=`<div class="cpp-num">${item.t}</div>
+    <div class="cpp-desc">${item.d}</div>
+    <div class="cpp-code"><pre>${codeHtml}</pre></div>
+    <div class="cpp-row">
+      <input class="cpp-inp" type="text" placeholder="completar..." id="ci-inp-${i}" onkeydown="if(event.key==='Enter')checkCpp(${i})">
+      <button class="cpp-verify" onclick="checkCpp(${i})">Verificar</button>
+    </div>
+    <div class="cpp-fb" id="ci-fb-${i}"></div>`;
+    c.appendChild(d);
+  });
+}
+function nc(s){return s.trim().replace(/\s+/g,' ');}
+function checkCpp(i){
+  const inp=document.getElementById('ci-inp-'+i);
+  const fb=document.getElementById('ci-fb-'+i);
+  const el=document.getElementById('ci-'+i);
+  if(el.classList.contains('ok-state')||el.classList.contains('bad-state'))return;
+  const v=nc(inp.value);
+  const ok=cppData[i].ans.some(a=>nc(a)===v);
+  fb.className='cpp-fb show '+(ok?'ok-fb':'bad-fb');
+  if(ok){
+    fb.textContent='✓ Correcto. '+cppData[i].exp;
+    el.classList.add('ok-state');cppSc++;
+    document.getElementById('cpp-sc').textContent=cppSc;
+    document.getElementById('cpp-bar').style.width=(cppSc/cppData.length*100)+'%';
+  }else{
+    fb.innerHTML='✗ Incorrecto. Esperado: <code style="font-family:var(--mono);color:var(--success)">'+cppData[i].ans[0]+'</code>. '+cppData[i].exp;
+    el.classList.add('bad-state');
+  }
+  inp.disabled=true;
+}
+function resetCpp(){cppSc=0;document.getElementById('cpp-sc').textContent=0;document.getElementById('cpp-bar').style.width='0%';document.getElementById('cpp-container').innerHTML='';buildCpp();}
+buildCpp();
+</script>
+</body>
+</html>
