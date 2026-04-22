@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programación — Unidad 6: Funciones y Procedimientos [NLM]</title>
+<style>
+  :root{--bg:#0a0e1a;--surface:#111827;--card:#1a2235;--border:#2a3755;--accent:#f472b6;--accent-light:rgba(244,114,182,.12);--accent2:#60c5fa;--accent2-light:rgba(96,197,250,.1);--success:#22c55e;--success-bg:rgba(34,197,94,.12);--error:#f87171;--error-bg:rgba(248,113,113,.12);--text:#e2e8f0;--text-muted:#7b8fa8;--text-dim:#3d506b;--mono:"JetBrains Mono","Fira Code","Consolas",monospace;--sans:"Lora","Georgia","Times New Roman",serif;--serif:"Lora","Georgia",serif;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--serif);font-size:16px;line-height:1.75;min-height:100vh;}
+  header{background:linear-gradient(160deg,#0a0e1a 0%,#1a0011 50%,#1a0018 100%);border-bottom:1px solid var(--border);padding:3rem 2rem 2.5rem;text-align:center;position:relative;overflow:hidden;}
+  header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(244,114,182,.15) 0%,transparent 70%);pointer-events:none;}
+  .tag{display:inline-block;font-family:var(--mono);font-size:.66rem;letter-spacing:.15em;color:var(--accent);background:var(--accent-light);border:1px solid rgba(244,114,182,.35);padding:.25rem .85rem;border-radius:99px;margin-bottom:.5rem;}
+  .nlm-badge{display:inline-block;font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;color:#a78bfa;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.35);padding:.18rem .7rem;border-radius:99px;margin-left:.5rem;vertical-align:middle;}
+  header h1{font-family:var(--sans);font-size:clamp(1.8rem,4vw,3rem);font-weight:800;letter-spacing:-.03em;color:#fff;margin-bottom:.4rem;}
+  header h1 em{color:var(--accent);font-style:normal;}
+  header p{color:var(--text-muted);font-family:var(--sans);font-size:.88rem;}
+  .tabs-wrap{position:sticky;top:0;z-index:100;background:rgba(10,14,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 1rem;overflow-x:auto;scrollbar-width:none;}
+  .tabs-wrap::-webkit-scrollbar{display:none;}
+  .tabs{display:flex;min-width:max-content;}
+  .tab{font-family:var(--sans);font-size:.82rem;font-weight:500;padding:.75rem 1.1rem;cursor:pointer;color:var(--text-muted);border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+  .tab:hover{color:var(--text);}
+  .tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .panel{display:none;max-width:860px;margin:0 auto;padding:2.5rem 1.5rem 4rem;}
+  .panel.active{display:block;}
+  h2{font-family:var(--sans);font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:1.2rem;}
+  h3{font-family:var(--sans);font-size:1.05rem;font-weight:700;color:var(--accent2);margin:2rem 0 .6rem;}
+  p{margin-bottom:.9rem;}ul,ol{padding-left:1.5rem;margin-bottom:.9rem;}li{margin-bottom:.35rem;}
+  .summary-box{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;padding:1.4rem 1.6rem;margin-bottom:2rem;}
+  .concept-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem;margin-bottom:2rem;}
+  .concept-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem;transition:border-color .2s,transform .2s;}
+  .concept-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .concept-card .term{font-family:var(--mono);font-size:.78rem;font-weight:700;color:var(--accent);margin-bottom:.5rem;}
+  .concept-card .def{font-size:.9rem;color:var(--text-muted);line-height:1.5;}
+  .code-block{background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:1rem 1.4rem;font-family:var(--mono);font-size:.85rem;color:#c9d1d9;margin:1rem 0 1.5rem;overflow-x:auto;line-height:1.7;white-space:pre;}
+  .kw{color:#ff7b72;}.ty{color:#79c0ff;}.cm{color:#8b949e;font-style:italic;}.vr{color:#ffa657;}.st{color:#a5d6ff;}.fn{color:#f472b6;}.op{color:#ff7b72;}
+  .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0 1.5rem;}
+  .compare-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem;}
+  .compare-title{font-family:var(--mono);font-size:.85rem;font-weight:700;color:var(--accent);margin-bottom:.7rem;}
+  .compare-item{font-size:.88rem;color:var(--text-muted);margin-bottom:.3rem;}
+  .example-box{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent2);border-radius:8px;padding:1.1rem 1.4rem;margin:1rem 0;}
+  .example-title{font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent2);margin-bottom:.5rem;}
+  .warn-box{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.3);border-left:3px solid #fbbf24;border-radius:8px;padding:1rem 1.4rem;margin:1rem 0;font-size:.92rem;color:var(--text-muted);}
+  .warn-box strong{color:#fbbf24;}
+  .progress-bar-wrap{background:var(--surface);border-radius:99px;height:4px;margin-bottom:1.5rem;overflow:hidden;}
+  .progress-bar{height:100%;background:var(--accent);border-radius:99px;transition:width .3s;}
+  .fc-controls{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+  .fc-progress{font-family:var(--mono);font-size:.85rem;color:var(--text-muted);}
+  .fc-progress span{color:var(--accent);font-weight:700;}
+  .btn{font-family:var(--sans);font-size:.85rem;font-weight:600;padding:.45rem 1.1rem;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;transition:all .15s;}
+  .btn:hover{border-color:var(--accent);color:var(--accent);}
+  .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700;}
+  .flashcard-scene{perspective:1000px;height:220px;cursor:pointer;margin-bottom:1.5rem;user-select:none;}
+  .flashcard{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
+  .flashcard.flipped{transform:rotateY(180deg);}
+  .fc-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;border:1px solid var(--border);}
+  .fc-front{background:var(--card);}
+  .fc-back{background:linear-gradient(135deg,#1a0011,var(--card));border-color:var(--accent);transform:rotateY(180deg);}
+  .fc-hint{font-family:var(--mono);font-size:.7rem;color:var(--text-dim);margin-bottom:.5rem;}
+  .fc-question{font-size:1.05rem;font-weight:600;color:var(--text);line-height:1.5;}
+  .fc-answer{font-size:.95rem;color:var(--text-muted);line-height:1.6;}
+  .fill-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.5rem;margin-bottom:1rem;}
+  .fill-item.correct{border-color:var(--success);background:var(--success-bg);}
+  .fill-item.wrong{border-color:var(--error);background:var(--error-bg);}
+  .fill-sentence{font-size:.97rem;margin-bottom:.7rem;line-height:1.7;}
+  .fill-input{font-family:var(--mono);font-size:.88rem;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:.4rem .8rem;border-radius:5px;width:220px;outline:none;}
+  .fill-input:focus{border-color:var(--accent2);}
+  .fill-feedback{font-family:var(--sans);font-size:.83rem;margin-top:.5rem;display:none;}
+  .fill-item.correct .fill-feedback{display:block;color:var(--success);}
+  .fill-item.wrong .fill-feedback{display:block;color:var(--error);}
+  .mc-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem 1.5rem;margin-bottom:1.2rem;}
+  .mc-question{font-size:.97rem;font-weight:600;margin-bottom:1rem;}
+  .mc-options{display:flex;flex-direction:column;gap:.5rem;}
+  .mc-option{display:flex;align-items:flex-start;gap:.7rem;padding:.6rem .9rem;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-size:.9rem;transition:all .15s;background:var(--surface);}
+  .mc-option:hover{border-color:var(--accent);}
+  .mc-option.selected-correct{border-color:var(--success);background:var(--success-bg);color:var(--success);}
+  .mc-option.selected-wrong{border-color:var(--error);background:var(--error-bg);color:var(--error);}
+  .mc-option.reveal-correct{border-color:var(--success);background:var(--success-bg);}
+  .mc-letter{font-family:var(--mono);font-size:.75rem;font-weight:700;color:var(--text-muted);min-width:18px;padding-top:1px;}
+  .mc-explanation{margin-top:.8rem;padding:.7rem 1rem;background:var(--surface);border-radius:6px;font-size:.85rem;color:var(--text-muted);display:none;border-left:2px solid var(--accent);}
+  .mc-item.answered .mc-explanation{display:block;}
+  .mc-item.answered .mc-option{pointer-events:none;}
+  .cpp-exercise{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.5rem;margin-bottom:1.2rem;}
+  .cpp-exercise.correct{border-color:var(--success);background:var(--success-bg);}
+  .cpp-exercise.wrong{border-color:var(--error);background:var(--error-bg);}
+  .cpp-title{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:.7rem;}
+  .cpp-code{background:#0d1117;border:1px solid var(--border);border-radius:6px;padding:.9rem 1.1rem;font-family:var(--mono);font-size:.84rem;color:#c9d1d9;line-height:1.7;margin-bottom:.8rem;overflow-x:auto;white-space:pre;}
+  .cpp-blank-label{font-size:.88rem;color:var(--text-muted);margin-bottom:.5rem;}
+  .cpp-blank-label strong{color:var(--accent);}
+  .cpp-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+  .cpp-input{background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:.38rem .7rem;font-family:var(--mono);font-size:.88rem;color:var(--text);width:180px;outline:none;transition:border-color .15s;}
+  .cpp-input:focus{border-color:var(--accent);}
+  .cpp-feedback{margin-top:.55rem;font-size:.88rem;line-height:1.5;}
+  .cpp-feedback.ok{color:var(--success);}
+  .cpp-feedback.err{color:var(--error);}
+  .back-btn{position:fixed;top:1rem;left:1rem;z-index:200;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;padding:.38rem .72rem;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.55);backdrop-filter:blur(10px);transition:color .2s,border-color .2s,background .2s;white-space:nowrap;line-height:1;}
+  .back-btn:hover{color:var(--accent);border-color:rgba(255,255,255,.28);background:rgba(0,0,0,.75);}
+  .material-bar{background:rgba(255,255,255,.03);border-bottom:1px solid var(--border);padding:.6rem 1rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;justify-content:center;}
+  .material-link{display:inline-flex;align-items:center;gap:.3rem;font-family:var(--mono);font-size:.72rem;font-weight:500;color:var(--text-muted);text-decoration:none;background:rgba(255,255,255,.05);border:1px solid var(--border);padding:.22rem .65rem;border-radius:2rem;transition:color .2s,border-color .2s,background .2s;}
+  .material-link:hover{color:var(--accent);border-color:rgba(244,114,182,.4);background:rgba(244,114,182,.08);}
+  @media(max-width:600px){.compare-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<a class="back-btn" href="../../../index.html">&#8592; Inicio</a>
+
+<header>
+  <div>
+    <span class="tag">Programación · Unidad 6</span><span class="nlm-badge">&#9670; NotebookLM</span>
+  </div>
+  <h1>Funciones y <em>Procedimientos</em></h1>
+  <p>Modularización · Top Down · Parámetros · Scope · Recursividad</p>
+</header>
+
+<div class="material-bar">
+  <span style="font-family:var(--mono);font-size:.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-right:.25rem;">&#128204; Material</span>
+  <a class="material-link" href="../material/clase_6-_FUNCIONES_Y_PROCEDIMIENTOS.pdf" target="_blank">&#128196; clase_6-_FUNCIONES_Y_PROCEDIMIENTOS.pdf</a>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('resumen',this)">Resumen</button>
+    <button class="tab" onclick="showTab('conceptos',this)">Conceptos Clave</button>
+    <button class="tab" onclick="showTab('detalle',this)">Explicación Detallada</button>
+    <button class="tab" onclick="showTab('recursividad',this)">Recursividad</button>
+    <button class="tab" onclick="showTab('flashcards',this)">Flashcards</button>
+    <button class="tab" onclick="showTab('completar',this)">Completar el Espacio</button>
+    <button class="tab" onclick="showTab('multiple',this)">Multiple Choice</button>
+    <button class="tab" onclick="showTab('cpp',this)">C++</button>
+  </div>
+</div>
+
+<!-- ══ RESUMEN ══ -->
+<div id="panel-resumen" class="panel active">
+  <h2>Resumen General</h2>
+  <div class="summary-box">
+    <p>La <strong>modularización</strong> (Desarrollo Top Down) divide un problema complejo en subproblemas más simples llamados <strong>módulos</strong>. En C++ existen dos tipos: las <strong>funciones</strong> (retornan un único valor) y los <strong>procedimientos</strong> (tipo <code>void</code>, pueden retornar cero o varios valores por referencia). La comunicación entre módulos se hace mediante <strong>parámetros</strong>: por <em>valor</em> (copia) o por <em>referencia</em> (símbolo <code>&amp;</code>, acceso directo). Las variables dentro de un módulo son <strong>locales</strong> y desaparecen cuando el módulo termina. Un caso especial de función es la <strong>recursividad</strong>: una función que se llama a sí misma hasta alcanzar un <em>caso base</em>.</p>
+  </div>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-title">Función</div>
+      <div class="compare-item">&#10003; Recibe parámetros de entrada</div>
+      <div class="compare-item">&#10003; Realiza una tarea</div>
+      <div class="compare-item">&#10003; <strong>Retorna exactamente un valor</strong></div>
+      <div class="compare-item">&#10003; Debe terminar con <code>return valor;</code></div>
+      <div class="compare-item" style="color:var(--text-dim);">Ej: <code>int max(int a, int b)</code></div>
+    </div>
+    <div class="compare-card">
+      <div class="compare-title">Procedimiento (void)</div>
+      <div class="compare-item">&#10003; Recibe parámetros</div>
+      <div class="compare-item">&#10003; Realiza una tarea</div>
+      <div class="compare-item">&#10003; Puede modificar variables por <code>&amp;</code></div>
+      <div class="compare-item" style="color:var(--text-dim);">&#10007; No retorna valor directo</div>
+      <div class="compare-item" style="color:var(--text-dim);">Ej: <code>void dividir(int a, int b, int &amp;c, int &amp;r)</code></div>
+    </div>
+  </div>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-title">Pasaje por Valor</div>
+      <div class="compare-item">• El módulo recibe una <strong>copia</strong></div>
+      <div class="compare-item">• Cambios internos NO afectan al original</div>
+      <div class="compare-item">• Parámetro de entrada</div>
+      <div class="compare-item" style="color:var(--text-dim);">Ej: <code>void mostrar(float promedio)</code></div>
+    </div>
+    <div class="compare-card">
+      <div class="compare-title">Pasaje por Referencia</div>
+      <div class="compare-item">• El módulo recibe la <strong>dirección real</strong></div>
+      <div class="compare-item">• Cambios internos SÍ afectan al original</div>
+      <div class="compare-item">• Parámetro de salida (usa <code>&amp;</code>)</div>
+      <div class="compare-item" style="color:var(--text-dim);">Ej: <code>void leer(int &amp;nota1, int &amp;nota2)</code></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CONCEPTOS CLAVE ══ -->
+<div id="panel-conceptos" class="panel">
+  <h2>Conceptos Clave</h2>
+  <div class="concept-grid">
+    <div class="concept-card"><div class="term">Modularización</div><div class="def">Dividir un programa complejo en módulos más pequeños. Cada uno hace una sola tarea. "Divide y vencerás".</div></div>
+    <div class="concept-card"><div class="term">Desarrollo Top Down</div><div class="def">Metodología: partir del problema general y descomponerlo iterativamente en subproblemas cada vez más simples.</div></div>
+    <div class="concept-card"><div class="term">Módulo / Subprograma</div><div class="def">Unidad de código independiente con nombre propio. Sinónimos: rutina, subrutina, función, procedimiento.</div></div>
+    <div class="concept-card"><div class="term">Función</div><div class="def">Módulo que ejecuta una tarea y RETORNA exactamente un valor. Siempre termina con <code>return valor;</code>.</div></div>
+    <div class="concept-card"><div class="term">Procedimiento (void)</div><div class="def">Módulo que realiza una tarea pero no retorna un valor directo. Puede devolver resultados modificando parámetros por referencia.</div></div>
+    <div class="concept-card"><div class="term">Firma de la Función</div><div class="def">Combinación del nombre y la lista de parámetros. Ej: <code>max(int num1, int num2)</code>. Identifica unívocamente a la función.</div></div>
+    <div class="concept-card"><div class="term">Parámetro vs Argumento</div><div class="def">Parámetro: variable en la declaración de la función. Argumento: valor real que se pasa al llamarla. <code>max(a, b)</code> → a y b son argumentos.</div></div>
+    <div class="concept-card"><div class="term">Pasaje por Valor</div><div class="def">El módulo recibe una COPIA del argumento. Los cambios internos NO afectan a la variable original.</div></div>
+    <div class="concept-card"><div class="term">Pasaje por Referencia</div><div class="def">El módulo recibe la dirección real de la variable. Los cambios internos SÍ modifican la variable original. Se declara con <code>&amp;</code>.</div></div>
+    <div class="concept-card"><div class="term">Variable Local</div><div class="def">Variable definida dentro de un módulo. Solo existe mientras el módulo se ejecuta; desaparece al terminar.</div></div>
+    <div class="concept-card"><div class="term">Variable Global</div><div class="def">Variable definida fuera de todos los módulos. Existe durante toda la ejecución. No debe accederse directamente desde módulos.</div></div>
+    <div class="concept-card"><div class="term">Prioridad de Nombre</div><div class="def">Si una variable local y una global tienen el mismo nombre, dentro del módulo siempre se usa la LOCAL.</div></div>
+    <div class="concept-card"><div class="term">Abstracción</div><div class="def">"Caja negra": importa qué recibe y qué devuelve el módulo, no cómo lo hace internamente. Permite trabajar con módulos sin conocer su implementación.</div></div>
+    <div class="concept-card"><div class="term">Ocultamiento de información</div><div class="def">Las variables y operaciones internas de un módulo quedan protegidas del resto del programa. Consecuencia de la abstracción.</div></div>
+    <div class="concept-card"><div class="term">Recursividad</div><div class="def">Cuando una función se llama a sí misma. Requiere siempre un caso base (condición de corte) y una ecuación de recurrencia.</div></div>
+    <div class="concept-card"><div class="term">Caso Base</div><div class="def">Condición que detiene la recursividad. Sin caso base, la función se llama infinitamente (desbordamiento de pila).</div></div>
+    <div class="concept-card"><div class="term">Reutilización de Código</div><div class="def">Un módulo bien escrito puede usarse en distintos programas sin reescribirlo. Clave: nombres genéricos en parámetros.</div></div>
+    <div class="concept-card"><div class="term">Declaración anticipada</div><div class="def">Escribir la firma de la función antes del <code>main</code> para que el compilador la conozca, y el cuerpo completo después.</div></div>
+  </div>
+</div>
+
+<!-- ══ EXPLICACIÓN DETALLADA ══ -->
+<div id="panel-detalle" class="panel">
+  <h2>Explicación Detallada</h2>
+
+  <h3>1. ¿Por qué modularizar?</h3>
+  <p>A medida que los algoritmos crecen, manejar toda la lógica en un único bloque se vuelve inmanejable. La <strong>modularización</strong> (o Desarrollo Top Down) resuelve esto:</p>
+  <div class="example-box">
+    <div class="example-title">Analogía de la mudanza</div>
+    <p>Mudarse = buscar hogar + adquirir propiedad + realizar mudanza.<br>
+    Buscar hogar = visitar inmobiliarias + navegar la web + comparar y decidir.<br>
+    Cada subproblema, a su vez, puede seguir dividiéndose hasta ser trivial.</p>
+  </div>
+  <p><strong>Beneficios concretos:</strong></p>
+  <ul>
+    <li><strong>Simplifica:</strong> subproblemas pequeños son más fáciles de programar.</li>
+    <li><strong>Reutilización:</strong> un módulo escrito se puede usar en otros programas.</li>
+    <li><strong>Legibilidad:</strong> el <code>main</code> queda como una lista corta de llamadas.</li>
+    <li><strong>Testing independiente:</strong> cada módulo puede probarse por separado.</li>
+    <li><strong>Mantenimiento localizado:</strong> un cambio o arreglo afecta solo al módulo correspondiente.</li>
+  </ul>
+
+  <h3>2. Abstracción y Caja Negra</h3>
+  <p>Al dividir en módulos nace un concepto clave: la <strong>abstracción</strong>. Trabajamos con los módulos como <em>cajas negras</em>: solo nos importa qué datos reciben y qué devuelven, no cómo lo hacen internamente. Cada módulo debe ser independiente y <strong>realizar una sola tarea</strong>.</p>
+  <div class="warn-box"><strong>Regla de oro:</strong> No mezcles responsabilidades en un mismo módulo. Separá la obtención de datos (procedimiento) del cálculo (función pura).</div>
+
+  <h3>3. Tipos de Módulos en C++</h3>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-title">Función</div>
+      <div class="compare-item">• Tipo de retorno antes del nombre</div>
+      <div class="compare-item">• Siempre termina con <code>return valor;</code></div>
+      <div class="compare-item">• Retorna exactamente un valor</div>
+    </div>
+    <div class="compare-card">
+      <div class="compare-title">Procedimiento (void)</div>
+      <div class="compare-item">• Tipo de retorno: <code>void</code></div>
+      <div class="compare-item">• Puede usar <code>return;</code> solo para salir antes</div>
+      <div class="compare-item">• Devuelve resultados por referencia (<code>&amp;</code>)</div>
+    </div>
+  </div>
+  <div class="code-block"><span class="cm">// Función: retorna el máximo (ejemplo del apunte)</span>
+<span class="ty">int</span> <span class="fn">max</span>(<span class="ty">int</span> <span class="vr">num1</span>, <span class="ty">int</span> <span class="vr">num2</span>) {
+    <span class="ty">int</span> <span class="vr">result</span>;
+    <span class="kw">if</span> (<span class="vr">num1</span> <span class="op">&gt;</span> <span class="vr">num2</span>)
+        <span class="vr">result</span> = <span class="vr">num1</span>;
+    <span class="kw">else</span>
+        <span class="vr">result</span> = <span class="vr">num2</span>;
+    <span class="kw">return</span> <span class="vr">result</span>;
+}
+
+<span class="cm">// Procedimiento: divide y entrega cociente y resto por referencia</span>
+<span class="ty">void</span> <span class="fn">dividir</span>(<span class="ty">int</span> <span class="vr">dividendo</span>, <span class="ty">int</span> <span class="vr">divisor</span>, <span class="ty">int</span> <span class="op">&amp;</span><span class="vr">cociente</span>, <span class="ty">int</span> <span class="op">&amp;</span><span class="vr">resto</span>) {
+    <span class="vr">cociente</span> = <span class="vr">dividendo</span> / <span class="vr">divisor</span>;
+    <span class="vr">resto</span>    = <span class="vr">dividendo</span> % <span class="vr">divisor</span>;
+}</div>
+
+  <h3>4. Firma de la Función y Declaración Anticipada</h3>
+  <p>La <strong>firma</strong> es la combinación del nombre + lista de parámetros. Para que el <code>main</code> pueda llamar a una función, el compilador debe conocerla antes. Opciones:</p>
+  <ul>
+    <li>Escribir la función completa <em>antes</em> del <code>main</code>.</li>
+    <li>Declarar solo la firma antes del <code>main</code> y escribir el cuerpo después.</li>
+  </ul>
+  <div class="code-block"><span class="ty">int</span> <span class="fn">max</span>(<span class="ty">int</span> <span class="vr">num1</span>, <span class="ty">int</span> <span class="vr">num2</span>);  <span class="cm">// solo la firma — declaración anticipada</span>
+
+<span class="ty">int</span> <span class="fn">main</span>() {
+    <span class="ty">int</span> <span class="vr">ret</span> = <span class="fn">max</span>(100, 200);
+    <span class="kw">return</span> 0;
+}
+
+<span class="ty">int</span> <span class="fn">max</span>(<span class="ty">int</span> <span class="vr">num1</span>, <span class="ty">int</span> <span class="vr">num2</span>) {  <span class="cm">// cuerpo completo después</span>
+    <span class="kw">return</span> (<span class="vr">num1</span> <span class="op">&gt;</span> <span class="vr">num2</span>) ? <span class="vr">num1</span> : <span class="vr">num2</span>;
+}</div>
+
+  <h3>5. Ámbito de Variables (Scope)</h3>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-title">Variable Local</div>
+      <div class="compare-item">• Definida dentro del módulo</div>
+      <div class="compare-item">• Almacenada en su propio ámbito de memoria</div>
+      <div class="compare-item">• Solo accesible dentro del módulo</div>
+      <div class="compare-item">• <strong>Desaparece</strong> cuando el módulo termina</div>
+    </div>
+    <div class="compare-card">
+      <div class="compare-title">Variable Global</div>
+      <div class="compare-item">• Definida fuera de todos los módulos</div>
+      <div class="compare-item">• Existe durante toda la ejecución</div>
+      <div class="compare-item">• Visible desde cualquier parte</div>
+      <div class="compare-item">• <strong>Nunca</strong> accederla directamente desde un módulo</div>
+    </div>
+  </div>
+  <div class="warn-box"><strong>Regla de prioridad de nombre:</strong> Si existe una variable local con el mismo nombre que una global, dentro del módulo siempre se usa la LOCAL. La global queda "tapada".</div>
+  <div class="warn-box"><strong>Regla de buenas prácticas:</strong> Acceder a una variable global directamente desde un módulo rompe la abstracción. La forma correcta es pasarla como parámetro.</div>
+
+  <h3>6. Pasaje de Parámetros</h3>
+  <p><strong>Por Valor:</strong> el módulo recibe una copia. Cambios internos no se reflejan afuera.</p>
+  <div class="code-block"><span class="ty">void</span> <span class="fn">mostrarPromedio</span>(<span class="ty">float</span> <span class="vr">promedio</span>) {  <span class="cm">// recibe copia</span>
+    <span class="vr">promedio</span> = 0;  <span class="cm">// no afecta a la variable original</span>
+    cout <span class="op">&lt;&lt;</span> <span class="vr">promedio</span>;
+}</div>
+  <p><strong>Por Referencia:</strong> el módulo recibe la dirección real de la variable. Los cambios sí modifican el original.</p>
+  <div class="code-block"><span class="ty">void</span> <span class="fn">obtenerNotas</span>(<span class="ty">int</span> <span class="op">&amp;</span><span class="vr">nota1</span>, <span class="ty">int</span> <span class="op">&amp;</span><span class="vr">nota2</span>) {  <span class="cm">// recibe referencia</span>
+    cin <span class="op">&gt;&gt;</span> <span class="vr">nota1</span> <span class="op">&gt;&gt;</span> <span class="vr">nota2</span>;  <span class="cm">// modifica las variables originales</span>
+}</div>
+  <p><strong>Combinando entrada y salida:</strong></p>
+  <div class="code-block"><span class="cm">// bool como retorno para indicar éxito/fallo + resultados por referencia</span>
+<span class="ty">bool</span> <span class="fn">dividirSeguro</span>(<span class="ty">int</span> <span class="vr">dividendo</span>, <span class="ty">int</span> <span class="vr">divisor</span>, <span class="ty">int</span> <span class="op">&amp;</span><span class="vr">cociente</span>, <span class="ty">int</span> <span class="op">&amp;</span><span class="vr">resto</span>) {
+    <span class="kw">if</span> (<span class="vr">divisor</span> == 0) <span class="kw">return</span> <span class="kw">false</span>;  <span class="cm">// fallo</span>
+    <span class="vr">cociente</span> = <span class="vr">dividendo</span> / <span class="vr">divisor</span>;
+    <span class="vr">resto</span>    = <span class="vr">dividendo</span> % <span class="vr">divisor</span>;
+    <span class="kw">return</span> <span class="kw">true</span>;   <span class="cm">// éxito</span>
+}</div>
+
+  <h3>7. Consejos de Modularización</h3>
+  <ul>
+    <li><strong>Maximizar la abstracción:</strong> usá nombres genéricos. <code>promedio(int val1, int val2)</code> es reutilizable para cualquier promedio. <code>promedioNotas(int nota1, int nota2)</code> solo sirve para notas.</li>
+    <li><strong>Una sola tarea por módulo:</strong> no mezcles "pedir datos al usuario" con "calcular". Creá un procedimiento para capturar y una función pura para calcular.</li>
+  </ul>
+</div>
+
+<!-- ══ RECURSIVIDAD ══ -->
+<div id="panel-recursividad" class="panel">
+  <h2>Recursividad</h2>
+  <div class="summary-box">
+    <p>Una función es <strong>recursiva</strong> cuando se llama a sí misma. Funciona como un bucle, pero sin usar <code>for</code> o <code>while</code>. Las llamadas se "apilan" en memoria hasta que se cumple el <strong>caso base</strong>, momento en que el control empieza a volver hacia atrás hasta llegar al <code>main</code>.</p>
+  </div>
+  <h3>Partes obligatorias</h3>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-title">Caso Base</div>
+      <div class="compare-item">• Condición que detiene la recursividad</div>
+      <div class="compare-item">• No depende de llamadas anteriores</div>
+      <div class="compare-item">• <strong>Sin él: desbordamiento de pila</strong></div>
+    </div>
+    <div class="compare-card">
+      <div class="compare-title">Ecuación de Recurrencia</div>
+      <div class="compare-item">• La función se llama a sí misma</div>
+      <div class="compare-item">• Parámetros modificados para acercarse al caso base</div>
+      <div class="compare-item">• Reduce el espacio del problema en cada vuelta</div>
+    </div>
+  </div>
+
+  <h3>Factorial (n!)</h3>
+  <p>Caso base: <code>0! = 1</code> (si n es 0, retorna 1). Ecuación: <code>n * factorial(n-1)</code>.</p>
+  <div class="code-block"><span class="ty">int</span> <span class="fn">factorial</span>(<span class="ty">int</span> <span class="vr">n</span>) {
+    <span class="kw">if</span> (<span class="vr">n</span> == 0)
+        <span class="kw">return</span> 1;                         <span class="cm">// caso base</span>
+    <span class="kw">return</span> <span class="vr">n</span> <span class="op">*</span> <span class="fn">factorial</span>(<span class="vr">n</span> - 1);      <span class="cm">// ecuación de recurrencia</span>
+}
+
+<span class="cm">// Traza: factorial(4)
+//   → 4 * factorial(3)
+//       → 3 * factorial(2)
+//           → 2 * factorial(1)
+//               → 1 * factorial(0) → 1 (caso base)
+//   Resultado: 4*3*2*1 = 24</span></div>
+
+  <h3>Potencia (a<sup>n</sup>)</h3>
+  <p>Caso base: <code>a^0 = 1</code> (si exponente es 0, retorna 1). Ecuación: <code>base * potencia(base, exponente - 1)</code>.</p>
+  <div class="code-block"><span class="ty">int</span> <span class="fn">potencia</span>(<span class="ty">int</span> <span class="vr">base</span>, <span class="ty">int</span> <span class="vr">exp</span>) {
+    <span class="kw">if</span> (<span class="vr">exp</span> == 0)
+        <span class="kw">return</span> 1;                              <span class="cm">// caso base</span>
+    <span class="kw">return</span> <span class="vr">base</span> <span class="op">*</span> <span class="fn">potencia</span>(<span class="vr">base</span>, <span class="vr">exp</span> - 1); <span class="cm">// ecuación de recurrencia</span>
+}</div>
+
+  <h3>Sucesión de Fibonacci</h3>
+  <p>Dos casos base: <code>Fib(0) = 1</code> y <code>Fib(1) = 1</code>. Ecuación: <code>Fib(n-1) + Fib(n-2)</code>.</p>
+  <div class="code-block"><span class="ty">int</span> <span class="fn">fib</span>(<span class="ty">int</span> <span class="vr">n</span>) {
+    <span class="kw">if</span> (<span class="vr">n</span> == 0 || <span class="vr">n</span> == 1)
+        <span class="kw">return</span> 1;                              <span class="cm">// casos base</span>
+    <span class="kw">return</span> <span class="fn">fib</span>(<span class="vr">n</span> - 1) <span class="op">+</span> <span class="fn">fib</span>(<span class="vr">n</span> - 2);       <span class="cm">// ecuación de recurrencia</span>
+}
+
+<span class="cm">// Secuencia: 1, 1, 2, 3, 5, 8, 13, 21, ...</span></div>
+
+  <div class="warn-box"><strong>Clave para identificar recursividad:</strong> buscá el caso base (condición de corte) y verificá que la ecuación de recurrencia siempre "achica" el problema acercándose a ese caso base. Si no se acerca, habrá recursión infinita.</div>
+</div>
+
+<!-- ══ FLASHCARDS ══ -->
+<div id="panel-flashcards" class="panel">
+  <h2>Flashcards</h2>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="fc-bar" style="width:5%"></div></div>
+  <div class="fc-controls">
+    <div class="fc-progress">Carta <span id="fc-current">1</span> / <span id="fc-total">18</span></div>
+    <div style="display:flex;gap:.5rem;">
+      <button class="btn" onclick="fcPrev()">&#8592; Anterior</button>
+      <button class="btn btn-primary" onclick="fcNext()">Siguiente &#8594;</button>
+    </div>
+  </div>
+  <div class="flashcard-scene" onclick="document.getElementById('flashcard').classList.toggle('flipped')">
+    <div class="flashcard" id="flashcard">
+      <div class="fc-face fc-front"><div class="fc-hint">click para ver respuesta</div><div class="fc-question" id="fc-q">¿Qué es la modularización?</div></div>
+      <div class="fc-face fc-back"><div class="fc-hint">Respuesta</div><div class="fc-answer" id="fc-a"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ COMPLETAR ══ -->
+<div id="panel-completar" class="panel">
+  <h2>Completar el Espacio</h2>
+  <p style="color:var(--text-muted);margin-bottom:1.5rem;font-family:var(--sans);font-size:.9rem;">Completá con la palabra o símbolo correcto.</p>
+  <div id="fill-container"></div>
+</div>
+
+<!-- ══ MULTIPLE CHOICE ══ -->
+<div id="panel-multiple" class="panel">
+  <h2>Multiple Choice</h2>
+  <div id="mc-container"></div>
+</div>
+
+<!-- ══ C++ ══ -->
+<div id="panel-cpp" class="panel">
+  <h2>Ejercicios en C++</h2>
+  <p style="color:var(--text-muted);font-size:.9rem;margin-bottom:1.5rem;">Completá la palabra o símbolo que falta en cada fragmento.</p>
+  <div id="cpp-container"></div>
+</div>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+// ── FLASHCARDS ──
+const cards = [
+  {q:'¿Qué es la modularización?', a:'Dividir un programa en módulos más pequeños, cada uno con una tarea específica. Estrategia "divide y vencerás".'},
+  {q:'¿Cuál es la diferencia entre una función y un procedimiento?', a:'La función RETORNA exactamente un valor con return. El procedimiento (void) no retorna valor directo; puede devolver resultados modificando parámetros por referencia.'},
+  {q:'¿Qué es el Desarrollo Top Down?', a:'Metodología que parte del problema general y lo descompone iterativamente en subproblemas más simples hasta que sean fácilmente programables.'},
+  {q:'¿Qué es la firma de una función?', a:'La combinación del nombre y la lista de parámetros. Ej: max(int num1, int num2). Identifica unívocamente a la función para el compilador.'},
+  {q:'¿Diferencia entre argumento y parámetro?', a:'Parámetro: variable en la declaración de la función. Argumento: valor real pasado al llamarla. En max(a, b) → a y b son argumentos; num1 y num2 son parámetros.'},
+  {q:'¿Qué hace el símbolo & en un parámetro?', a:'Indica pasaje por REFERENCIA. El módulo recibe la dirección real de la variable, por lo que los cambios internos sí modifican la variable original.'},
+  {q:'¿Qué es el pasaje por valor?', a:'El módulo recibe una COPIA del argumento. Los cambios internos no afectan a la variable original en el punto de llamada.'},
+  {q:'¿Qué es una variable local?', a:'Variable definida dentro de un módulo. Solo existe y es accesible durante la ejecución de ese módulo. Desaparece cuando el módulo termina.'},
+  {q:'¿Qué es una variable global y por qué no accederla directamente desde un módulo?', a:'Variable definida fuera de todos los módulos. Accederla directamente desde un módulo rompe la abstracción. Lo correcto es pasarla como parámetro.'},
+  {q:'Regla de prioridad de nombres: ¿qué pasa si una variable local y una global tienen el mismo nombre?', a:'Dentro del módulo siempre se usa la variable LOCAL. La global queda "tapada" por la local.'},
+  {q:'¿Qué es la abstracción en programación modular?', a:'Tratar un módulo como una "caja negra": solo importa qué recibe y qué devuelve, no cómo lo hace internamente. Permite trabajar con módulos sin conocer su implementación.'},
+  {q:'¿Qué es la recursividad?', a:'Cuando una función se llama a sí misma. Las llamadas se apilan en memoria hasta alcanzar el caso base, momento en que el control empieza a volver.'},
+  {q:'¿Cuáles son las dos partes obligatorias de una función recursiva?', a:'1) Caso base: condición que detiene la recursividad. 2) Ecuación de recurrencia: la llamada a sí misma con parámetros que acercan al caso base.'},
+  {q:'¿Cuál es el caso base del factorial?', a:'0! = 1. Si n es 0, la función retorna 1 sin hacer más llamadas recursivas.'},
+  {q:'¿Cuál es el caso base de la sucesión de Fibonacci?', a:'Dos casos base: Fib(0) = 1 y Fib(1) = 1. La ecuación de recurrencia es Fib(n-1) + Fib(n-2).'},
+  {q:'¿Cuándo usar return; sin valor?', a:'En procedimientos (void) para salir anticipadamente antes de llegar al final del bloque. No puede usarse en funciones con tipo de retorno distinto de void.'},
+  {q:'¿Por qué usar nombres genéricos en parámetros para maximizar la reutilización?', a:'Una función promedio(int val1, int val2) sirve para cualquier cálculo. promedioNotas(int nota1, int nota2) limita su uso solo a notas, reduciendo la reutilización.'},
+  {q:'¿Qué es la declaración anticipada de una función?', a:'Escribir solo la firma antes del main para que el compilador la conozca, y el cuerpo completo después del main. Permite organizar el código con el main al principio.'},
+];
+
+let fcIdx = 0;
+function updateFC() {
+  document.getElementById('fc-q').textContent = cards[fcIdx].q;
+  document.getElementById('fc-a').textContent = cards[fcIdx].a;
+  document.getElementById('fc-current').textContent = fcIdx + 1;
+  document.getElementById('fc-total').textContent = cards.length;
+  document.getElementById('fc-bar').style.width = ((fcIdx + 1) / cards.length * 100) + '%';
+  document.getElementById('flashcard').classList.remove('flipped');
+}
+function fcNext() { fcIdx = (fcIdx + 1) % cards.length; updateFC(); }
+function fcPrev() { fcIdx = (fcIdx - 1 + cards.length) % cards.length; updateFC(); }
+updateFC();
+
+// ── FILL IN ──
+const fills = [
+  {sentence:'El símbolo ___ se antepone a un parámetro para indicar pasaje por referencia en C++.', answer:'&', hint:'Ampersand. Indica que se pasa la dirección real de la variable.'},
+  {sentence:'Una función que se llama a sí misma se denomina ___.',answer:'recursiva',hint:'Requiere siempre un caso base para detenerse.'},
+  {sentence:'La combinación del nombre y la lista de parámetros de una función se llama ___ de la función.',answer:'firma',hint:'Identifica unívocamente a la función para el compilador.'},
+  {sentence:'El ___ es la condición que detiene la recursividad y no depende de llamadas anteriores.',answer:'caso base',hint:'Sin él, la función se llamaría infinitamente.'},
+  {sentence:'Si una variable local y una global tienen el mismo nombre, dentro del módulo se usa la variable ___.',answer:'local',hint:'La local tiene prioridad y "tapa" a la global.'},
+  {sentence:'Un procedimiento en C++ usa el tipo de retorno ___ porque no devuelve ningún valor directo.',answer:'void',hint:'Vacío en inglés. Puede igualmente devolver resultados por referencia.'},
+  {sentence:'En el pasaje por ___, el módulo recibe una copia del argumento y los cambios no afectan al original.',answer:'valor',hint:'Se opone al pasaje por referencia.'},
+  {sentence:'El caso base del factorial es: si n es cero, retornar ___.',answer:'1',hint:'0! = 1 por definición matemática.'},
+  {sentence:'La metodología de descomponer el problema de lo general a lo específico se llama Desarrollo ___ ___.',answer:'top down',hint:'De arriba hacia abajo.'},
+  {sentence:'Tratar un módulo como una "caja ___" significa que no necesitamos saber cómo funciona internamente.',answer:'negra',hint:'Solo importa qué recibe y qué devuelve.'},
+];
+
+const fillContainer = document.getElementById('fill-container');
+fills.forEach((f, i) => {
+  const div = document.createElement('div');
+  div.className = 'fill-item';
+  div.id = 'fill-' + i;
+  div.innerHTML = `<div class="fill-sentence">${f.sentence.replace('___', '<strong>___</strong>')}</div>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
+      <input class="fill-input" id="fi-${i}" placeholder="Respuesta..." onkeydown="if(event.key==='Enter')checkFill(${i})">
+      <button class="btn" style="font-size:.8rem;padding:.3rem .8rem;" onclick="checkFill(${i})">Verificar</button>
+    </div>
+    <div class="fill-feedback" id="ff-${i}"></div>`;
+  fillContainer.appendChild(div);
+});
+
+function norm(s) { return s.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); }
+function checkFill(i) {
+  const val = document.getElementById('fi-' + i).value;
+  const item = document.getElementById('fill-' + i);
+  const fb = document.getElementById('ff-' + i);
+  if (norm(val) === norm(fills[i].answer)) {
+    item.classList.remove('wrong'); item.classList.add('correct');
+    fb.textContent = '✓ Correcto!';
+  } else {
+    item.classList.remove('correct'); item.classList.add('wrong');
+    fb.textContent = `✗ Respuesta: "${fills[i].answer}". ${fills[i].hint}`;
+  }
+}
+
+// ── MULTIPLE CHOICE ──
+const mcData = [
+  {q:'¿Qué hace el símbolo & delante de un parámetro en C++?',options:['Hace la variable constante','Indica pasaje por referencia: los cambios afectan a la variable original','Convierte el tipo a puntero','Indica que el parámetro es opcional'],correct:1,exp:'El & declara pasaje por referencia. El módulo recibe la dirección real de la variable, por lo que cualquier modificación interna se refleja en la variable original del punto de llamada.'},
+  {q:'¿Cuántos valores puede retornar una función con return en C++?',options:['Ninguno','Exactamente uno','Dos o más','Depende del tipo de retorno'],correct:1,exp:'Una función solo puede retornar exactamente un valor con return. Para devolver múltiples resultados se usan parámetros por referencia en procedimientos void.'},
+  {q:'¿Cuál es el caso base del factorial de n?',options:['n == 1 → retorna n','n == 0 → retorna 1','n < 0 → retorna -1','n == 2 → retorna 2'],correct:1,exp:'El caso base es 0! = 1: si n es 0, la función retorna 1 sin más llamadas recursivas. Es la definición matemática del factorial.'},
+  {q:'¿Qué ocurre si una variable local y una global tienen el mismo nombre?',options:['Error de compilación','Se usan ambas según el contexto','Dentro del módulo siempre se usa la local','La global siempre tiene prioridad'],correct:2,exp:'La variable local tiene prioridad dentro del módulo, "tapando" a la global con el mismo nombre. Es una regla de scope de C++.'},
+  {q:'¿Qué es la "firma" de una función?',options:['El comentario que la describe','El nombre de la función únicamente','La combinación del nombre y la lista de parámetros','El tipo de retorno únicamente'],correct:2,exp:'La firma es nombre + lista de parámetros. Por ejemplo: max(int num1, int num2). El compilador la necesita conocer antes del punto de llamada.'},
+  {q:'¿En qué consiste la abstracción en programación modular?',options:['Usar solo variables locales','Tratar un módulo como caja negra: importa qué recibe y devuelve, no cómo','Evitar el uso de parámetros','Duplicar el código para mayor seguridad'],correct:1,exp:'La abstracción significa que al usar un módulo no necesitamos saber cómo está implementado internamente. Solo nos importa la interfaz: parámetros de entrada y valor de retorno.'},
+  {q:'¿Cuándo se puede usar return; (sin valor) en C++?',options:['En cualquier función','Solo en funciones int','Solo en procedimientos void, para salir anticipadamente','Solo al final de la función'],correct:2,exp:'return; sin valor se usa en procedimientos void para salir del módulo antes de llegar al final. En funciones con tipo de retorno no-void, return debe ir acompañado de un valor.'},
+  {q:'Para maximizar la reutilización, ¿qué nombres conviene usar en los parámetros?',options:['Nombres específicos del dominio (ej: nota1, nota2)','Nombres genéricos (ej: val1, val2)','Nombres de variables globales','Números como parámetros'],correct:1,exp:'Nombres genéricos hacen que el módulo sirva para cualquier contexto. promedio(val1, val2) puede promediar notas, sueldos o distancias. promedioNotas(nota1, nota2) queda atado al dominio de notas.'},
+];
+
+const mcContainer = document.getElementById('mc-container');
+mcData.forEach((mc, i) => {
+  const div = document.createElement('div');
+  div.className = 'mc-item'; div.id = 'mc-' + i;
+  const L = ['A','B','C','D'];
+  div.innerHTML = `<div class="mc-question">${i+1}. ${mc.q}</div>
+    <div class="mc-options">${mc.options.map((o,j)=>`<div class="mc-option" onclick="checkMC(${i},${j})"><span class="mc-letter">${L[j]}</span>${o}</div>`).join('')}</div>
+    <div class="mc-explanation" id="mce-${i}">${mc.exp}</div>`;
+  mcContainer.appendChild(div);
+});
+function checkMC(qi, oi) {
+  const item = document.getElementById('mc-' + qi);
+  if (item.classList.contains('answered')) return;
+  item.classList.add('answered');
+  const opts = item.querySelectorAll('.mc-option');
+  opts[oi].classList.add(oi === mcData[qi].correct ? 'selected-correct' : 'selected-wrong');
+  if (oi !== mcData[qi].correct) opts[mcData[qi].correct].classList.add('reveal-correct');
+}
+
+// ── C++ EXERCISES ──
+const cppEx = [
+  {title:'Tipo de retorno — función', code:`___ suma(int a, int b) {
+    return a + b;
+}`, blank:'¿Qué tipo va antes del nombre si la función devuelve un entero?', answer:'int', hint:'El tipo de retorno debe coincidir con el valor que se retorna. a+b es entero → int.'},
+  {title:'Instrucción de retorno', code:`int cuadrado(int n) {
+    ___ n * n;
+}`, blank:'¿Qué instrucción envía el resultado al punto de llamada?', answer:'return', hint:'return termina la función y envía el valor calculado al código que la llamó.'},
+  {title:'Procedimiento sin retorno', code:`___ saludar(string nombre) {
+    cout << "Hola, " << nombre;
+}`, blank:'¿Qué tipo de retorno indica que la función no devuelve ningún valor?', answer:'void', hint:'void = vacío. Equivale a un procedimiento: ejecuta acciones pero no retorna nada.'},
+  {title:'Pasaje por referencia', code:`void leerDos(int ___ a, int ___ b) {
+    cin >> a >> b;
+}`, blank:'¿Qué símbolo se antepone al parámetro para pasaje por referencia?', answer:'&', hint:'& indica que se pasa la dirección real. Los cambios a a y b se reflejan en las variables originales.'},
+  {title:'Declaración anticipada (firma)', code:`#include <iostream>
+using namespace std;
+
+___ max(int num1, int num2);  // firma antes del main
+
+int main() {
+    cout << max(100, 200);
+    return 0;
+}`, blank:'¿Qué tipo de retorno va en la firma de la función max?', answer:'int', hint:'max devuelve el mayor de dos enteros → tipo int.'},
+  {title:'Función max — else', code:`int max(int num1, int num2) {
+    int result;
+    if (num1 > num2)
+        result = num1;
+    ___
+        result = num2;
+    return result;
+}`, blank:'¿Qué palabra introduce el caso alternativo cuando num1 no es mayor?', answer:'else', hint:'Si num1 no es mayor que num2, el else asigna num2 como resultado.'},
+  {title:'Recursividad — caso base factorial', code:`int factorial(int n) {
+    if (n == ___)
+        return 1;   // caso base
+    return n * factorial(n - 1);
+}`, blank:'¿Con qué valor de n se detiene la recursividad del factorial?', answer:'0', hint:'0! = 1 por definición. Si n llega a 0, la función retorna 1 sin seguir llamándose.'},
+  {title:'Recursividad — potencia', code:`int potencia(int base, int exp) {
+    if (exp == 0)
+        return ___;  // caso base: a^0 = 1
+    return base * potencia(base, exp - 1);
+}`, blank:'¿Qué valor retorna el caso base de la potencia?', answer:'1', hint:'Cualquier número elevado a la 0 es 1. Es el caso base que detiene la recursividad.'},
+  {title:'return sin valor — void', code:`void validar(int n) {
+    if (n < 0) {
+        cout << "Invalido";
+        ___;   // salir anticipadamente
+    }
+    cout << "Valido: " << n;
+}`, blank:'¿Cómo se escribe el return en un procedimiento void para salir sin devolver valor?', answer:'return', hint:'En un procedimiento void, return; (sin valor) sale del módulo anticipadamente.'},
+  {title:'Combinación entrada/salida', code:`void dividir(int dividendo, int divisor,
+             int ___ cociente, int ___ resto) {
+    cociente = dividendo / divisor;
+    resto    = dividendo % divisor;
+}`, blank:'¿Qué símbolo permite que cociente y resto sean modificados externamente?', answer:'&', hint:'El & convierte cociente y resto en parámetros de salida. Los cambios se reflejan en las variables originales.'},
+];
+
+document.addEventListener('DOMContentLoaded', function() {
+  const cppContainer = document.getElementById('cpp-container');
+  cppEx.forEach((ex, i) => {
+    const d = document.createElement('div');
+    d.className = 'cpp-exercise';
+    d.id = 'cpp-' + i;
+    const codeHtml = ex.code.replace(/___/g, '<span style="color:var(--accent);font-weight:700;">___</span>');
+    d.innerHTML = `
+      <div class="cpp-title">${i+1}. ${ex.title}</div>
+      <pre class="cpp-code">${codeHtml}</pre>
+      <div class="cpp-blank-label">${ex.blank}</div>
+      <div class="cpp-row">
+        <input class="cpp-input" id="cppi-${i}" placeholder="Respuesta..." onkeydown="if(event.key==='Enter')checkCpp(${i})">
+        <button class="btn" onclick="checkCpp(${i})">Verificar</button>
+      </div>
+      <div class="cpp-feedback" id="cppf-${i}"></div>`;
+    cppContainer.appendChild(d);
+  });
+});
+
+function checkCpp(i) {
+  const val = document.getElementById('cppi-' + i).value.trim();
+  const ex = cppEx[i];
+  const el = document.getElementById('cpp-' + i);
+  const fb = document.getElementById('cppf-' + i);
+  const ok = norm(val) === norm(ex.answer);
+  el.classList.toggle('correct', ok);
+  el.classList.toggle('wrong', !ok);
+  fb.className = 'cpp-feedback ' + (ok ? 'ok' : 'err');
+  fb.textContent = ok
+    ? '✓ Correcto! ' + ex.hint
+    : '✗ La respuesta es "' + ex.answer + '". ' + ex.hint;
+}
+</script>
+</body>
+</html>
