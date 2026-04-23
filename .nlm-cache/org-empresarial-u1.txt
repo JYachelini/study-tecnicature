@@ -1,0 +1,96 @@
+ORGANIZACIÓN EMPRESARIAL — UNIDAD 1
+Teoría General de Sistemas
+Fuentes: (B)_UNIDAD_1-_TEORIA_GENERAL_DE_SISTEMA-_MARCO_TEORICO.pdf, TEORIA_GENERAL_SISTEMA_-_12032026.pdf
+
+===================================================
+1. TEORÍA GENERAL DE SISTEMAS — DEFINICIÓN
+===================================================
+La Teoría General de Sistemas se define como el estudio de los sistemas en general desde una perspectiva interdisciplinaria, abarcando distintas áreas como la biología, la sociología o la administración de empresas.
+
+Un SISTEMA es un conjunto ordenado y organizado de componentes relacionados entre sí (pueden ser materiales o conceptuales) que interactúan juntos y de forma simultánea para alcanzar una meta u objetivo en común. Es una unidad con una identidad que la distingue de lo que la rodea y que es capaz de mantener esa identidad a lo largo del tiempo, incluso en entornos cambiantes.
+
+===================================================
+2. CARACTERÍSTICAS GENERALES DE LOS SISTEMAS
+===================================================
+- INTERDEPENDENCIA (Sinergia): Para que exista un sistema, al modificar una de sus partes, inevitablemente se modifican también las demás, generando patrones predecibles. Si un elemento falla, todo el sistema se altera.
+- ENFOQUE SISTÉMICO (Holismo): Un sistema se caracteriza por su percepción global. Destaca las interacciones de todos los elementos que lo componen, en lugar de analizar cada elemento de manera particular o aislada.
+
+===================================================
+3. ELEMENTOS QUE COMPONEN UN SISTEMA
+===================================================
+- ENTRADAS (Inputs o insumos): Son los elementos, energía, datos o materia que provienen del exterior y se incorporan al sistema para que este opere.
+- TRANSFORMADORES (Proceso o throughput): Son los mecanismos o actividades del sistema que producen cambios, convirtiendo las entradas en salidas.
+- SALIDAS (Outputs o productos): Son los resultados obtenidos mediante el funcionamiento del sistema, los cuales generalmente salen hacia el medio externo.
+- RETROALIMENTACIÓN: Ocurre en aquellos casos en los que el sistema convierte sus propias salidas en nuevas entradas.
+- OBJETIVO: La meta que se alcanza gracias a la interacción de los componentes.
+- ELEMENTOS Y SUS ATRIBUTOS: Las partes identificables del sistema (pueden ser objetos o personas) y sus propiedades (velocidad, precisión, capacidad), que influyen en cómo opera.
+- ESTRUCTURA Y ORGANIZACIÓN: El conjunto de relaciones entre los elementos y las reglas que condicionan su funcionamiento.
+- FRONTERA: El límite físico o conceptual que delimita el espacio del sistema y permite controlar lo que hay dentro de él.
+- MEDIO AMBIENTE (Entorno o meta sistema): Todo lo que rodea al sistema y queda fuera de su frontera, actuando como perturbaciones que no se pueden controlar.
+
+===================================================
+4. CLASIFICACIÓN DE LOS SISTEMAS
+===================================================
+
+A) Por su relación con el entorno:
+- SISTEMAS ABIERTOS: Son aquellos que se relacionan, producen intercambios y comparten información libremente con su medio ambiente. Sin esta conexión, sería difícil su supervivencia. Las organizaciones y empresas entran en esta categoría.
+- SISTEMAS CERRADOS: Son aquellos que no realizan intercambios ni comparten información de ningún tipo con el entorno. Se consideran siempre "sistemas ideales".
+- SISTEMAS SEMIABIERTOS O SEMICERRADOS: Comparten la menor información posible con su medio ambiente, sin llegar a ser completamente cerrados.
+
+B) Por la naturaleza de sus elementos:
+- SISTEMAS CONCEPTUALES: Cuyos elementos son conceptos, como por ejemplo, un idioma o lenguaje.
+- SISTEMAS FÍSICOS O DE OBJETOS: Cuyos componentes son entidades u objetos (vivientes o no vivientes), como el cuerpo humano, el sistema solar o una computadora.
+- SISTEMAS MIXTOS: Estructurados por conceptos, objetos y sujetos al mismo tiempo. Un ejemplo claro es un sistema Empresa o un sistema hombre-máquina.
+
+===================================================
+5. LA EMPRESA COMO SISTEMA
+===================================================
+Una empresa funciona bajo los principios de la Teoría General de Sistemas porque se define como un conjunto ordenado y organizado de componentes (personas, equipos, instalaciones, materiales) que interactúan simultáneamente para lograr una meta u objetivo común. Particularmente, la empresa se clasifica como un SISTEMA MIXTO, dado que está estructurada por tres clases de elementos: conceptos, objetos físicos y sujetos humanos.
+
+Una de sus características más importantes es la INTERDEPENDENCIA: los elementos trabajan coordinadamente y si una de las partes se modifica o falla, todo el sistema se altera y genera patrones de comportamiento predecibles.
+
+La empresa es por definición un SISTEMA ABIERTO. Produce intercambios constantes y comparte información libremente con el medio que la rodea. Su supervivencia depende netamente de esta interacción; sin conexión o intercambio con el exterior y con los demás sistemas, sería muy difícil que una organización pudiera sobrevivir.
+
+Esta interacción se da a través de "fronteras", que son los límites físicos o conceptuales de la empresa. A través de estas fronteras:
+- Ingresan ENTRADAS o INPUTS (como energía, información, materia prima o recursos del exterior)
+- Pasan por MECANISMOS TRANSFORMADORES que producen cambios
+- Cruzan nuevamente la frontera hacia el exterior en forma de SALIDAS u OUTPUTS (productos o resultados)
+
+===================================================
+6. SUBSISTEMAS DE LA EMPRESA
+===================================================
+Si un sistema es lo suficientemente grande, se descompone en SUBSISTEMAS, que son simplemente sistemas más pequeños operando dentro de un sistema mayor. Cada organización implementa los subsistemas que considera más convenientes para su operación.
+
+SISTEMA DE INFORMACIÓN: Una unidad compleja integrada por elementos humanos, materiales y tecnológicos. Su función principal es recopilar datos tanto del interior como del exterior, ordenarlos y transformarlos en información útil que reduzca la incertidumbre y asista a la empresa para lograr una correcta toma de decisiones.
+
+SUBSISTEMA DE INFORMACIÓN CONTABLE: Es una ramificación dentro del sistema de información general. Su función es registrar las operaciones comerciales básicas (compras, ventas, pagos y cobros) a partir de comprobantes o documentos comerciales. Toma estos hechos económicos como "entradas", los procesa mediante la técnica contable y emite como "salida" los Estados Contables e informes periódicos. Estos informes reflejan la situación patrimonial, económica y financiera para permitir una correcta gestión, control y evaluación de la empresa.
+
+===================================================
+7. ENTORNO / META-SISTEMA
+===================================================
+Se denomina META-SISTEMA, AMBIENTE o ENTORNO a todo aquello que queda fuera del espacio delimitado por la frontera del sistema. Es todo lo que rodea a la empresa, existiendo fuera de ella, y que constituye a su vez un gran supersistema que la engloba.
+
+La característica principal del entorno es que los elementos que se encuentran allí NO PUEDEN SER CONTROLADOS por la empresa, operando en muchas ocasiones como "perturbaciones externas" a las que la organización inevitablemente debe ajustarse.
+
+Factores externos que influyen en la empresa:
+- Fuentes de datos externas: estadísticas, noticias, encuestas y entrevistas que la empresa debe monitorear.
+- Entidades y reguladores: organismos gubernamentales y bancarios como la AFIP-DGI, la Inspección General de Justicia, el Banco Central, inversores y bancos, que requieren informes y regulan el accionar de la empresa imponiendo normativas legales para la presentación de los Estados Contables.
+
+===================================================
+8. VENTAJAS DEL ENFOQUE SISTÉMICO
+===================================================
+El enfoque sistémico ofrece una visión abarcadora e integradora para entender a las organizaciones. Sus principales ventajas son:
+- PERCEPCIÓN GLOBAL: En lugar de centrarse en la precisión de los detalles aislados, destaca las interacciones conjuntas de todos los elementos que componen la organización.
+- GESTIÓN DE VARIABLES: Permite modificar grupos de variables en forma simultánea (a diferencia del enfoque analítico que modifica una variable a la vez).
+- COMPRENSIÓN DE LA INTERDEPENDENCIA: Ayuda a entender que la empresa funciona como una unidad donde las partes se afectan mutuamente de manera continua hacia una meta común; si un elemento falla, inevitablemente todo el sistema se altera.
+
+===================================================
+9. EJEMPLOS CONCRETOS DEL MATERIAL
+===================================================
+- LA EMPRESA (sistema hombre-máquina): Sistema mixto donde conviven e interactúan conceptos, objetos físicos y sujetos (personas).
+- UNA ORQUESTA: Input = la partitura; Proceso = ejecución coordinada; Output = la melodía resultante. Interdependencia alta: si un músico desafina, desmerece el trabajo de toda la orquesta.
+- UN TERMO DE CAFÉ (sistema cerrado): El material aislante minimiza la pérdida de calor, manteniendo la energía calórica sin intercambiarla con el exterior.
+- EL CUERPO HUMANO: Sistema físico compuesto por corazón, venas, arterias y sangre trabajando juntos para llevar oxígeno a todo el cuerpo.
+- EL SISTEMA SOLAR: Sistema físico compuesto de astros celestes que orbitan al Sol en trayectorias elípticas.
+- EL LENGUAJE: Sistema conceptual compuesto de signos, sonidos y la capacidad de entrelazarlos para crear significados complejos.
+- SISTEMAS INFORMÁTICOS: Conjunto de datos que se ordenan mediante instrucciones o algoritmos, permitiendo que la información se ubique y recupere de forma rápida.
