@@ -1,507 +1,1199 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unidad 2 — Organización Contable de la Empresa</title>
-<style>
-  @import url('data:text/css,');
-  :root {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --card: #1c2333;
-    --card-hover: #21293d;
-    --border: #30363d;
-    --accent: #2ea043;
-    --accent-light: rgba(46,160,67,0.15);
-    --accent2: #58a6ff;
-    --accent2-light: rgba(88,166,255,0.12);
-    --warn: #d29922;
-    --warn-light: rgba(210,153,34,0.15);
-    --success: #3fb950;
-    --success-bg: rgba(63,185,80,0.12);
-    --error: #f85149;
-    --error-bg: rgba(248,81,73,0.12);
-    --text: #e6edf3;
-    --text-muted: #8b949e;
-    --text-dim: #484f58;
-    --font: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-    --mono: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
-    --sans: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.75; min-height: 100vh; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Org. Empresarial · Unidad 2: Patrimonio y Sistema Contable</title>
+  <style>
+    :root {
+      --bg: #080f0a;
+      --surface: #0c1a0e;
+      --surface-2: #112016;
+      --surface-3: #172a1c;
+      --border: #1e3824;
+      --border-soft: #192e1f;
+      --green: #22c55e;
+      --green-bright: #4ade80;
+      --green-dim: rgba(34,197,94,0.1);
+      --green-border: rgba(34,197,94,0.25);
+      --gold: #fbbf24;
+      --gold-dim: rgba(251,191,36,0.1);
+      --gold-border: rgba(251,191,36,0.25);
+      --text: #d4e8d8;
+      --text-dim: #6b9475;
+      --text-faint: #2d4a35;
+      --success: #22c55e;
+      --success-dim: rgba(34,197,94,0.12);
+      --success-border: rgba(34,197,94,0.35);
+      --error: #f43f5e;
+      --error-dim: rgba(244,63,94,0.12);
+      --error-border: rgba(244,63,94,0.35);
+      --font-head: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+      --font-body: Georgia, 'Times New Roman', Times, serif;
+      --font-mono: 'Courier New', 'Lucida Console', monospace;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
 
-  header {
-    background: linear-gradient(135deg, #0d1117 0%, #161b22 60%, #0d1f0f 100%);
-    border-bottom: 1px solid var(--border);
-    padding: 3rem 2rem 2.5rem;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  header::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(46,160,67,0.12) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .tag {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--accent);
-    background: var(--accent-light);
-    border: 1px solid rgba(46,160,67,0.3);
-    padding: 0.2rem 0.8rem;
-    border-radius: 2rem;
-    margin-bottom: 1rem;
-  }
-  header h1 { font-family: var(--sans); font-size: clamp(1.7rem,4vw,2.8rem); font-weight: 700; letter-spacing: -0.02em; color: #fff; margin-bottom: 0.4rem; }
-  header h1 em { color: var(--accent); font-style: normal; }
-  header p { color: var(--text-muted); font-family: var(--sans); font-size: 0.9rem; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
-  .tabs-wrap { position: sticky; top: 0; z-index: 100; background: rgba(13,17,23,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); padding: 0 1rem; overflow-x: auto; scrollbar-width: none; }
-  .tabs-wrap::-webkit-scrollbar { display: none; }
-  .tabs { display: flex; gap: 0.15rem; min-width: max-content; }
-  .tab { font-family: var(--sans); font-size: 0.82rem; font-weight: 500; padding: 0.75rem 1.1rem; cursor: pointer; color: var(--text-muted); border: none; background: none; border-bottom: 2px solid transparent; transition: color .2s, border-color .2s; white-space: nowrap; }
-  .tab:hover { color: var(--text); }
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.75;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-  .panel { display: none; max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
-  .panel.active { display: block; }
+    /* ─── ATMOSPHERE ─── */
+    .atmosphere {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .atm-glow {
+      position: absolute; border-radius: 50%; filter: blur(120px);
+    }
+    .atm-glow-1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(34,197,94,0.07) 0%, transparent 70%);
+      top: -150px; right: -200px;
+    }
+    .atm-glow-2 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(251,191,36,0.05) 0%, transparent 70%);
+      bottom: -100px; left: -100px;
+    }
+    .atm-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(34,197,94,0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34,197,94,0.018) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+    .bg-sym {
+      position: absolute;
+      font-family: var(--font-head);
+      color: rgba(34,197,94,0.025);
+      user-select: none; line-height: 1;
+    }
 
-  h2 { font-family: var(--sans); font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 1.2rem; }
-  h3 { font-family: var(--sans); font-size: 1.1rem; font-weight: 600; color: var(--accent2); margin: 1.8rem 0 0.6rem; }
-  p { margin-bottom: 0.9rem; }
-  ul, ol { padding-left: 1.5rem; margin-bottom: 0.9rem; }
-  li { margin-bottom: 0.3rem; }
+    /* ─── BACK BUTTON ─── */
+    .back-btn {
+      position: fixed; top: 1rem; left: 1rem; z-index: 200;
+      font-family: var(--font-mono); font-size: .6rem;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--text-dim); text-decoration: none;
+      padding: .38rem .72rem;
+      border: 1px solid var(--border);
+      background: rgba(8,15,10,.88);
+      backdrop-filter: blur(10px);
+      transition: color .2s, border-color .2s;
+      white-space: nowrap;
+    }
+    .back-btn:hover { color: var(--green); border-color: var(--green-border); }
 
-  .summary-box { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 1.4rem 1.6rem; margin-bottom: 2rem; }
-  .summary-box p { margin: 0; }
+    /* ─── MATERIAL BAR ─── */
+    .material-bar {
+      position: relative; z-index: 1;
+      background: rgba(34,197,94,.04);
+      border-bottom: 1px solid var(--border);
+      padding: .55rem 2rem;
+      display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+    }
+    .material-lbl {
+      font-family: var(--font-mono); font-size: .6rem;
+      color: var(--text-faint); text-transform: uppercase; letter-spacing: .14em;
+    }
+    .material-link {
+      font-family: var(--font-mono); font-size: .64rem;
+      color: var(--green); text-decoration: none;
+      padding: .2rem .6rem;
+      border: 1px solid rgba(34,197,94,.22); border-radius: 4px;
+      transition: background .2s, border-color .2s; white-space: nowrap;
+    }
+    .material-link:hover { background: var(--green-dim); border-color: rgba(34,197,94,.45); }
 
-  .concept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-  .concept-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem; transition: border-color .2s, transform .2s; }
-  .concept-card:hover { border-color: var(--accent); transform: translateY(-2px); }
-  .concept-card .term { font-family: var(--sans); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 0.4rem; }
-  .concept-card .def { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+    /* ─── HEADER ─── */
+    .header {
+      position: relative; z-index: 1;
+      padding: 64px 48px 52px;
+      max-width: 1280px; margin: 0 auto;
+    }
+    .header-eyebrow {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 28px; flex-wrap: wrap;
+    }
+    .eyebrow-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--green-dim); border: 1px solid var(--green-border);
+      color: var(--green);
+      font-family: var(--font-mono); font-size: 10.5px;
+      letter-spacing: .16em; text-transform: uppercase;
+      padding: 5px 14px; border-radius: 20px;
+    }
+    .eyebrow-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green); animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .5; transform: scale(.8); }
+    }
+    .eyebrow-nlm {
+      background: var(--gold-dim); border: 1px solid var(--gold-border);
+      color: var(--gold);
+      font-family: var(--font-mono); font-size: 10.5px;
+      letter-spacing: .14em; text-transform: uppercase;
+      padding: 5px 14px; border-radius: 20px;
+    }
+    .header-title {
+      font-family: var(--font-head);
+      font-size: clamp(2.6rem, 6.5vw, 5rem);
+      font-weight: 700; color: #fff;
+      line-height: 1.05; letter-spacing: -.02em; margin-bottom: 14px;
+    }
+    .header-title .accent { color: var(--green); }
+    .header-title .line2 {
+      display: block; color: rgba(255,255,255,.5);
+      font-size: .52em; margin-top: 6px; font-weight: 400;
+    }
+    .header-meta {
+      display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    }
+    .header-meta-item {
+      font-size: .85rem; color: var(--text-dim);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .header-meta-item .dot { color: var(--green); }
 
-  .formula-box { background: linear-gradient(135deg, #0d1f0f, #1c2333); border: 1px solid rgba(46,160,67,0.4); border-radius: 10px; padding: 1.5rem 2rem; text-align: center; margin: 1.5rem 0; }
-  .formula-box .formula { font-family: var(--mono); font-size: 1.1rem; color: var(--accent); font-weight: 600; }
-  .formula-box .label { font-family: var(--sans); font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem; }
+    /* ─── ECUACIÓN PATRIMONIAL (header decoration) ─── */
+    .pat-eq {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: 28px; flex-wrap: wrap;
+    }
+    .pat-box {
+      padding: 6px 16px; border-radius: 6px;
+      font-family: var(--font-mono); font-size: .8rem; font-weight: 700;
+      letter-spacing: .06em;
+    }
+    .pat-box.activo { background: rgba(34,197,94,.15); color: var(--green-bright); border: 1px solid var(--green-border); }
+    .pat-box.pasivo { background: rgba(244,63,94,.1); color: #fb7185; border: 1px solid rgba(244,63,94,.3); }
+    .pat-box.pn { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-border); }
+    .pat-op { color: var(--text-faint); font-family: var(--font-mono); font-size: 1.1rem; }
 
-  .example-box { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem 1.5rem; margin: 1rem 0 1.5rem; }
-  .example-box .example-title { font-family: var(--sans); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--warn); margin-bottom: 0.6rem; }
+    /* ─── TABS ─── */
+    .tabs-shell {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(8,15,10,.95);
+      backdrop-filter: blur(20px) saturate(1.5);
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .tabs {
+      max-width: 1280px; margin: 0 auto;
+      display: flex; padding: 0 48px;
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      background: none; border: none;
+      color: var(--text-dim);
+      font-family: var(--font-head); font-size: .88rem; font-weight: 600;
+      padding: 15px 22px; cursor: pointer;
+      position: relative; white-space: nowrap;
+      transition: color .22s; letter-spacing: .03em;
+    }
+    .tab-btn::after {
+      content: '';
+      position: absolute; bottom: 0; left: 50%; right: 50%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--green), var(--green-bright));
+      transition: left .3s cubic-bezier(.4,0,.2,1), right .3s cubic-bezier(.4,0,.2,1);
+      border-radius: 2px 2px 0 0;
+    }
+    .tab-btn.active { color: var(--green-bright); }
+    .tab-btn.active::after { left: 12px; right: 12px; }
+    .tab-btn:hover:not(.active) { color: var(--text); }
 
-  table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: 0.9rem; }
-  th { background: var(--card); color: var(--text); font-family: var(--sans); font-weight: 600; padding: 0.6rem 1rem; text-align: left; border: 1px solid var(--border); }
-  td { padding: 0.5rem 1rem; border: 1px solid var(--border); color: var(--text-muted); }
-  tr:hover td { background: rgba(255,255,255,0.02); }
+    /* ─── MAIN ─── */
+    .main {
+      position: relative; z-index: 1;
+      max-width: 1280px; margin: 0 auto; padding: 52px 48px;
+    }
+    .section { display: none; animation: secIn .35s cubic-bezier(.4,0,.2,1) both; }
+    .section.active { display: block; }
+    @keyframes secIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-  /* FLASHCARDS */
-  .fc-controls { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-  .fc-progress { font-family: var(--mono); font-size: 0.85rem; color: var(--text-muted); }
-  .fc-progress span { color: var(--accent); font-weight: 700; }
-  .fc-nav { display: flex; gap: 0.5rem; }
-  .btn { font-family: var(--sans); font-size: 0.85rem; font-weight: 600; padding: 0.45rem 1.1rem; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; transition: all .15s; }
-  .btn:hover { border-color: var(--accent); color: var(--accent); }
-  .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .btn-primary:hover { background: #3fb950; color: #fff; }
+    .sec-head { margin-bottom: 40px; }
+    .sec-head h2 {
+      font-family: var(--font-head); font-size: 1.8rem; font-weight: 700;
+      color: #fff; margin-bottom: 6px; letter-spacing: -.01em;
+    }
+    .sec-head p { color: var(--text-dim); font-size: .9rem; }
 
-  .flashcard-scene { perspective: 1000px; height: 220px; cursor: pointer; margin-bottom: 1.5rem; user-select: none; }
-  .flashcard { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .5s cubic-bezier(.4,0,.2,1); }
-  .flashcard.flipped { transform: rotateY(180deg); }
-  .fc-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center; border: 1px solid var(--border); }
-  .fc-front { background: var(--card); }
-  .fc-back { background: linear-gradient(135deg, #0d1f0f, var(--card)); border-color: var(--accent); transform: rotateY(180deg); }
-  .fc-hint { font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim); margin-bottom: 0.5rem; }
-  .fc-question { font-size: 1.05rem; font-weight: 600; color: var(--text); line-height: 1.5; }
-  .fc-answer { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; }
+    /* ─── RESUMEN ─── */
+    .resumen-layout { display: grid; grid-template-columns: 1fr 360px; gap: 32px; }
+    @media (max-width: 900px) { .resumen-layout { grid-template-columns: 1fr; } }
 
-  /* COMPLETAR EL ESPACIO */
-  .fill-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem 1.5rem; margin-bottom: 1rem; transition: border-color .2s; }
-  .fill-item.correct { border-color: var(--success); background: var(--success-bg); }
-  .fill-item.wrong { border-color: var(--error); background: var(--error-bg); }
-  .fill-sentence { font-size: 0.97rem; margin-bottom: 0.7rem; line-height: 1.7; }
-  .fill-input { font-family: var(--mono); font-size: 0.9rem; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 0.4rem 0.8rem; border-radius: 5px; width: 220px; outline: none; transition: border-color .2s; }
-  .fill-input:focus { border-color: var(--accent2); }
-  .fill-feedback { font-family: var(--sans); font-size: 0.83rem; margin-top: 0.5rem; display: none; }
-  .fill-item.correct .fill-feedback { display: block; color: var(--success); }
-  .fill-item.wrong .fill-feedback { display: block; color: var(--error); }
-  .fill-verify { font-size: 0.8rem; padding: 0.3rem 0.8rem; margin-left: 0.5rem; }
+    .rsum-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--green);
+      border-radius: var(--radius); padding: 2rem;
+    }
+    .rsum-card p { color: rgba(212,232,216,.85); font-size: .97rem; line-height: 1.85; }
+    .rsum-card p + p { margin-top: .9rem; }
+    .rsum-card strong { color: var(--green-bright); }
+    .rsum-label {
+      font-family: var(--font-mono); font-size: .62rem;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--green); margin-bottom: .9rem; opacity: .8;
+    }
+    .rsum-callout {
+      background: var(--green-dim); border: 1px solid var(--green-border);
+      border-radius: var(--radius-sm); padding: 1rem 1.2rem;
+      font-style: italic; color: var(--green-bright); font-size: .92rem;
+      margin: 1.1rem 0;
+    }
 
-  /* MULTIPLE CHOICE */
-  .mc-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.4rem 1.5rem; margin-bottom: 1.2rem; }
-  .mc-question { font-size: 0.97rem; font-weight: 600; margin-bottom: 1rem; color: var(--text); }
-  .mc-options { display: flex; flex-direction: column; gap: 0.5rem; }
-  .mc-option { display: flex; align-items: flex-start; gap: 0.7rem; padding: 0.6rem 0.9rem; border-radius: 7px; border: 1px solid var(--border); cursor: pointer; font-size: 0.9rem; transition: all .15s; background: var(--surface); }
-  .mc-option:hover { border-color: var(--accent2); background: var(--accent2-light); }
-  .mc-option.selected-correct { border-color: var(--success); background: var(--success-bg); color: var(--success); }
-  .mc-option.selected-wrong { border-color: var(--error); background: var(--error-bg); color: var(--error); }
-  .mc-option.reveal-correct { border-color: var(--success); background: var(--success-bg); }
-  .mc-letter { font-family: var(--mono); font-size: 0.75rem; font-weight: 700; color: var(--text-muted); min-width: 18px; padding-top: 1px; }
-  .mc-explanation { margin-top: 0.8rem; padding: 0.7rem 1rem; background: var(--surface); border-radius: 6px; font-size: 0.85rem; color: var(--text-muted); display: none; border-left: 2px solid var(--accent); }
-  .mc-item.answered .mc-explanation { display: block; }
-  .mc-item.answered .mc-option { pointer-events: none; }
+    .sidebar-card {
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .info-pill {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 1rem 1.2rem;
+    }
+    .info-pill-lbl {
+      font-family: var(--font-mono); font-size: .6rem;
+      letter-spacing: .15em; text-transform: uppercase;
+      color: var(--text-faint); margin-bottom: .4rem;
+    }
+    .info-pill-val { font-size: .95rem; color: var(--text); font-family: var(--font-head); }
 
-  .progress-bar-wrap { background: var(--surface); border-radius: 99px; height: 4px; margin-bottom: 1.5rem; overflow: hidden; }
-  .progress-bar { height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s; }
+    /* Ecuación box */
+    .eq-box {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem;
+      text-align: center;
+    }
+    .eq-formula {
+      font-family: var(--font-mono); font-size: 1rem;
+      color: var(--gold); letter-spacing: .08em; line-height: 2;
+    }
+    .eq-formula span { color: var(--green-bright); }
+    .eq-sub { font-size: .78rem; color: var(--text-dim); margin-top: .5rem; font-style: italic; }
 
-  @media (max-width: 600px) {
-    .concept-grid { grid-template-columns: 1fr; }
-    .panel { padding: 1.5rem 1rem 3rem; }
-    .flashcard-scene { height: 260px; }
-  }
+    /* ─── CONCEPTOS ─── */
+    .concepts-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .concept-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem;
+      transition: border-color .2s, transform .2s;
+    }
+    .concept-card:hover { border-color: var(--green-border); transform: translateY(-2px); }
+    .concept-num {
+      font-family: var(--font-mono); font-size: .6rem;
+      letter-spacing: .18em; color: var(--green); margin-bottom: .6rem;
+    }
+    .concept-term {
+      font-family: var(--font-head); font-size: 1.05rem; font-weight: 700;
+      color: #fff; margin-bottom: .6rem;
+    }
+    .concept-def { font-size: .9rem; color: rgba(212,232,216,.8); line-height: 1.7; }
+    .concept-def strong { color: var(--green-bright); }
 
-  /* ── BACK BUTTON ── */
-  .back-btn{position:fixed;top:1rem;left:1rem;z-index:200;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted,#7b8fa8);text-decoration:none;padding:.38rem .72rem;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:color .2s,border-color .2s,background .2s;white-space:nowrap;line-height:1;}
-  .back-btn:hover{color:var(--accent,#4fc3f7);border-color:rgba(255,255,255,.28);background:rgba(0,0,0,.75);}
-</style>
+    /* ─── DESARROLLO ─── */
+    .dev-section { margin-bottom: 3rem; }
+    .dev-section h3 {
+      font-family: var(--font-head); font-size: 1.2rem; font-weight: 700;
+      color: var(--green-bright); margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .dev-section h3::before {
+      content: ''; width: 4px; height: 1.1em;
+      background: var(--green); border-radius: 2px; flex-shrink: 0;
+    }
+    .dev-p { color: rgba(212,232,216,.82); font-size: .97rem; line-height: 1.85; margin-bottom: .9rem; }
+    .dev-p strong { color: var(--text); }
+
+    .dev-list {
+      list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.2rem;
+    }
+    .dev-list li {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: .8rem 1rem;
+      font-size: .93rem;
+    }
+    .dev-list li::before {
+      content: '▸'; color: var(--green); font-size: .8rem; flex-shrink: 0; margin-top: .15rem;
+    }
+    .dev-list li strong { color: var(--green-bright); }
+
+    /* Ejercicios */
+    .exercise-card {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.2rem;
+    }
+    .ex-title {
+      font-family: var(--font-head); font-weight: 700;
+      color: var(--gold); margin-bottom: .8rem; font-size: .95rem;
+    }
+    .ex-table {
+      width: 100%; border-collapse: collapse; margin: .8rem 0;
+      font-size: .9rem;
+    }
+    .ex-table th {
+      background: rgba(251,191,36,.08); color: var(--gold);
+      font-family: var(--font-head); font-weight: 700;
+      padding: .5rem .8rem; text-align: left; border-bottom: 1px solid var(--border);
+    }
+    .ex-table td {
+      padding: .45rem .8rem; border-bottom: 1px solid rgba(30,56,36,.5);
+      color: rgba(212,232,216,.85);
+    }
+    .ex-table td.num { text-align: right; font-family: var(--font-mono); }
+    .ex-table tr.total td { color: var(--green-bright); font-weight: 700; border-top: 1px solid var(--border); border-bottom: none; }
+    .ex-result {
+      background: rgba(34,197,94,.08); border: 1px solid var(--green-border);
+      border-radius: var(--radius-sm); padding: .8rem 1rem; margin-top: .8rem;
+      font-family: var(--font-mono); font-size: .9rem;
+      color: var(--green-bright); letter-spacing: .04em;
+    }
+
+    /* Pirámide */
+    .piramide {
+      display: flex; flex-direction: column; align-items: center; gap: 0; margin: 1.2rem 0;
+    }
+    .pir-level {
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-head); font-weight: 700; font-size: .88rem;
+      border-radius: 4px; transition: background .2s;
+    }
+    .pir-level:nth-child(1) {
+      width: 220px; padding: .7rem; background: rgba(251,191,36,.18);
+      color: var(--gold); border: 1px solid var(--gold-border);
+    }
+    .pir-level:nth-child(2) {
+      width: 320px; padding: .7rem; background: rgba(34,197,94,.12);
+      color: var(--green-bright); border: 1px solid var(--green-border); border-top: none;
+    }
+    .pir-level:nth-child(3) {
+      width: 420px; padding: .7rem; background: rgba(212,232,216,.06);
+      color: var(--text); border: 1px solid var(--border); border-top: none;
+    }
+
+    /* SIC flow */
+    .sic-flow {
+      display: flex; align-items: center; gap: 0; flex-wrap: wrap; margin: 1.2rem 0;
+    }
+    .sic-step {
+      flex: 1; min-width: 160px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 1rem 1.2rem; text-align: center;
+    }
+    .sic-icon { font-size: 1.5rem; margin-bottom: .4rem; }
+    .sic-step-name {
+      font-family: var(--font-head); font-weight: 700; color: var(--green-bright);
+      font-size: .88rem; margin-bottom: .3rem;
+    }
+    .sic-step-desc { font-size: .8rem; color: var(--text-dim); }
+    .sic-arrow {
+      font-size: 1.2rem; color: var(--green); padding: 0 8px; flex-shrink: 0;
+    }
+    @media (max-width: 700px) { .sic-arrow { display: none; } .sic-step { min-width: 100%; } }
+
+    /* ─── FLASHCARDS ─── */
+    .fc-wrap { max-width: 640px; margin: 0 auto; }
+    .fc-progress-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px; font-family: var(--font-mono); font-size: .75rem;
+      color: var(--text-dim);
+    }
+    .fc-prog-bar-shell {
+      flex: 1; height: 3px; background: var(--border);
+      border-radius: 2px; margin: 0 16px;
+    }
+    .fc-prog-bar {
+      height: 100%; background: var(--green); border-radius: 2px;
+      transition: width .4s cubic-bezier(.4,0,.2,1);
+    }
+
+    .flashcard-scene {
+      perspective: 1000px; height: 240px; cursor: pointer; user-select: none;
+      margin-bottom: 24px;
+    }
+    .flashcard {
+      width: 100%; height: 100%;
+      position: relative; transform-style: preserve-3d;
+      transition: transform .55s cubic-bezier(.4,0,.2,1);
+    }
+    .flashcard.flipped { transform: rotateY(180deg); }
+    .fc-face {
+      position: absolute; inset: 0;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: var(--radius); padding: 2rem;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center; text-align: center;
+    }
+    .fc-front {
+      background: var(--surface); border: 1px solid var(--border);
+    }
+    .fc-back {
+      background: var(--surface-2); border: 1px solid var(--green-border);
+      transform: rotateY(180deg);
+    }
+    .fc-label {
+      font-family: var(--font-mono); font-size: .62rem;
+      letter-spacing: .18em; text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .fc-front .fc-label { color: var(--text-faint); }
+    .fc-back .fc-label { color: var(--green); }
+    .fc-text {
+      font-size: 1.1rem; color: var(--text); line-height: 1.55;
+    }
+    .fc-front .fc-text { color: rgba(212,232,216,.9); }
+    .fc-back .fc-text { color: var(--green-bright); font-weight: 700; }
+    .fc-hint {
+      font-family: var(--font-mono); font-size: .65rem;
+      color: var(--text-faint); margin-top: 1rem;
+    }
+
+    .fc-controls {
+      display: flex; gap: 12px; justify-content: center; margin-top: 8px;
+    }
+    .fc-btn {
+      font-family: var(--font-head); font-size: .82rem; font-weight: 600;
+      padding: .6rem 1.4rem; border-radius: var(--radius-sm); cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface); color: var(--text-dim);
+      transition: background .2s, color .2s, border-color .2s;
+    }
+    .fc-btn:hover { background: var(--surface-2); color: var(--text); border-color: var(--green-border); }
+    .fc-btn.primary {
+      background: var(--green-dim); color: var(--green); border-color: var(--green-border);
+    }
+    .fc-btn.primary:hover { background: rgba(34,197,94,.18); }
+
+    /* ─── COMPLETAR ─── */
+    .fill-progress-row {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 28px; font-family: var(--font-mono); font-size: .75rem;
+      color: var(--text-dim);
+    }
+    .fill-prog-shell {
+      flex: 1; height: 3px; background: var(--border); border-radius: 2px;
+    }
+    .fill-prog-bar {
+      height: 100%; background: var(--green); border-radius: 2px;
+      width: 0; transition: width .4s cubic-bezier(.4,0,.2,1);
+    }
+
+    .fill-item {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.4rem 1.6rem; margin-bottom: 14px;
+      transition: border-color .2s;
+    }
+    .fill-item.correct { border-color: var(--success-border); background: var(--success-dim); }
+    .fill-item.wrong { border-color: var(--error-border); background: var(--error-dim); }
+
+    .fill-q {
+      font-size: .97rem; color: var(--text); margin-bottom: .9rem; line-height: 1.65;
+    }
+    .fill-q .blank {
+      display: inline-block; min-width: 80px; padding: 0 4px;
+      border-bottom: 2px solid var(--text-faint); color: var(--text-faint);
+      font-style: italic;
+    }
+    .fill-input-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .fill-input {
+      flex: 1; min-width: 180px;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: .55rem 1rem;
+      font-family: var(--font-body); font-size: .9rem; color: var(--text);
+      transition: border-color .2s;
+    }
+    .fill-input:focus { outline: none; border-color: var(--green-border); }
+    .fill-input:disabled { opacity: .5; cursor: not-allowed; }
+    .fill-check-btn {
+      font-family: var(--font-head); font-weight: 700; font-size: .82rem;
+      padding: .55rem 1.2rem; border-radius: var(--radius-sm); cursor: pointer;
+      background: var(--green-dim); color: var(--green);
+      border: 1px solid var(--green-border);
+      transition: background .2s;
+    }
+    .fill-check-btn:hover { background: rgba(34,197,94,.18); }
+    .fill-check-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .fill-feedback {
+      margin-top: .65rem; font-size: .87rem; line-height: 1.55;
+      display: none;
+    }
+    .fill-feedback.ok { display: block; color: var(--success); }
+    .fill-feedback.err { display: block; color: var(--error); }
+
+    /* ─── QUIZ ─── */
+    .quiz-item {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.6rem; margin-bottom: 20px;
+    }
+    .quiz-q-num {
+      font-family: var(--font-mono); font-size: .62rem;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--text-faint); margin-bottom: .6rem;
+    }
+    .quiz-q-text {
+      font-size: 1rem; color: var(--text); margin-bottom: 1.2rem; line-height: 1.65;
+    }
+    .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+    .quiz-opt {
+      display: flex; align-items: flex-start; gap: 12px;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: .75rem 1rem;
+      font-family: var(--font-body); font-size: .9rem; color: var(--text-dim);
+      cursor: pointer; text-align: left; transition: border-color .18s, color .18s;
+    }
+    .quiz-opt:hover { border-color: var(--green-border); color: var(--text); }
+    .opt-ltr {
+      font-family: var(--font-mono); font-size: .75rem; font-weight: 700;
+      color: var(--text-faint); flex-shrink: 0; margin-top: .05rem;
+    }
+    .quiz-opt.done { cursor: default; }
+    .quiz-opt.opt-correct { background: var(--success-dim); border-color: var(--success-border); color: var(--success); }
+    .quiz-opt.opt-correct .opt-ltr { color: var(--success); }
+    .quiz-opt.opt-wrong { background: var(--error-dim); border-color: var(--error-border); color: var(--error); }
+    .quiz-opt.opt-wrong .opt-ltr { color: var(--error); }
+    .quiz-opt.opt-reveal { background: rgba(34,197,94,.06); border-color: rgba(34,197,94,.3); color: rgba(34,197,94,.8); }
+    .quiz-explanation {
+      display: none; margin-top: 1rem;
+      background: var(--surface-3); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: .9rem 1.1rem;
+      font-size: .88rem; color: var(--text-dim); line-height: 1.65;
+    }
+    .quiz-explanation.visible { display: block; animation: secIn .3s both; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      .header { padding: 80px 24px 40px; }
+      .main { padding: 32px 20px; }
+      .tabs { padding: 0 20px; }
+    }
+  </style>
 </head>
 <body>
-<a class="back-btn" href="../../../index.html">&#8592; Inicio</a>
 
+<div class="atmosphere">
+  <div class="atm-glow atm-glow-1"></div>
+  <div class="atm-glow atm-glow-2"></div>
+  <div class="atm-grid"></div>
+  <div class="bg-sym" style="font-size:18rem;bottom:-60px;right:-80px;opacity:.018;">$</div>
+  <div class="bg-sym" style="font-size:11rem;top:80px;left:-40px;opacity:.015;">≡</div>
+</div>
 
-<header>
-  <div class="tag">Organización Empresarial · Unidad 2</div>
-  <h1>Organización <em>Contable</em> de la Empresa</h1>
-  <p>Patrimonio · Sistema de Información Contable · Registración</p>
-</header>
+<a class="back-btn" href="../../../index.html">← Inicio</a>
 
-<div class="tabs-wrap">
+<!-- MATERIAL BAR -->
+<div class="material-bar">
+  <span class="material-lbl">📎 Material</span>
+  <a class="material-link" href="../material/(D)_PRACTICO_N_1_-_PATRIMONIO_Y_EMPRESA.pdf" target="_blank">📄 Práctico N°1 — Patrimonio y Empresa</a>
+  <a class="material-link" href="../material/INF._CONTABLE_DE_LA_EMPRESA_-_CLASE_2__19_03_26.pdf" target="_blank">📄 Información Contable — Clase 2</a>
+  <a class="material-link" href="../material/RESULTADOS_PRACTICO_1_-_PATRIMONIO_Y_EMPRESA.pdf" target="_blank">📄 Resultados Práctico N°1</a>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-eyebrow">
+    <span class="eyebrow-badge"><span class="eyebrow-dot"></span>Org. Empresarial · Unidad 2</span>
+    <span class="eyebrow-nlm">◆ NotebookLM</span>
+  </div>
+  <h1 class="header-title">
+    <span class="accent">Patrimonio</span> y<br>
+    <span class="line2">Sistema de Información Contable</span>
+  </h1>
+  <div class="header-meta">
+    <span class="header-meta-item"><span class="dot">◆</span> 12 conceptos</span>
+    <span class="header-meta-item"><span class="dot">◆</span> 12 flashcards</span>
+    <span class="header-meta-item"><span class="dot">◆</span> 12 ejercicios</span>
+    <span class="header-meta-item"><span class="dot">◆</span> 7 preguntas</span>
+  </div>
+  <div class="pat-eq">
+    <span class="pat-box pn">PN</span>
+    <span class="pat-op">=</span>
+    <span class="pat-box activo">Activo</span>
+    <span class="pat-op">−</span>
+    <span class="pat-box pasivo">Pasivo</span>
+  </div>
+</div>
+
+<!-- TABS -->
+<nav class="tabs-shell">
   <div class="tabs">
-    <button class="tab active" onclick="showTab('resumen')">Resumen</button>
-    <button class="tab" onclick="showTab('conceptos')">Conceptos Clave</button>
-    <button class="tab" onclick="showTab('detalle')">Explicación Detallada</button>
-    <button class="tab" onclick="showTab('flashcards')">Flashcards</button>
-    <button class="tab" onclick="showTab('completar')">Completar el Espacio</button>
-    <button class="tab" onclick="showTab('multiple')">Multiple Choice</button>
+    <button class="tab-btn active" data-tab="resumen">Resumen</button>
+    <button class="tab-btn" data-tab="conceptos">Conceptos</button>
+    <button class="tab-btn" data-tab="desarrollo">Desarrollo</button>
+    <button class="tab-btn" data-tab="flashcards">Flashcards</button>
+    <button class="tab-btn" data-tab="completar">Completar</button>
+    <button class="tab-btn" data-tab="quiz">Quiz</button>
   </div>
-</div>
+</nav>
 
-<!-- RESUMEN -->
-<div id="panel-resumen" class="panel active">
-  <h2>Resumen General</h2>
-  <div class="summary-box">
-    <p>Esta unidad estudia cómo las empresas organizan su información económica a través de la contabilidad. Se analiza el concepto de patrimonio como la suma de bienes y derechos menos las obligaciones, sus componentes (Activo, Pasivo y Patrimonio Neto), y el rol del Sistema de Información Contable para registrar operaciones mediante comprobantes. La contabilidad permite conocer el estado del patrimonio, controlar la actividad y medir resultados, siendo esencial para la toma de decisiones.</p>
-  </div>
-  <div class="formula-box">
-    <div class="formula">Patrimonio Neto = Bienes + Derechos − Obligaciones</div>
-    <div class="label">también: Activo − Pasivo = Patrimonio Neto</div>
-  </div>
-  <h3>Lo que vas a aprender</h3>
-  <ul>
-    <li>Qué es el patrimonio y sus componentes</li>
-    <li>Diferencia entre Activo, Pasivo y Patrimonio Neto</li>
-    <li>Qué es un Sistema de Información Contable</li>
-    <li>Cómo funciona el proceso de registración contable</li>
-    <li>Qué son y para qué sirven los comprobantes</li>
-  </ul>
-</div>
+<main class="main">
 
-<!-- CONCEPTOS CLAVE -->
-<div id="panel-conceptos" class="panel">
-  <h2>Conceptos Clave</h2>
-  <div class="concept-grid">
-    <div class="concept-card">
-      <div class="term">Patrimonio</div>
-      <div class="def">Conjunto de bienes, derechos y obligaciones que tiene una persona o empresa.</div>
+  <!-- ══════════════ RESUMEN ══════════════ -->
+  <section class="section active" id="resumen">
+    <div class="sec-head">
+      <h2>Resumen General</h2>
+      <p>Conceptos clave extraídos del material de cátedra vía NotebookLM</p>
     </div>
-    <div class="concept-card">
-      <div class="term">Bienes</div>
-      <div class="def">Elementos materiales e inmateriales con que cuenta la empresa: maquinaria, dinero en caja, locales, etc.</div>
-    </div>
-    <div class="concept-card">
-      <div class="term">Derechos</div>
-      <div class="def">Facultades que la empresa puede ejercer: préstamos concedidos, cantidades adeudadas por clientes.</div>
-    </div>
-    <div class="concept-card">
-      <div class="term">Obligaciones</div>
-      <div class="def">Responsabilidades a las que debe hacer frente la empresa: deudas con bancos, trabajadores, Estado.</div>
-    </div>
-    <div class="concept-card">
-      <div class="term">Patrimonio Neto</div>
-      <div class="def">Resultado de Bienes + Derechos − Obligaciones. También: Activo − Pasivo.</div>
-    </div>
-    <div class="concept-card">
-      <div class="term">Activo</div>
-      <div class="def">Bienes y derechos de la empresa. Todo lo que se posee o se tiene derecho a cobrar.</div>
-    </div>
-    <div class="concept-card">
-      <div class="term">Pasivo</div>
-      <div class="def">Obligaciones exigibles de la empresa. Deudas a pagar a terceros.</div>
-    </div>
-    <div class="concept-card">
-      <div class="term">Sistema de Información Contable</div>
-      <div class="def">Sistema que reúne datos contables, los procesa y produce información para distintos usuarios.</div>
-    </div>
-    <div class="concept-card">
-      <div class="term">Comprobante</div>
-      <div class="def">Documento comercial que formaliza operaciones o transacciones. Base de los registros contables.</div>
-    </div>
-    <div class="concept-card">
-      <div class="term">Contabilidad</div>
-      <div class="def">Ciencia que permite conocer el patrimonio y sus variaciones, controlar la actividad y medir resultados.</div>
-    </div>
-    <div class="concept-card">
-      <div class="term">Registración Contable</div>
-      <div class="def">Proceso de: leer comprobante → determinar operación → extraer datos → registrar contablemente.</div>
-    </div>
-    <div class="concept-card">
-      <div class="term">Normas Contables</div>
-      <div class="def">Criterios, normas y reglas que otorgan carácter creíble a la información contable: valuación y exposición.</div>
-    </div>
-  </div>
-</div>
 
-<!-- DETALLE -->
-<div id="panel-detalle" class="panel">
-  <h2>Explicación Detallada</h2>
-
-  <h3>El Patrimonio</h3>
-  <p>El <strong>patrimonio</strong> es el conjunto de bienes, derechos y obligaciones que posee una empresa. Se puede expresar como:</p>
-  <div class="formula-box">
-    <div class="formula">PN = Bienes + Derechos − Obligaciones</div>
-  </div>
-  <div class="example-box">
-    <div class="example-title">Ejemplo</div>
-    <p>Una empresa tiene: Dinero en Caja $13.000 · Edificios $450.000 · Vehículos $110.000 · Clientes le deben $33.000 · Deuda banco $28.000 · Deuda proveedores $17.000</p>
-    <p><strong>PN = (13.000 + 450.000 + 110.000 + 33.000) − (28.000 + 17.000) = $561.000</strong></p>
-  </div>
-
-  <h3>Activo, Pasivo y Patrimonio Neto</h3>
-  <p>Desde la perspectiva contable, los elementos patrimoniales se agrupan en tres grandes apartados:</p>
-  <table>
-    <tr><th>Elemento</th><th>Qué incluye</th><th>Ejemplo</th></tr>
-    <tr><td>Activo</td><td>Bienes y derechos de la empresa</td><td>Caja, Banco, Inmuebles, Rodados, Deudores por ventas</td></tr>
-    <tr><td>Pasivo</td><td>Obligaciones (deudas)</td><td>Préstamos bancarios, deudas con proveedores, deudas fiscales</td></tr>
-    <tr><td>Patrimonio Neto</td><td>Activo − Pasivo</td><td>Capital propio + Resultados acumulados</td></tr>
-  </table>
-  <p>La ecuación contable fundamental es: <strong>Activo = Pasivo + Patrimonio Neto</strong></p>
-
-  <h3>El Sistema de Información Contable</h3>
-  <p>Forma parte del Sistema de Información general de las organizaciones. Su jerarquía es:</p>
-  <div class="example-box">
-    <div class="example-title">Jerarquía del sistema</div>
-    <p>Organización → Sistema Administrativo → Sistema de Información → <strong>Sistema de Información Contable</strong></p>
-  </div>
-  <p>Tiene tres funciones principales:</p>
-  <ul>
-    <li><strong>Reunir datos:</strong> la mayoría surgen de comprobantes (facturas, recibos, etc.)</li>
-    <li><strong>Procesar datos:</strong> mediante técnica contable de registro de operaciones</li>
-    <li><strong>Producir información:</strong> para distintos usuarios (propietarios, bancos, Estado, inversores)</li>
-  </ul>
-
-  <h3>Los Comprobantes</h3>
-  <p>Son documentos comerciales que formalizan las operaciones. Sus finalidades son:</p>
-  <ul>
-    <li>Sirven de constancia de las operaciones realizadas</li>
-    <li>Sirven como información de las operaciones efectuadas</li>
-    <li>Sirven de base de los registros contables</li>
-    <li>Facilitan la tarea de fiscalización y control fiscal</li>
-  </ul>
-
-  <h3>El Proceso de Registración Contable</h3>
-  <ol>
-    <li>Lectura del comprobante</li>
-    <li>Determinación de la operación realizada sobre la base del comprobante</li>
-    <li>Extracción de los datos necesarios para el registro contable</li>
-    <li>Registro contable de la operación</li>
-  </ol>
-
-  <h3>La Contabilidad</h3>
-  <p>Es un Sistema de Información que permite:</p>
-  <ul>
-    <li>Conocer el patrimonio y sus variaciones</li>
-    <li>Controlar el desarrollo de la actividad</li>
-    <li>Medir sus resultados (pérdidas o ganancias)</li>
-    <li>Brindar información sobre el pasado, el presente y el futuro proyectado</li>
-  </ul>
-  <p>La información contable debe prepararse conforme a <strong>Normas Contables</strong> que le otorguen carácter creíble (Normas de Valuación y Medición + Normas de Exposición).</p>
-</div>
-
-<!-- FLASHCARDS -->
-<div id="panel-flashcards" class="panel">
-  <h2>Flashcards</h2>
-  <div class="progress-bar-wrap"><div class="progress-bar" id="fc-bar" style="width:10%"></div></div>
-  <div class="fc-controls">
-    <div class="fc-progress">Carta <span id="fc-current">1</span> / <span id="fc-total">10</span></div>
-    <div class="fc-nav">
-      <button class="btn" onclick="fcPrev()">← Anterior</button>
-      <button class="btn btn-primary" onclick="fcNext()">Siguiente →</button>
-    </div>
-  </div>
-  <div class="flashcard-scene" onclick="document.getElementById('flashcard').classList.toggle('flipped')">
-    <div class="flashcard" id="flashcard">
-      <div class="fc-face fc-front">
-        <div class="fc-hint">Pregunta — click para ver respuesta</div>
-        <div class="fc-question" id="fc-q">¿Qué es el patrimonio?</div>
+    <div class="resumen-layout">
+      <div>
+        <div class="rsum-card">
+          <div class="rsum-label">¿De qué trata esta unidad?</div>
+          <p>
+            La Unidad 2 introduce los conceptos fundamentales del <strong>Patrimonio empresarial</strong>: qué posee y qué debe una organización. Toda empresa tiene un <strong>Activo</strong> (bienes y derechos) y un <strong>Pasivo</strong> (obligaciones), y la diferencia entre ambos es el <strong>Patrimonio Neto</strong>.
+          </p>
+          <div class="rsum-callout">
+            "El Sistema de Información Contable no es un fin en sí mismo — es la brújula que permite tomar decisiones económicas y financieras."
+          </div>
+          <p>
+            También se estudia el <strong>Sistema de Información Contable (SIC)</strong>: cómo se reúnen datos a partir de comprobantes, se procesan con técnica contable y se producen informes (<strong>Balance General</strong> y <strong>Estado de Resultados</strong>) que orientan la gestión empresarial.
+          </p>
+          <p>
+            Las <strong>Normas Contables</strong> (Generales y Particulares) garantizan que la información sea confiable, útil y comparable, regulando la valuación, medición y exposición de los datos.
+          </p>
+        </div>
       </div>
-      <div class="fc-face fc-back">
-        <div class="fc-hint">Respuesta</div>
-        <div class="fc-answer" id="fc-a">El conjunto de bienes, derechos y obligaciones que tiene una persona o empresa.</div>
+
+      <div class="sidebar-card">
+        <div class="eq-box">
+          <div class="rsum-label" style="text-align:center;">Ecuación Patrimonial</div>
+          <div class="eq-formula">
+            <span>PN</span> = Bienes + Derechos − Obligaciones<br>
+            <span>PN</span> = Activo − Pasivo
+          </div>
+          <div class="eq-sub">Cuando PN = 0 → A = P (todo es deuda)<br>Cuando P = 0 → A = PN (sin deudas)</div>
+        </div>
+
+        <div class="info-pill">
+          <div class="info-pill-lbl">3 Pasos del SIC</div>
+          <div class="info-pill-val" style="font-size:.85rem;line-height:1.8;color:var(--text-dim);">
+            1. Reunir datos (comprobantes)<br>
+            2. Procesar (técnica contable)<br>
+            3. Producir información
+          </div>
+        </div>
+
+        <div class="info-pill">
+          <div class="info-pill-lbl">Normas Contables regulan</div>
+          <div class="info-pill-val" style="font-size:.85rem;line-height:1.8;color:var(--text-dim);">
+            • Valuación<br>
+            • Medición<br>
+            • Exposición
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
+  </section>
 
-<!-- COMPLETAR -->
-<div id="panel-completar" class="panel">
-  <h2>Completar el Espacio</h2>
-  <p style="color:var(--text-muted);margin-bottom:1.5rem;font-family:var(--sans);font-size:0.9rem;">Escribí la palabra que falta y presioná Enter o "Verificar".</p>
-  <div id="fill-container"></div>
-</div>
+  <!-- ══════════════ CONCEPTOS ══════════════ -->
+  <section class="section" id="conceptos">
+    <div class="sec-head">
+      <h2>Conceptos Clave</h2>
+      <p>Definiciones extraídas directamente del material de cátedra</p>
+    </div>
 
-<!-- MULTIPLE CHOICE -->
-<div id="panel-multiple" class="panel">
-  <h2>Multiple Choice</h2>
-  <div id="mc-container"></div>
-</div>
+    <div class="concepts-grid">
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 01</div>
+        <div class="concept-term">Patrimonio</div>
+        <div class="concept-def">Conjunto de <strong>bienes</strong>, <strong>derechos</strong> y <strong>obligaciones</strong> que tiene una persona o empresa. Es la foto completa de todo lo que posee y debe una organización.</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 02</div>
+        <div class="concept-term">Activo</div>
+        <div class="concept-def">Formado por los <strong>Bienes</strong> (elementos materiales e inmateriales: caja, maquinaria, mercadería, inmuebles) y los <strong>Derechos</strong> (facultades a favor de la empresa: préstamos otorgados, cuentas por cobrar).</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 03</div>
+        <div class="concept-term">Pasivo (Exigible)</div>
+        <div class="concept-def">Las <strong>obligaciones</strong> que la empresa debe afrontar: deudas con bancos, proveedores, trabajadores o el Estado. Todo lo que la empresa debe a terceros.</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 04</div>
+        <div class="concept-term">Patrimonio Neto (PN)</div>
+        <div class="concept-def">Resultado de restarle el Pasivo al Activo: <strong>PN = Activo − Pasivo</strong>. Representa el patrimonio "propio" de los dueños, libre de deudas. También llamado Neto Patrimonial.</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 05</div>
+        <div class="concept-term">Bienes</div>
+        <div class="concept-def">Elementos materiales e inmateriales con los que cuenta la empresa: dinero en caja, maquinaria, mercadería, locales, rodados. Forman parte del <strong>Activo</strong>.</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 06</div>
+        <div class="concept-term">Derechos</div>
+        <div class="concept-def">Facultades que la empresa puede ejercer a su favor: préstamos concedidos a terceros, cuentas por cobrar, deudas de clientes. También forman parte del <strong>Activo</strong>.</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 07</div>
+        <div class="concept-term">Sistema de Información Contable (SIC)</div>
+        <div class="concept-def">Subsistema vital del sistema administrativo de una organización. Su finalidad es <strong>reunir datos</strong>, <strong>procesarlos</strong> y <strong>producir información</strong> para la toma de decisiones económicas y financieras.</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 08</div>
+        <div class="concept-term">Comprobantes</div>
+        <div class="concept-def">Documentos comerciales (facturas, recibos, cheques) que formalizan las operaciones. Sirven de <strong>constancia</strong>, <strong>base de registro</strong> y <strong>medio de control</strong>. Son la materia prima del SIC.</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 09</div>
+        <div class="concept-term">Balance General</div>
+        <div class="concept-def">Estado contable que muestra la <strong>situación financiera</strong> de la empresa en un momento dado: qué tiene (Activo) y qué debe (Pasivo), con el resultado del Patrimonio Neto.</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 10</div>
+        <div class="concept-term">Estado de Resultados</div>
+        <div class="concept-def">Estado contable que refleja la <strong>situación económica</strong> de la empresa: ingresos, egresos y resultado del período. Complementa al Balance General.</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 11</div>
+        <div class="concept-term">Normas Contables</div>
+        <div class="concept-def">Reglas (Generales y Particulares) que dictan cómo realizar la <strong>Valuación</strong>, la <strong>Medición</strong> y la <strong>Exposición</strong> de la información contable. Garantizan que sea útil, confiable y creíble.</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 12</div>
+        <div class="concept-term">Pirámide Organizacional</div>
+        <div class="concept-def">Estructura jerárquica de la empresa: 1° nivel <strong>Propietarios/socios</strong>, 2° nivel <strong>Gerentes/jefes</strong>, 3° nivel <strong>Empleados/obreros</strong>. Define autoridad y responsabilidad.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ DESARROLLO ══════════════ -->
+  <section class="section" id="desarrollo">
+    <div class="sec-head">
+      <h2>Desarrollo Detallado</h2>
+      <p>Explicación completa de los temas con ejercicios resueltos del práctico</p>
+    </div>
+
+    <div class="dev-section">
+      <h3>1. Patrimonio, Activo y Pasivo</h3>
+      <p class="dev-p">El <strong>Patrimonio</strong> es el conjunto de bienes, derechos y obligaciones de una persona o empresa. Desde el punto de vista contable, se divide en dos grandes grupos:</p>
+      <ul class="dev-list">
+        <li><strong>Activo</strong> = Bienes + Derechos. Todo lo que la empresa TIENE o le DEBEN.</li>
+        <li><strong>Pasivo</strong> = Obligaciones. Todo lo que la empresa DEBE a terceros.</li>
+        <li><strong>Patrimonio Neto</strong> = Activo − Pasivo. El "resto" que pertenece a los dueños.</li>
+      </ul>
+      <p class="dev-p">Los <strong>Bienes</strong> son elementos materiales e inmateriales: dinero en caja, maquinaria, mercadería (existencias), locales propios. Los <strong>Derechos</strong> son facultades a favor de la empresa: préstamos concedidos, facturas a cobrar, deudas de clientes. Las <strong>Obligaciones</strong> incluyen: deudas con bancos, con proveedores, con el fisco (AFIP), con trabajadores.</p>
+    </div>
+
+    <div class="dev-section">
+      <h3>2. Situaciones Patrimoniales Especiales</h3>
+      <ul class="dev-list">
+        <li><strong>PN = 0</strong>: Ocurre cuando Activo = Pasivo. Significa "todo lo que tengo es deuda" — la empresa no tiene nada propio.</li>
+        <li><strong>P = 0 → A = PN</strong>: Ocurre cuando el Pasivo es cero. Significa que la empresa no tiene deudas, y todo el Activo pertenece a los dueños.</li>
+        <li><strong>PN negativo</strong>: Si el Pasivo supera al Activo, el PN es negativo — situación crítica de insolvencia.</li>
+      </ul>
+    </div>
+
+    <div class="dev-section">
+      <h3>3. Ejercicios Resueltos del Práctico N° 1</h3>
+
+      <div class="exercise-card">
+        <div class="ex-title">Ejercicio A — Cálculo del Patrimonio Neto (Caso 1)</div>
+        <table class="ex-table">
+          <tr><th colspan="2">ACTIVO (Bienes y Derechos)</th></tr>
+          <tr><td>Dinero en Caja</td><td class="num">$25.800</td></tr>
+          <tr><td>Bancos</td><td class="num">$53.000</td></tr>
+          <tr><td>Edificios / Inmueble</td><td class="num">$1.450.000</td></tr>
+          <tr><td>Rodados</td><td class="num">$3.110.000</td></tr>
+          <tr><td>Deudores por Ventas</td><td class="num">$73.000</td></tr>
+          <tr class="total"><td>Total Activo</td><td class="num">$4.711.800</td></tr>
+          <tr><th colspan="2">PASIVO (Obligaciones)</th></tr>
+          <tr><td>Préstamo bancario</td><td class="num">$58.000</td></tr>
+          <tr><td>Deuda a proveedores</td><td class="num">$107.000</td></tr>
+          <tr class="total"><td>Total Pasivo</td><td class="num">$165.000</td></tr>
+        </table>
+        <div class="ex-result">Patrimonio Neto = $4.711.800 − $165.000 = $4.546.800</div>
+      </div>
+
+      <div class="exercise-card">
+        <div class="ex-title">Ejercicio C — Caso "Paracaídas" S.A.</div>
+        <table class="ex-table">
+          <tr><th colspan="2">ACTIVO</th></tr>
+          <tr><td>Caja</td><td class="num">$200.000</td></tr>
+          <tr><td>Bancos</td><td class="num">$3.000.000</td></tr>
+          <tr><td>Inmueble</td><td class="num">$600.000</td></tr>
+          <tr><td>Mobiliario</td><td class="num">$200.000</td></tr>
+          <tr><td>Derechos de cobro</td><td class="num">$30.000</td></tr>
+          <tr><td>Existencias (Mercadería)</td><td class="num">$84.000</td></tr>
+          <tr><td>Rodado</td><td class="num">$615.000</td></tr>
+          <tr class="total"><td>Total Activo</td><td class="num">$4.729.000</td></tr>
+          <tr><th colspan="2">PASIVO</th></tr>
+          <tr><td>Préstamo a devolver</td><td class="num">$10.000</td></tr>
+          <tr><td>Deudas fiscales</td><td class="num">$8.500</td></tr>
+          <tr class="total"><td>Total Pasivo</td><td class="num">$18.500</td></tr>
+        </table>
+        <div class="ex-result">Patrimonio Neto = $4.729.000 − $18.500 = $4.710.500</div>
+      </div>
+
+      <div class="exercise-card">
+        <div class="ex-title">Ejercicio B — Identificación de Elementos Patrimoniales</div>
+        <p class="dev-p">Dado el siguiente inventario de una empresa, clasificar cada elemento:</p>
+        <ul class="dev-list">
+          <li><strong>Bienes:</strong> Ordenadores, herramientas, local propio, dinero en caja, dinero en C/C bancaria, mobiliario, joyas propias.</li>
+          <li><strong>Derechos:</strong> Facturas pendientes de cobro (lo que los clientes deben a la empresa).</li>
+          <li><strong>Obligaciones:</strong> Préstamo del Banco ZAS (lo que la empresa debe al banco).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dev-section">
+      <h3>4. El Sistema de Información Contable (SIC)</h3>
+      <p class="dev-p">La contabilidad no es una disciplina aislada — es un <strong>subsistema vital</strong> dentro del sistema administrativo de una organización. Su finalidad es reunir datos, procesarlos y producir información.</p>
+
+      <div class="sic-flow">
+        <div class="sic-step">
+          <div class="sic-icon">📄</div>
+          <div class="sic-step-name">1. Reunir Datos</div>
+          <div class="sic-step-desc">Documentos comerciales y comprobantes: facturas, recibos, cheques</div>
+        </div>
+        <div class="sic-arrow">→</div>
+        <div class="sic-step">
+          <div class="sic-icon">⚙️</div>
+          <div class="sic-step-name">2. Procesar</div>
+          <div class="sic-step-desc">Técnica contable: lectura del comprobante, registro metódico e histórico</div>
+        </div>
+        <div class="sic-arrow">→</div>
+        <div class="sic-step">
+          <div class="sic-icon">📊</div>
+          <div class="sic-step-name">3. Producir Información</div>
+          <div class="sic-step-desc">Información histórica, presente y predictiva para toma de decisiones</div>
+        </div>
+      </div>
+
+      <p class="dev-p">Los <strong>comprobantes</strong> (facturas, recibos, cheques) sirven como: constancia de la operación, base para el registro contable, y medio de control interno.</p>
+      <p class="dev-p">Los informes finales del SIC son dos: el <strong>Balance General</strong> (situación financiera) y el <strong>Estado de Resultados</strong> (situación económica). Son la "brújula" de la empresa.</p>
+    </div>
+
+    <div class="dev-section">
+      <h3>5. Normas Contables y Calidad de la Información</h3>
+      <p class="dev-p">Para que la información contable sea <strong>útil</strong>, debe ser <strong>confiable</strong>: reflejar la realidad de forma exacta y demostrable. Las <strong>Normas Contables</strong> (Generales y Particulares) regulan tres procesos clave:</p>
+      <ul class="dev-list">
+        <li><strong>Valuación:</strong> Cómo asignar valor monetario a los activos y pasivos.</li>
+        <li><strong>Medición:</strong> Con qué criterios cuantificar los hechos económicos.</li>
+        <li><strong>Exposición:</strong> Cómo presentar y comunicar la información en los estados contables.</li>
+      </ul>
+    </div>
+
+    <div class="dev-section">
+      <h3>6. La Pirámide Organizacional</h3>
+      <p class="dev-p">Toda empresa tiene una estructura jerárquica de tres niveles:</p>
+      <div class="piramide">
+        <div class="pir-level">1° Nivel — Propietario / Socios</div>
+        <div class="pir-level">2° Nivel — Gerentes / Jefes</div>
+        <div class="pir-level">3° Nivel — Empleados / Obreros</div>
+      </div>
+      <p class="dev-p" style="margin-top:.8rem;">Esta pirámide define la autoridad y responsabilidad dentro de la organización. El SIC produce información útil para todos los niveles, pero especialmente para la toma de decisiones estratégicas del primer nivel.</p>
+    </div>
+  </section>
+
+  <!-- ══════════════ FLASHCARDS ══════════════ -->
+  <section class="section" id="flashcards">
+    <div class="sec-head">
+      <h2>Flashcards</h2>
+      <p>Hacé click en la tarjeta para dar vuelta · 12 tarjetas</p>
+    </div>
+
+    <div class="fc-wrap">
+      <div class="fc-progress-row">
+        <span id="fc-counter">1 / 12</span>
+        <div class="fc-prog-bar-shell">
+          <div class="fc-prog-bar" id="fc-prog-bar" style="width:8.33%"></div>
+        </div>
+        <span id="fc-score">0 vistas</span>
+      </div>
+
+      <div class="flashcard-scene" onclick="flipCard()">
+        <div class="flashcard" id="fc-card">
+          <div class="fc-face fc-front">
+            <div class="fc-label">Pregunta</div>
+            <div class="fc-text" id="fc-q"></div>
+            <div class="fc-hint">click para ver respuesta</div>
+          </div>
+          <div class="fc-face fc-back">
+            <div class="fc-label">Respuesta</div>
+            <div class="fc-text" id="fc-a"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fc-controls">
+        <button class="fc-btn" onclick="fcPrev()">← Anterior</button>
+        <button class="fc-btn primary" onclick="fcNext()">Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ COMPLETAR ══════════════ -->
+  <section class="section" id="completar">
+    <div class="sec-head">
+      <h2>Completar el Espacio</h2>
+      <p>Escribí la palabra que falta y presioná Enter o Verificar · 12 ejercicios</p>
+    </div>
+
+    <div class="fill-progress-row">
+      <span id="fill-prog-label">0 / 12</span>
+      <div class="fill-prog-shell">
+        <div class="fill-prog-bar" id="fill-prog-bar"></div>
+      </div>
+      <span id="fill-score">0 correctas</span>
+    </div>
+
+    <div id="fill-container"></div>
+  </section>
+
+  <!-- ══════════════ QUIZ ══════════════ -->
+  <section class="section" id="quiz">
+    <div class="sec-head">
+      <h2>Multiple Choice</h2>
+      <p>Seleccioná la opción correcta · 7 preguntas</p>
+    </div>
+    <div id="quiz-list"></div>
+  </section>
+
+</main>
 
 <script>
+// ══════════════════════════════════════
 // TABS
-function showTab(id) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('panel-' + id).classList.add('active');
-  event.target.classList.add('active');
-}
+// ══════════════════════════════════════
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
 
-// FLASHCARDS DATA
-const cards = [
-  { q: '¿Qué es el patrimonio?', a: 'El conjunto de bienes, derechos y obligaciones que tiene una persona o empresa.' },
-  { q: '¿Cuál es la fórmula del Patrimonio Neto?', a: 'Patrimonio Neto = Bienes + Derechos − Obligaciones (o Activo − Pasivo).' },
-  { q: '¿Qué son los Bienes en contabilidad?', a: 'Elementos materiales e inmateriales con que cuenta la empresa: maquinaria, dinero en caja, locales, existencias.' },
-  { q: '¿Qué son los Derechos?', a: 'Facultades que la empresa puede ejercer: préstamos concedidos, cantidades adeudadas por clientes.' },
-  { q: '¿Qué son las Obligaciones?', a: 'Responsabilidades a las que debe hacer frente la empresa: deudas con bancos, trabajadores y la Administración.' },
-  { q: '¿Qué incluye el Activo?', a: 'Bienes y derechos de la empresa (todo lo que posee o tiene derecho a cobrar).' },
-  { q: '¿Qué incluye el Pasivo?', a: 'Las obligaciones exigibles: las deudas contraídas con terceros.' },
-  { q: '¿Qué es el Sistema de Información Contable?', a: 'Sistema que reúne datos contables, los procesa con técnica contable y produce información para distintos usuarios.' },
-  { q: '¿Qué es un comprobante?', a: 'Documento comercial que formaliza las operaciones o transacciones; es la base de los registros contables.' },
-  { q: '¿Cuál es la ecuación contable fundamental?', a: 'Activo = Pasivo + Patrimonio Neto.' },
-  { q: '¿Para qué sirve la Contabilidad?', a: 'Permite conocer el patrimonio, controlar el desarrollo de la actividad y medir sus resultados (pérdidas o ganancias).' },
-  { q: '¿Cuáles son los pasos del proceso de registración contable?', a: '1) Leer el comprobante, 2) Determinar la operación, 3) Extraer los datos necesarios, 4) Registrar contablemente.' },
+// ══════════════════════════════════════
+// FLASHCARDS
+// ══════════════════════════════════════
+const CARDS = [
+  { q: '¿Qué es el Patrimonio?', a: 'Conjunto de bienes, derechos y obligaciones que tiene una persona o empresa.' },
+  { q: '¿Qué compone el Activo?', a: 'Los Bienes (materiales e inmateriales) y los Derechos (facultades a favor de la empresa como cuentas por cobrar).' },
+  { q: '¿Qué es el Pasivo?', a: 'Las obligaciones o deudas de la empresa: con bancos, proveedores, el Estado o trabajadores.' },
+  { q: '¿Cuál es la ecuación patrimonial?', a: 'PN = Activo − Pasivo. También: PN = Bienes + Derechos − Obligaciones.' },
+  { q: '¿Cuándo el Patrimonio Neto es igual a cero?', a: 'Cuando el Activo es exactamente igual al Pasivo. Significa que "todo lo que tengo es deuda".' },
+  { q: '¿Qué significa que el Pasivo sea igual a cero?', a: 'Que la empresa no tiene deudas, y el Activo es igual al Patrimonio Neto. Todo pertenece a los dueños.' },
+  { q: '¿Cuáles son los 3 pasos del Sistema de Información Contable?', a: '1. Reunir datos (comprobantes). 2. Procesar (técnica contable). 3. Producir información.' },
+  { q: '¿Qué son los comprobantes?', a: 'Documentos comerciales (facturas, recibos, cheques) que sirven de constancia, base de registro y medio de control.' },
+  { q: '¿Qué regulan las Normas Contables?', a: 'La Valuación, la Medición y la Exposición de la información contable. Hacen que sea confiable y útil.' },
+  { q: '¿Qué muestra el Balance General?', a: 'La situación financiera de la empresa: su Activo, Pasivo y Patrimonio Neto en un momento dado.' },
+  { q: '¿Qué muestra el Estado de Resultados?', a: 'La situación económica de la empresa: ingresos, egresos y resultado del período (ganancia o pérdida).' },
+  { q: '¿Cuáles son los niveles de la pirámide organizacional?', a: '1° nivel: Propietarios/socios. 2° nivel: Gerentes/jefes. 3° nivel: Empleados/obreros.' },
 ];
-let fcIdx = 0;
-function updateFC() {
-  const c = cards[fcIdx];
+
+let fcIndex = 0;
+let fcSeen = 0;
+
+function renderCard() {
+  const c = CARDS[fcIndex];
   document.getElementById('fc-q').textContent = c.q;
   document.getElementById('fc-a').textContent = c.a;
-  document.getElementById('fc-current').textContent = fcIdx + 1;
-  document.getElementById('fc-total').textContent = cards.length;
-  document.getElementById('fc-bar').style.width = ((fcIdx+1)/cards.length*100) + '%';
-  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('fc-card').classList.remove('flipped');
+  document.getElementById('fc-counter').textContent = (fcIndex + 1) + ' / ' + CARDS.length;
+  document.getElementById('fc-prog-bar').style.width = ((fcIndex + 1) / CARDS.length * 100) + '%';
 }
-function fcNext() { fcIdx = (fcIdx + 1) % cards.length; updateFC(); }
-function fcPrev() { fcIdx = (fcIdx - 1 + cards.length) % cards.length; updateFC(); }
 
-// COMPLETAR EL ESPACIO
-const fills = [
-  { sentence: 'El ___ es el conjunto de bienes, derechos y obligaciones de una empresa.', answer: 'patrimonio', hint: 'Concepto contable fundamental.' },
-  { sentence: 'El Patrimonio Neto se calcula como Activo ___ Pasivo.', answer: 'menos', hint: 'Operación aritmética.' },
-  { sentence: 'Los ___ son documentos comerciales que formalizan las operaciones y son la base de los registros.', answer: 'comprobantes', hint: 'Documentos de respaldo.' },
-  { sentence: 'El ___ incluye los bienes y derechos de la empresa.', answer: 'activo', hint: 'Uno de los tres elementos del balance.' },
-  { sentence: 'Las deudas contraídas con terceros forman parte del ___.', answer: 'pasivo', hint: 'Lado deudor del balance.' },
-  { sentence: 'La ecuación contable es: Activo = Pasivo + ___.', answer: 'patrimonio neto', hint: 'Tercer elemento de la ecuación.' },
-  { sentence: 'La contabilidad es un Sistema de ___ que permite conocer el patrimonio y sus variaciones.', answer: 'información', hint: 'Tipo de sistema.' },
-  { sentence: 'La ___ permite conocer el estado del patrimonio, controlar la actividad y medir sus resultados.', answer: 'contabilidad', hint: 'Disciplina de registro.' },
-  { sentence: 'El proceso de registración comienza con la ___ del comprobante.', answer: 'lectura', hint: 'Primer paso del proceso.' },
-  { sentence: 'Las ___ indican qué valores puede tomar el dato de entrada para que sea válido.', answer: 'normas contables', hint: 'Reglas que otorgan credibilidad.' },
+function flipCard() {
+  const card = document.getElementById('fc-card');
+  card.classList.toggle('flipped');
+  if (!card.classList.contains('flipped')) return;
+  fcSeen = Math.max(fcSeen, fcIndex + 1);
+  document.getElementById('fc-score').textContent = fcSeen + ' vista' + (fcSeen !== 1 ? 's' : '');
+}
+
+function fcNext() {
+  fcIndex = (fcIndex + 1) % CARDS.length;
+  renderCard();
+}
+function fcPrev() {
+  fcIndex = (fcIndex - 1 + CARDS.length) % CARDS.length;
+  renderCard();
+}
+
+renderCard();
+
+// ══════════════════════════════════════
+// COMPLETAR
+// ══════════════════════════════════════
+const FILL_QS = [
+  { q: 'El conjunto de bienes, derechos y obligaciones de una empresa se llama <span class="blank">___</span>.', ans: ['patrimonio'], exp: 'El Patrimonio es la "foto" completa de lo que una empresa posee y debe.' },
+  { q: 'El Activo está formado por los <span class="blank">___</span> y los <span class="blank">___</span> de la empresa.', ans: ['bienes', 'derechos'], exp: 'Activo = Bienes (caja, rodados, inmuebles) + Derechos (cuentas por cobrar, préstamos otorgados).' },
+  { q: 'Las obligaciones de la empresa conforman el <span class="blank">___</span>.', ans: ['pasivo'], exp: 'El Pasivo es todo lo que la empresa debe: deudas bancarias, con proveedores, deudas fiscales.' },
+  { q: 'La ecuación patrimonial es: PN = <span class="blank">___</span> − <span class="blank">___</span>.', ans: ['activo', 'pasivo'], exp: 'Patrimonio Neto = Activo − Pasivo. Es la fórmula fundamental de la contabilidad patrimonial.' },
+  { q: 'Los documentos comerciales (facturas, recibos, cheques) que son base de registro se llaman <span class="blank">___</span>.', ans: ['comprobantes'], exp: 'Los comprobantes son la materia prima del Sistema de Información Contable.' },
+  { q: 'El SIC primero <span class="blank">___</span> datos, luego los procesa, y finalmente produce <span class="blank">___</span>.', ans: ['reune', 'información'], exp: 'Los 3 pasos del SIC: Reunir (comprobantes) → Procesar (técnica contable) → Producir información.' },
+  { q: 'Las Normas Contables se dividen en Generales y <span class="blank">___</span>.', ans: ['particulares'], exp: 'Las Normas Contables Generales y Particulares regulan cómo debe realizarse la valuación, medición y exposición.' },
+  { q: 'La situación financiera de la empresa se refleja en el <span class="blank">___</span>.', ans: ['balance general'], exp: 'El Balance General muestra Activo, Pasivo y PN en un momento dado — la "foto" financiera.' },
+  { q: 'La situación económica de la empresa se refleja en el Estado de <span class="blank">___</span>.', ans: ['resultados'], exp: 'El Estado de Resultados muestra ingresos, egresos y el resultado del período (ganancia o pérdida).' },
+  { q: 'El primer nivel de la pirámide organizacional corresponde a los <span class="blank">___</span>.', ans: ['propietarios', 'socios'], exp: '1° nivel: Propietario/socios. 2° nivel: Gerentes/jefes. 3° nivel: Empleados/obreros.' },
+  { q: 'Las Normas Contables regulan la Valuación, la <span class="blank">___</span> y la Exposición.', ans: ['medicion', 'medición'], exp: 'Los tres procesos que regulan las Normas Contables: Valuación, Medición y Exposición de la información.' },
+  { q: 'Cuando el Activo es exactamente igual al Pasivo, el Patrimonio Neto es <span class="blank">___</span>.', ans: ['cero', '0'], exp: 'PN = 0 significa que todo lo que tiene la empresa es prestado — no tiene nada propio.' },
 ];
-const fillContainer = document.getElementById('fill-container');
-fills.forEach((f, i) => {
-  const div = document.createElement('div');
-  div.className = 'fill-item';
-  div.id = 'fill-' + i;
-  div.innerHTML = `
-    <div class="fill-sentence">${f.sentence.replace('___', '<strong>___</strong>')}</div>
-    <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
-      <input class="fill-input" id="fi-${i}" placeholder="Escribí aquí..." onkeydown="if(event.key==='Enter')checkFill(${i})">
-      <button class="btn fill-verify" onclick="checkFill(${i})">Verificar</button>
-    </div>
-    <div class="fill-feedback" id="ff-${i}"></div>`;
-  fillContainer.appendChild(div);
-});
-function norm(s){return s.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
+
+let fillAnswered = 0;
+let fillCorrect = 0;
+
+function normalize(s) {
+  return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+}
+
+function buildFill() {
+  const container = document.getElementById('fill-container');
+  FILL_QS.forEach((fq, i) => {
+    const div = document.createElement('div');
+    div.className = 'fill-item';
+    div.id = 'fi-' + i;
+    div.innerHTML = `
+      <div class="fill-q">${i + 1}. ${fq.q}</div>
+      <div class="fill-input-row">
+        <input class="fill-input" id="fni-${i}" placeholder="Escribí tu respuesta…" type="text"
+          onkeydown="if(event.key==='Enter')checkFill(${i})">
+        <button class="fill-check-btn" id="fnb-${i}" onclick="checkFill(${i})">Verificar</button>
+      </div>
+      <div class="fill-feedback" id="fnf-${i}"></div>
+    `;
+    container.appendChild(div);
+  });
+}
+
 function checkFill(i) {
-  const inp = document.getElementById('fi-' + i);
-  const val = norm(inp.value);
-  const correct = norm(fills[i].answer);
-  const item = document.getElementById('fill-' + i);
-  const fb = document.getElementById('ff-' + i);
-  if (val === correct || correct.split('/').includes(val)) {
-    item.classList.remove('wrong'); item.classList.add('correct');
-    fb.textContent = '✓ Correcto!';
+  const fq = FILL_QS[i];
+  const inp = document.getElementById('fni-' + i);
+  const fb = document.getElementById('fnf-' + i);
+  const btn = document.getElementById('fnb-' + i);
+  const item = document.getElementById('fi-' + i);
+  if (inp.disabled) return;
+  inp.disabled = true;
+  btn.disabled = true;
+  fillAnswered++;
+  const val = normalize(inp.value);
+  const ok = fq.ans.some(a => normalize(a) === val || val.includes(normalize(a)));
+  if (ok) {
+    fillCorrect++;
+    item.classList.add('correct');
+    fb.className = 'fill-feedback ok';
+    fb.innerHTML = '✓ ¡Correcto! ' + fq.exp;
   } else {
-    item.classList.remove('correct'); item.classList.add('wrong');
-    fb.textContent = `✗ La respuesta correcta es: "${fills[i].answer}". ${fills[i].hint}`;
+    item.classList.add('wrong');
+    fb.className = 'fill-feedback err';
+    fb.innerHTML = '✗ Incorrecto. La respuesta es: <strong>' + fq.ans[0] + '</strong>. ' + fq.exp;
   }
+  document.getElementById('fill-prog-bar').style.width = (fillAnswered / FILL_QS.length * 100) + '%';
+  document.getElementById('fill-prog-label').textContent = fillAnswered + ' / ' + FILL_QS.length;
+  document.getElementById('fill-score').textContent = fillCorrect + ' correcta' + (fillCorrect !== 1 ? 's' : '');
 }
 
-// MULTIPLE CHOICE
-const mcData = [
+buildFill();
+
+// ══════════════════════════════════════
+// QUIZ
+// ══════════════════════════════════════
+const QUIZ = [
   {
-    q: '¿Qué resultado tiene una empresa cuyo Activo es igual al Pasivo?',
-    options: ['Patrimonio Neto positivo', 'Patrimonio Neto igual a cero', 'Patrimonio Neto negativo', 'No se puede determinar'],
+    q: '¿Cuál es la fórmula del Patrimonio Neto?',
+    opts: ['PN = Activo + Pasivo', 'PN = Activo − Pasivo', 'PN = Pasivo − Activo', 'PN = Bienes × Derechos'],
     correct: 1,
-    exp: 'Si Activo = Pasivo, entonces PN = Activo − Pasivo = 0. La empresa no tiene capital propio: todo lo que tiene es deuda.'
+    exp: 'Patrimonio Neto = Activo − Pasivo. El Activo incluye bienes y derechos; el Pasivo incluye las obligaciones. La diferencia es lo que pertenece a los dueños.'
   },
   {
-    q: '¿Cuál de los siguientes es un ejemplo de "Derecho" patrimonial?',
-    options: ['Maquinaria', 'Deuda con el banco', 'Facturas pendientes de cobro de clientes', 'Dinero en caja'],
+    q: '¿Qué son los "Derechos" dentro del Activo?',
+    opts: ['Las deudas de la empresa con el banco', 'El dinero en efectivo guardado en caja', 'Las facultades que la empresa puede ejercer a su favor, como cuentas por cobrar', 'Las maquinarias e inmuebles de la empresa'],
     correct: 2,
-    exp: 'Las facturas pendientes de cobro son derechos: la empresa tiene la facultad de exigir su pago a los clientes.'
+    exp: 'Los Derechos son facultades a favor de la empresa: préstamos concedidos a terceros, cuentas por cobrar, deudas de clientes. Se oponen a los Bienes que son los elementos materiales e inmateriales.'
   },
   {
-    q: '¿Cuál es la función del Sistema de Información Contable?',
-    options: ['Vender productos de la empresa', 'Reunir datos, procesarlos y producir información contable', 'Contratar empleados', 'Diseñar el organigrama'],
+    q: '¿Cuál es la finalidad del Sistema de Información Contable?',
+    opts: ['Contratar empleados y calcular sueldos', 'Reunir datos, procesarlos y producir información para la toma de decisiones', 'Vender productos al mercado', 'Diseñar el organigrama empresarial'],
     correct: 1,
-    exp: 'El SIC reúne datos (principalmente de comprobantes), los procesa con técnica contable y produce información para distintos usuarios.'
+    exp: 'El SIC es un subsistema vital del sistema administrativo. Su finalidad es: 1) Reunir datos (comprobantes), 2) Procesar (técnica contable), 3) Producir información para la toma de decisiones económicas y financieras.'
   },
   {
-    q: 'Una empresa tiene Activo = $500.000 y Pasivo = $180.000. ¿Cuál es su Patrimonio Neto?',
-    options: ['$680.000', '$180.000', '$320.000', '$500.000'],
+    q: '¿Qué ocurre cuando el Patrimonio Neto es igual a cero?',
+    opts: ['La empresa tiene ganancias máximas ese período', 'El Pasivo supera al Activo (insolvencia total)', 'El Activo es exactamente igual al Pasivo ("todo lo que tengo es deuda")', 'No hay bienes registrados en la empresa'],
     correct: 2,
-    exp: 'PN = Activo − Pasivo = $500.000 − $180.000 = $320.000.'
+    exp: 'PN = 0 significa Activo = Pasivo. Todo lo que la empresa tiene (Activo) está financiado por deudas (Pasivo). Los dueños no tienen nada propio en ese momento.'
   },
   {
-    q: '¿Qué son los comprobantes en el sistema contable?',
-    options: ['Programas de computadora', 'Documentos comerciales que formalizan operaciones', 'Registros de empleados', 'Inventarios de productos'],
-    correct: 1,
-    exp: 'Los comprobantes son documentos comerciales (facturas, recibos, etc.) que formalizan las operaciones y son la base de los registros contables.'
+    q: '¿Qué regulan las Normas Contables?',
+    opts: ['Los sueldos y bonificaciones de los gerentes', 'Los horarios de atención al público', 'La valuación, medición y exposición de la información contable', 'Los precios de los productos y servicios'],
+    correct: 2,
+    exp: 'Las Normas Contables (Generales y Particulares) dictan cómo realizar la Valuación, la Medición y la Exposición de la información contable, para que sea confiable, útil y comparable entre empresas.'
   },
   {
-    q: '¿Para qué sirven las Normas Contables?',
-    options: ['Para contratar auditores', 'Para otorgar credibilidad y utilidad a la información contable', 'Para calcular el IVA', 'Para registrar el inventario'],
+    q: 'En el Práctico N° 1 (Caso Paracaídas S.A.), si el Activo total es $4.729.000 y el Pasivo es $18.500, ¿cuál es el Patrimonio Neto?',
+    opts: ['$4.747.500', '$4.729.000', '$18.500', '$4.710.500'],
+    correct: 3,
+    exp: 'PN = Activo − Pasivo = $4.729.000 − $18.500 = $4.710.500. El Pasivo es muy bajo (solo préstamo + deudas fiscales), por lo que el PN es casi igual al Activo total.'
+  },
+  {
+    q: '¿Qué nivel de la pirámide organizacional corresponde a los Gerentes o Jefes?',
+    opts: ['Primer nivel', 'Segundo nivel', 'Tercer nivel', 'No forman parte de la pirámide'],
     correct: 1,
-    exp: 'Las Normas Contables (de Valuación/Medición y de Exposición) hacen que la información contable sea útil, confiable y creíble.'
+    exp: 'La pirámide tiene 3 niveles: 1° Propietarios/socios, 2° Gerentes/jefes, 3° Empleados/obreros. Los gerentes están en el segundo nivel, entre la dirección estratégica y la operativa.'
   },
 ];
-const mcContainer = document.getElementById('mc-container');
-mcData.forEach((mc, i) => {
-  const div = document.createElement('div');
-  div.className = 'mc-item';
-  div.id = 'mc-' + i;
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-list');
   const letters = ['A', 'B', 'C', 'D'];
-  div.innerHTML = `
-    <div class="mc-question">${i+1}. ${mc.q}</div>
-    <div class="mc-options">
-      ${mc.options.map((o,j) => `<div class="mc-option" onclick="checkMC(${i},${j})"><span class="mc-letter">${letters[j]}</span>${o}</div>`).join('')}
-    </div>
-    <div class="mc-explanation" id="mce-${i}">${mc.exp}</div>`;
-  mcContainer.appendChild(div);
-});
-function checkMC(qi, oi) {
-  const item = document.getElementById('mc-' + qi);
-  if (item.classList.contains('answered')) return;
-  item.classList.add('answered');
-  const opts = item.querySelectorAll('.mc-option');
-  opts[oi].classList.add(oi === mcData[qi].correct ? 'selected-correct' : 'selected-wrong');
-  if (oi !== mcData[qi].correct) opts[mcData[qi].correct].classList.add('reveal-correct');
+  QUIZ.forEach((qd, qi) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-item';
+    const optsHtml = qd.opts.map((opt, j) => `
+      <button class="quiz-opt" id="qo-${qi}-${j}" onclick="checkQuiz(${qi},${j})">
+        <span class="opt-ltr">${letters[j]})</span>
+        <span>${opt}</span>
+      </button>
+    `).join('');
+    div.innerHTML = `
+      <div class="quiz-q-num">Pregunta ${qi + 1} de ${QUIZ.length}</div>
+      <div class="quiz-q-text">${qd.q}</div>
+      <div class="quiz-options">${optsHtml}</div>
+      <div class="quiz-explanation" id="qe-${qi}">${qd.exp}</div>
+    `;
+    container.appendChild(div);
+  });
 }
+
+function checkQuiz(qi, chosen) {
+  const qd = QUIZ[qi];
+  const opts = document.querySelectorAll(`[id^="qo-${qi}-"]`);
+  opts.forEach(o => {
+    o.setAttribute('onclick', '');
+    o.classList.add('done');
+    o.style.cursor = 'default';
+  });
+  opts.forEach((o, j) => {
+    if (j === qd.correct) {
+      o.classList.add(chosen === j ? 'opt-correct' : 'opt-reveal');
+    }
+    if (j === chosen && j !== qd.correct) {
+      o.classList.add('opt-wrong');
+    }
+  });
+  const exp = document.getElementById('qe-' + qi);
+  exp.classList.add('visible');
+}
+
+buildQuiz();
 </script>
 </body>
 </html>

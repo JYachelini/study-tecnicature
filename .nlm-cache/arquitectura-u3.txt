@@ -1,0 +1,122 @@
+Different notebook specified, starting new conversation...
+Continuing conversation dee52be3...
+Answer:
+A continuación, te presento un resumen exhaustivo y detallado de la Unidad 3 
+sobre Procesos e Hilos, estructurado metodológicamente para que puedas 
+utilizarlo como única fuente de estudio:
+
+**1. Conceptos Fundamentales: Procesos vs. Hilos**
+En los sistemas operativos tradicionales, la esencia de un proceso consta de dos
+características que están unidas [1]:
+*   **Propiedad de recursos:** El proceso incluye un espacio de direcciones de 
+memoria para alojar el programa, los datos, la pila y el Bloque de Control de 
+Proceso (PCB) [1].
+*   **Planificación/ejecución:** El proceso es la entidad que puede ser 
+planificada, activada, bloqueada o suspendida por el Sistema Operativo (SO) [1].
+
+Los sistemas operativos modernos tratan estas características de forma 
+independiente para ganar eficiencia [2]. A la unidad que posee los recursos se 
+la sigue denominando **proceso**, mientras que a la unidad que se planifica y 
+ejecuta se la denomina **hilo (thread)** o "proceso liviano" [2, 3]. 
+Bajo este concepto surge el **Multihilo**, que es la capacidad de un sistema 
+operativo de dar soporte a múltiples hilos de ejecución funcionando 
+simultáneamente dentro de un único proceso [4, 5].
+
+**2. Diferencias Estructurales y Memoria Compartida**
+En un entorno monohilo, el proceso tiene un solo PCB y espacios de pila [6, 7]. 
+En cambio, en un modelo multihilo, el proceso mantiene su espacio de direcciones
+único y su propio PCB, pero internamente aparecen **múltiples pilas y múltiples 
+PCB de hilo**, uno por cada hilo activo [7].
+Para entenderlo mejor, los elementos se dividen en:
+*   **Compartido por todo el proceso:** Espacio de memoria, variables globales, 
+punteros a archivos, punteros a procesos hijos, señales e información 
+estadística [8].
+*   **Privado de cada hilo:** Código, Program Counter (PC), registros (estado de
+ejecución), pila (stack) y espacio de almacenamiento para variables locales [4, 
+5, 8].
+
+**Regla de Protección:** Como todos los hilos residen en el mismo espacio de 
+memoria y pertenecen al mismo usuario, **no existe mecanismo de protección entre
+ellos** [7, 9]. Si un hilo modifica una variable global, el resto de los hilos 
+de ese proceso notarán el cambio inmediatamente [7, 9].
+
+**3. Justificación de Uso y Ejemplos Prácticos**
+El uso de hilos permite que varias acciones se ejecuten al mismo tiempo, siendo 
+ideal para sistemas con varios núcleos de procesador y para aplicaciones que 
+deban procesar grandes volúmenes de datos sin perder rendimiento [1, 10, 11]. 
+Además, crear, finalizar o cambiar un hilo es entre **10 y 100 veces más 
+rápido** que hacerlo con un proceso, y la comunicación entre ellos no requiere 
+intervención del SO [8, 12, 13].
+
+*Ejemplos concretos del material:*
+*   **Procesador de texto:** Un hilo se dedica a leer los comandos y tipeo del 
+usuario, mientras en paralelo otro hilo realiza tareas de guardado preventivo en
+el disco. Si fuera monohilo, el programa no podría atender las pulsaciones del 
+usuario mientras guarda, aparentando un "cuelgue" o baja de rendimiento [14].
+*   **Servidor Web:** Crea un hilo distinto para responder a cada solicitud 
+(request) [15]. Si una página requerida está en la memoria caché, el hilo la 
+devuelve de inmediato [15]. Si no está, el hilo se bloqueará buscando la página 
+en el disco rígido, permitiendo que los demás hilos sigan atendiendo nuevas 
+peticiones en paralelo [11, 15].
+
+**4. Estados de los Hilos**
+Como la planificación recae sobre ellos, los hilos atraviesan diferentes estados
+[13, 16]:
+*   **Creación:** La creación de un proceso dispara automáticamente la creación 
+de un hilo por defecto. Luego, se pueden crear nuevos hilos en ese proceso, cada
+uno con su propio contexto y pila [17, 18].
+*   **Bloqueo:** Si el hilo espera un evento (ej. lectura de disco), guarda sus 
+registros y se pausa. Esto permite que el SO ejecute otro hilo de la cola [17, 
+18].
+*   **Desbloqueo:** Cuando el evento esperado sucede, el hilo se mueve a la cola
+de "Listos" [17, 19].
+*   **Finalización:** Completa su ejecución y se liberan sus registros y datos 
+[17, 19].
+
+**Detalle Crítico:** Los estados globales como "Suspendido" aplican únicamente 
+al nivel del **proceso**. Por lo tanto, si el SO suspende o finaliza un proceso,
+esto implica **obligatoriamente que todos sus hilos** sean suspendidos o 
+finalizados en consecuencia [13, 17-20].
+
+**5. Sincronización y Concurrencia**
+La ejecución solapada o simultánea (concurrencia) mejora muchísimo el 
+rendimiento, pero trae aparejada ciertos peligros lógicos cuando los hilos 
+acceden a la misma memoria. Pueden surgir problemas graves como la **condición 
+de carrera** o los interbloqueos (**deadlocks**), que requieren el uso de 
+técnicas de sincronización para evitarlos [19, 21].
+
+**6. Implementación: Modelos de Hilos (ULT y KLT)**
+Cualquier gestión de hilos se realiza utilizando una **biblioteca de hilos** 
+(ej. POSIX Pthreads, Win32, Java) [21-23]. Existen dos grandes enfoques de 
+arquitectura:
+
+**A. User Level Thread (ULT - Hilos a nivel de usuario):**
+*   **Definición:** El proceso gestiona sus hilos mediante la biblioteca 
+ejecutada totalmente en el espacio del usuario. El sistema operativo (Kernel) 
+**no sabe** que existen los hilos; él solo ve y planifica un proceso ordinario 
+[20, 23-25].
+*   **Ventajas:** Es extremadamente rápido porque el cambio de hilo se hace en 
+la propia aplicación y **no implica un doble cambio de modo** (no se requiere 
+salto al Kernel); la aplicación puede programar su propio algoritmo de 
+planificación; y se pueden implementar hilos incluso en sistemas operativos 
+antiguos que no los soporten nativamente [24, 26, 27].
+*   **Desventajas:** Si un hilo realiza una llamada al sistema bloqueante (ej. 
+leer un disco), el OS detecta que "el proceso" pidió un recurso, bloqueando así 
+**todo el proceso**, inutilizando a los demás hilos [26-28]. Además, no pueden 
+aprovechar el multiprocesamiento real [26, 27].
+
+**B. Kernel Level Thread (KLT - Hilos a nivel de núcleo):**
+*   **Definición:** Toda la gestión y conocimiento de los hilos reside en el 
+Kernel [26, 28]. El SO proporciona una API, y cualquier creación o modificación 
+de un hilo dentro del proceso obliga a llamar a los servicios del sistema [26, 
+28].
+*   **Ventajas:** El Kernel puede asignar de forma inteligente distintos hilos 
+de un mismo proceso a múltiples procesadores; **si un hilo se bloquea, no 
+detiene al proceso entero** (el SO pone a funcionar a otro); y las rutinas del 
+propio SO pueden programarse en multihilo para ser más veloces [29, 30].
+*   **Desventajas:** El cambio de un hilo a otro dentro del proceso obliga a 
+realizar llamadas al sistema, lo que genera un **doble cambio de modo** (saltar 
+al modo Kernel y regresar al modo Usuario), haciendo la gestión más costosa y 
+lenta comparada con los ULT [29, 30].
+
+Resumed conversation: dee52be3-3fed-448d-893e-172a5f3a8560

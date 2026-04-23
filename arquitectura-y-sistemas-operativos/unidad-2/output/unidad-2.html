@@ -3,938 +3,563 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unidad 2 — Procesos</title>
+<title>Arquitectura y SO — Unidad 2: Procesos</title>
 <style>
-  :root {
-    --bg:       #0d0b07;
-    --surface:  #161209;
-    --card:     #1e1a0e;
-    --card-h:   #252010;
-    --border:   #3a3010;
-    --accent:   #f59e0b;
-    --accent-g: rgba(245,158,11,0.18);
-    --accent2:  #fbbf24;
-    --red:      #ef4444;
-    --red-bg:   rgba(239,68,68,0.12);
-    --green:    #22c55e;
-    --green-bg: rgba(34,197,94,0.12);
-    --blue:     #60a5fa;
-    --text:     #fef3c7;
-    --muted:    #a08050;
-    --dim:      #5a4820;
-    --mono:     "Menlo", "Courier New", monospace;
-    --serif:    "Georgia", "Times New Roman", serif;
-    --sans:     system-ui, -apple-system, "Segoe UI", sans-serif;
-  }
+:root{
+  --bg:#060a10;--surface:#0c1320;--surface2:#101929;
+  --accent:#f59e0b;--accent-dim:rgba(245,158,11,.11);--accent-glow:rgba(245,158,11,.22);
+  --accent2:#fb923c;--accent2-dim:rgba(251,146,60,.1);
+  --ok:#4ade80;--ok-bg:rgba(74,222,128,.07);--bad:#f87171;--bad-bg:rgba(248,113,113,.07);
+  --text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#475569;
+  --border:rgba(245,158,11,.14);--border2:rgba(255,255,255,.055);
+  --sans:'Century Gothic','Gill Sans','Gill Sans MT',Futura,sans-serif;
+  --body:Georgia,'Book Antiqua',Palatino,serif;
+  --mono:'Courier New',Courier,monospace;
+  --r:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.75;min-height:100vh;overflow-x:hidden;}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+.back-btn{position:fixed;top:1rem;left:1rem;z-index:200;font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;padding:.38rem .72rem;border:1px solid var(--border);background:rgba(6,10,16,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:color .2s,border-color .2s;white-space:nowrap;}
+.back-btn:hover{color:var(--accent);border-color:rgba(245,158,11,.4);}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--serif);
-    font-size: 16px;
-    line-height: 1.7;
-    min-height: 100vh;
-  }
+.material-bar{background:rgba(245,158,11,.05);border-bottom:1px solid var(--border);padding:.55rem 2rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+.material-lbl{font-family:var(--mono);font-size:.6rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.14em;}
+.material-link{font-family:var(--mono);font-size:.64rem;color:var(--accent);text-decoration:none;padding:.2rem .6rem;border:1px solid rgba(245,158,11,.22);border-radius:4px;transition:background .2s,border-color .2s;white-space:nowrap;}
+.material-link:hover{background:var(--accent-dim);border-color:rgba(245,158,11,.45);}
 
-  /* ── HEADER ── */
-  header {
-    background: linear-gradient(160deg, #100e06 0%, #1a1508 60%, #0d0b07 100%);
-    border-bottom: 1px solid var(--border);
-    padding: 2.5rem 2rem 2rem;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  header::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(245,158,11,0.12) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  header::after {
-    content: '{ }';
-    position: absolute;
-    right: 2rem; bottom: 1rem;
-    font-family: var(--mono);
-    font-size: 5rem;
-    color: rgba(245,158,11,0.04);
-    pointer-events: none;
-  }
-  .badge {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--accent);
-    background: rgba(245,158,11,0.1);
-    border: 1px solid rgba(245,158,11,0.3);
-    padding: 0.25rem 0.8rem;
-    border-radius: 2rem;
-    margin-bottom: 1rem;
-  }
-  header h1 {
-    font-family: var(--sans);
-    font-size: clamp(1.7rem, 4vw, 2.8rem);
-    font-weight: 800;
-    letter-spacing: -0.025em;
-    color: #fff;
-    margin-bottom: 0.4rem;
-  }
-  header h1 span { color: var(--accent); }
-  header p { color: var(--muted); font-family: var(--sans); font-size: 0.9rem; }
+header{position:relative;padding:5rem 2rem 3.5rem;overflow:hidden;border-bottom:1px solid var(--border);}
+header::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(251,146,60,.06) 0%,transparent 55%),repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(245,158,11,.03) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(245,158,11,.03) 40px);pointer-events:none;}
+header::after{content:'PRC';position:absolute;right:3%;top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:7rem;font-weight:700;letter-spacing:-.04em;color:rgba(245,158,11,.04);pointer-events:none;line-height:1;}
+.hd{position:relative;z-index:1;max-width:860px;}
+.tag-row{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin-bottom:1.4rem;}
+.tag{font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);background:rgba(255,255,255,.04);border:1px solid var(--border2);padding:.2rem .7rem;border-radius:2rem;}
+.nlm-badge{display:inline-flex;align-items:center;gap:.3rem;font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(245,158,11,.35);padding:.2rem .7rem;border-radius:2rem;}
+header h1{font-family:var(--sans);font-size:clamp(1.9rem,4.5vw,3rem);font-weight:700;letter-spacing:-.02em;color:#fff;margin-bottom:.7rem;line-height:1.15;}
+header p{color:var(--text-muted);font-family:var(--mono);font-size:.76rem;letter-spacing:.06em;}
 
-  /* ── TABS ── */
-  .tabs-wrap {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(13,11,7,0.94);
-    backdrop-filter: blur(14px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 1rem;
-    overflow-x: auto; scrollbar-width: none;
-  }
-  .tabs-wrap::-webkit-scrollbar { display: none; }
-  .tabs { display: flex; gap: 0.2rem; max-width: 920px; margin: 0 auto; }
-  .tab {
-    font-family: var(--sans); font-size: 0.78rem; font-weight: 600;
-    letter-spacing: 0.05em; text-transform: uppercase;
-    color: var(--muted); background: none; border: none;
-    border-bottom: 2px solid transparent;
-    padding: 0.85rem 1rem; cursor: pointer; white-space: nowrap;
-    transition: color .2s, border-color .2s;
-  }
-  .tab:hover { color: var(--text); }
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+/* Estado indicator strip */
+.state-strip{display:flex;gap:.3rem;margin-top:1.8rem;flex-wrap:wrap;align-items:center;}
+.state-dot{height:10px;width:10px;border-radius:50%;border:1px solid rgba(245,158,11,.3);}
+.state-dot.new{background:rgba(148,163,184,.25);}
+.state-dot.ready{background:rgba(56,189,248,.6);}
+.state-dot.run{background:rgba(245,158,11,.9);}
+.state-dot.blocked{background:rgba(251,146,60,.5);}
+.state-dot.exit{background:rgba(248,113,113,.4);}
+.state-lbl{font-family:var(--mono);font-size:.55rem;color:var(--text-dim);letter-spacing:.1em;}
 
-  /* ── SECTIONS ── */
-  .section { display: none; }
-  .section.active { display: block; animation: up .28s ease; }
-  @keyframes up { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform:none; } }
+.tabs-wrap{position:sticky;top:0;z-index:100;background:rgba(6,10,16,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border2);}
+.tabs{display:flex;overflow-x:auto;padding:0 1.5rem;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab-btn{flex-shrink:0;font-family:var(--mono);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);padding:.85rem 1.2rem;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;white-space:nowrap;}
+.tab-btn:hover{color:var(--text-muted);}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
 
-  .container { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+main{max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;animation:fi .25s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:translateY(0);}}
 
-  h2 {
-    font-family: var(--sans); font-size: 1.45rem; font-weight: 800;
-    color: #fff; margin-bottom: 1.5rem;
-    display: flex; align-items: center; gap: 0.6rem;
-  }
-  .icon {
-    font-size: 1.1rem;
-    background: var(--accent-g);
-    border: 1px solid rgba(245,158,11,0.3);
-    border-radius: 8px; width: 2rem; height: 2rem;
-    display: flex; align-items: center; justify-content: center;
-  }
+.sec-hd{margin-bottom:2rem;}
+.sec-title{display:flex;align-items:center;gap:.75rem;font-family:var(--sans);font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:.3rem;}
+.sec-icon{width:1.9rem;height:1.9rem;border-radius:7px;background:var(--accent-dim);border:1px solid rgba(245,158,11,.3);display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--accent);flex-shrink:0;}
+.sec-sub{color:var(--text-muted);font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;padding-left:2.65rem;}
 
-  /* ── RESUMEN ── */
-  .overview {
-    background: var(--card); border: 1px solid var(--border);
-    border-left: 3px solid var(--accent); border-radius: 12px;
-    padding: 1.5rem; margin-bottom: 2rem; font-size: 0.93rem;
-  }
-  .mem-diagram {
-    display: flex; flex-direction: column; gap: 0; margin-top: 1.5rem;
-    border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
-    font-family: var(--mono); font-size: 0.78rem; max-width: 260px;
-  }
-  .mem-row {
-    padding: 0.45rem 1rem; text-align: center; font-weight: 600;
-    border-bottom: 1px solid var(--border);
-    transition: background .2s;
-  }
-  .mem-row:last-child { border-bottom: none; }
-  .mem-row.ctx  { background: rgba(245,158,11,0.15); color: var(--accent); }
-  .mem-row.code { background: rgba(96,165,250,0.1);  color: var(--blue); }
-  .mem-row.data { background: rgba(139,92,246,0.1);  color: #a78bfa; }
-  .mem-row.stk  { background: rgba(34,197,94,0.1);   color: var(--green); }
-  .mem-row.heap { background: rgba(239,68,68,0.1);   color: var(--red); }
+.overview-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);padding:1.8rem 2rem;}
+.overview-card p{color:var(--text-muted);font-size:.96rem;line-height:1.85;}
+.overview-card p+p{margin-top:.9rem;}
+.overview-card strong{color:var(--text);}
 
-  .diff-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;
-  }
-  .diff-card {
-    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
-    padding: 1rem; text-align: center;
-  }
-  .diff-card .label {
-    font-family: var(--mono); font-size: 0.68rem; letter-spacing: .1em;
-    text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem;
-  }
-  .diff-card .value {
-    font-family: var(--sans); font-weight: 700; color: var(--accent); font-size: 0.95rem;
-  }
-  .diff-card .sub { font-size: 0.78rem; color: var(--muted); margin-top: 0.3rem; }
+/* Memory diagram */
+.mem-diagram{display:flex;flex-direction:column;gap:2px;width:200px;margin:.9rem 0;}
+.mem-seg{padding:.4rem .8rem;border-radius:4px;font-family:var(--mono);font-size:.7rem;text-align:center;font-weight:700;}
+.ms-ctx{background:rgba(245,158,11,.25);border:1px solid rgba(245,158,11,.5);color:#fde68a;}
+.ms-txt{background:rgba(56,189,248,.15);border:1px solid rgba(56,189,248,.3);color:#7dd3fc;}
+.ms-dat{background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.25);color:#86efac;}
+.ms-heap{background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#c4b5fd;}
+.ms-stk{background:rgba(251,146,60,.15);border:1px solid rgba(251,146,60,.3);color:#fdba74;}
+.ms-arrow{font-family:var(--mono);font-size:.6rem;color:var(--text-dim);text-align:center;padding:1px 0;}
 
-  /* ── CONCEPTOS ── */
-  .concept-list { display: flex; flex-direction: column; gap: 0.7rem; }
-  .concept-item {
-    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
-    padding: 1rem 1.25rem; transition: border-color .2s;
-  }
-  .concept-item:hover { border-color: var(--accent); }
-  .concept-term {
-    font-family: var(--sans); font-weight: 700; font-size: 0.88rem;
-    color: var(--accent2); margin-bottom: 0.3rem;
-    display: flex; align-items: center; gap: 0.5rem;
-  }
-  .concept-term::before { content: '//'; font-family: var(--mono); color: var(--dim); font-size: 0.78rem; }
-  .concept-def { font-size: 0.86rem; color: var(--text); }
+/* State models */
+.state-model{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:1.2rem 1.4rem;margin-bottom:.8rem;}
+.state-model h4{font-family:var(--sans);font-size:.9rem;font-weight:700;color:var(--accent2);margin-bottom:.7rem;}
+.states-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.7rem;}
+.state-badge{font-family:var(--mono);font-size:.65rem;padding:.25rem .65rem;border-radius:2rem;border:1px solid;}
+.sb-new{color:#94a3b8;border-color:rgba(148,163,184,.3);background:rgba(148,163,184,.08);}
+.sb-ready{color:#7dd3fc;border-color:rgba(56,189,248,.3);background:rgba(56,189,248,.08);}
+.sb-run{color:#fde68a;border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.1);}
+.sb-blocked{color:#fdba74;border-color:rgba(251,146,60,.3);background:rgba(251,146,60,.08);}
+.sb-exit{color:#fca5a5;border-color:rgba(248,113,113,.3);background:rgba(248,113,113,.08);}
+.sb-susp{color:#c4b5fd;border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.08);}
+.state-model p{font-size:.87rem;color:var(--text-muted);line-height:1.65;}
+.state-model p strong{color:var(--text);}
 
-  /* ── DETALLE ── */
-  .detail-block {
-    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-    padding: 1.4rem; margin-bottom: 1.2rem;
-  }
-  .detail-block h3 {
-    font-family: var(--sans); font-size: 0.95rem; font-weight: 700;
-    color: var(--accent); margin: 0 0 0.75rem;
-    display: flex; align-items: center; gap: 0.4rem;
-  }
-  .detail-block p { font-size: 0.88rem; color: var(--text); margin-bottom: 0.55rem; }
-  .detail-block ul { padding-left: 1.2rem; }
-  .detail-block li { font-size: 0.86rem; color: var(--text); margin-bottom: 0.3rem; }
+.concepts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.9rem;}
+.ccard{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:1.2rem 1.35rem;transition:border-color .2s,background .2s;}
+.ccard:hover{border-color:var(--border);background:var(--surface2);}
+.cterm{font-family:var(--sans);font-size:.84rem;font-weight:700;color:var(--accent);margin-bottom:.35rem;}
+.cdef{font-size:.86rem;color:var(--text-muted);line-height:1.6;}
 
-  /* State machine diagram */
-  .states-flow {
-    display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;
-    margin: 0.75rem 0; font-family: var(--mono); font-size: 0.78rem;
-  }
-  .state-box {
-    background: var(--accent-g); border: 1px solid rgba(245,158,11,0.4);
-    border-radius: 6px; padding: 0.3rem 0.75rem;
-    color: var(--accent); font-weight: 700;
-  }
-  .state-box.new    { background: rgba(96,165,250,0.12); border-color: rgba(96,165,250,0.4); color: var(--blue); }
-  .state-box.run    { background: rgba(34,197,94,0.12);  border-color: rgba(34,197,94,0.4);  color: var(--green); }
-  .state-box.ready  { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.4); color: var(--accent); }
-  .state-box.block  { background: rgba(239,68,68,0.12);  border-color: rgba(239,68,68,0.4);  color: var(--red); }
-  .state-box.exit   { background: rgba(100,100,100,0.12);border-color: rgba(100,100,100,0.3);color: #888; }
-  .arrow { color: var(--dim); }
+.ds{margin-bottom:2.4rem;}
+.ds h3{font-family:var(--sans);font-size:.97rem;font-weight:700;color:var(--accent2);margin-bottom:.85rem;letter-spacing:.02em;}
+.ds p{color:var(--text-muted);margin-bottom:.75rem;font-size:.93rem;}
+.ds ul{padding-left:1.4rem;color:var(--text-muted);font-size:.92rem;}
+.ds li{margin-bottom:.35rem;}
+.ds li strong{color:var(--text);}
+.hl{background:var(--accent-dim);border:1px solid rgba(245,158,11,.2);border-radius:7px;padding:.9rem 1.2rem;margin:.75rem 0;font-size:.9rem;color:var(--text);}
+.hl strong{color:var(--accent);}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin:.75rem 0;}
+@media(max-width:600px){.grid2{grid-template-columns:1fr;}}
+.mc2{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:.95rem 1.05rem;}
+.mc2 h4{font-family:var(--sans);font-size:.82rem;font-weight:700;color:#fff;margin-bottom:.3rem;}
+.mc2 p{font-size:.82rem;color:var(--text-muted);}
+.tl{display:flex;flex-direction:column;gap:.55rem;margin:.75rem 0;}
+.trow{display:flex;gap:.75rem;align-items:flex-start;}
+.tnum{flex-shrink:0;font-family:var(--mono);font-size:.62rem;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(245,158,11,.28);border-radius:4px;padding:.18rem .48rem;margin-top:.18rem;white-space:nowrap;}
+.ttext{font-size:.87rem;color:var(--text-muted);}
+.ttext strong{color:var(--text);}
+.exc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin:.8rem 0;}
+@media(max-width:600px){.exc-grid{grid-template-columns:1fr;}}
+.exc-card{border-radius:8px;padding:.9rem 1rem;border:1px solid;}
+.exc-abort{background:rgba(248,113,113,.07);border-color:rgba(248,113,113,.25);}
+.exc-fault{background:rgba(245,158,11,.07);border-color:rgba(245,158,11,.25);}
+.exc-trap{background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.2);}
+.exc-card h4{font-family:var(--sans);font-size:.8rem;font-weight:700;margin-bottom:.3rem;}
+.exc-abort h4{color:#f87171;}
+.exc-fault h4{color:#fde68a;}
+.exc-trap h4{color:#86efac;}
+.exc-card p{font-size:.8rem;color:var(--text-muted);}
 
-  .exc-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 0.75rem; margin-top: 0.75rem;
-  }
-  .exc-card {
-    border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem;
-  }
-  .exc-card.abort { border-color: rgba(239,68,68,0.4); }
-  .exc-card.fault { border-color: rgba(245,158,11,0.4); }
-  .exc-card.trap  { border-color: rgba(96,165,250,0.4); }
-  .exc-title {
-    font-family: var(--mono); font-size: 0.8rem; font-weight: 700;
-    margin-bottom: 0.4rem;
-  }
-  .exc-card.abort .exc-title { color: var(--red); }
-  .exc-card.fault .exc-title { color: var(--accent); }
-  .exc-card.trap  .exc-title { color: var(--blue); }
-  .exc-desc { font-size: 0.8rem; color: var(--muted); }
+.srow{display:flex;align-items:center;gap:1.4rem;margin-bottom:1.5rem;}
+.snum{font-family:var(--mono);font-size:1.45rem;font-weight:700;color:var(--accent);}
+.slbl{font-family:var(--mono);font-size:.6rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;}
+.bwrap{flex:1;height:4px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden;}
+.bfill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s ease;}
 
-  .tag-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; }
-  .tag {
-    font-family: var(--mono); font-size: 0.7rem;
-    color: var(--accent); background: var(--accent-g);
-    border: 1px solid rgba(245,158,11,0.25); padding: 0.18rem 0.55rem; border-radius: 4px;
-  }
+.fc-nav{display:flex;align-items:center;gap:.9rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+.fc-ctr{font-family:var(--mono);font-size:.75rem;color:var(--text-muted);min-width:3.5rem;}
+.btn{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;padding:.48rem 1.05rem;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;transition:background .2s,color .2s,border-color .2s;white-space:nowrap;}
+.btn:hover{background:var(--accent-dim);color:var(--accent);border-color:rgba(245,158,11,.4);}
+.btnp{background:var(--accent-dim);color:var(--accent);border-color:rgba(245,158,11,.4);}
+.btnp:hover{background:rgba(245,158,11,.2);}
+.scene{perspective:1000px;width:100%;max-width:640px;height:220px;cursor:pointer;user-select:none;}
+.fcard{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
+.fcard.flipped{transform:rotateY(180deg);}
+.ffront,.fback{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:var(--r);display:flex;align-items:center;justify-content:center;padding:1.8rem;text-align:center;}
+.ffront{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);}
+.fback{background:var(--surface2);border:1px solid rgba(251,146,60,.2);border-left:3px solid var(--accent2);transform:rotateY(180deg);}
+.ffront p{font-family:var(--sans);font-size:.97rem;font-weight:700;color:#fff;line-height:1.4;}
+.fback p{font-size:.86rem;color:var(--text-muted);line-height:1.65;}
+.fc-hint{font-family:var(--mono);font-size:.6rem;color:var(--text-dim);text-align:center;margin-top:.75rem;letter-spacing:.08em;}
 
-  /* ── FLASHCARDS ── */
-  .fc-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 1.25rem;
-  }
-  .fc-prog {
-    font-family: var(--mono); font-size: 0.78rem; color: var(--muted);
-    background: var(--card); border: 1px solid var(--border);
-    padding: 0.28rem 0.7rem; border-radius: 6px;
-  }
-  .fc-prog span { color: var(--accent); font-weight: 700; }
+.fi{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:1.15rem 1.35rem;margin-bottom:.8rem;transition:border-color .2s;}
+.fi.ok{border-color:rgba(74,222,128,.3);background:var(--ok-bg);}
+.fi.bad{border-color:rgba(248,113,113,.3);background:var(--bad-bg);}
+.fi-s{font-size:.93rem;color:var(--text);margin-bottom:.7rem;line-height:1.7;}
+.fi-s strong{color:var(--accent);font-style:italic;}
+.fi-row{display:flex;gap:.55rem;align-items:center;flex-wrap:wrap;}
+.fi-in{font-family:var(--mono);font-size:.84rem;background:#09101c;border:1px solid var(--border);border-radius:6px;padding:.42rem .75rem;color:var(--text);outline:none;transition:border-color .2s;min-width:190px;}
+.fi-in:focus{border-color:rgba(245,158,11,.5);}
+.fi-fb{font-size:.81rem;margin-top:.55rem;padding:.45rem .65rem;border-radius:6px;display:none;}
+.fi-fb.show{display:block;}
+.fi-fb.ok{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:#86efac;}
+.fi-fb.bad{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);color:#fca5a5;}
 
-  .fc-scene {
-    width: 100%; height: 240px; perspective: 1000px;
-    cursor: pointer; margin-bottom: 1.4rem;
-  }
-  .fc-inner {
-    width: 100%; height: 100%; position: relative;
-    transform-style: preserve-3d;
-    transition: transform .5s cubic-bezier(.4,0,.2,1);
-  }
-  .fc-scene.flipped .fc-inner { transform: rotateY(180deg); }
-  .fc-face {
-    position: absolute; inset: 0; backface-visibility: hidden;
-    border-radius: 16px; display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    padding: 2rem; text-align: center;
-  }
-  .fc-front {
-    background: linear-gradient(145deg, var(--card) 0%, #231e0c 100%);
-    border: 1px solid var(--border);
-  }
-  .fc-back {
-    background: linear-gradient(145deg, #1a1508 0%, #120f05 100%);
-    border: 1px solid rgba(245,158,11,0.35);
-    transform: rotateY(180deg);
-  }
-  .fc-hint {
-    font-family: var(--mono); font-size: 0.63rem; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--dim); margin-bottom: 0.9rem;
-  }
-  .fc-q {
-    font-family: var(--sans); font-size: clamp(0.95rem, 2.2vw, 1.2rem);
-    font-weight: 700; color: var(--text); line-height: 1.4;
-  }
-  .fc-a { font-size: 0.87rem; color: var(--text); line-height: 1.65; }
-  .fc-a strong { color: var(--accent); font-family: var(--sans); }
+.mci{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:1.3rem;margin-bottom:.95rem;}
+.mcn{font-family:var(--mono);font-size:.6rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.45rem;}
+.mcq{font-family:var(--sans);font-size:.93rem;font-weight:700;color:#fff;margin-bottom:.9rem;line-height:1.4;}
+.mco-wrap{display:flex;flex-direction:column;gap:.45rem;}
+.mco{display:flex;align-items:flex-start;gap:.7rem;padding:.6rem .85rem;border:1px solid var(--border2);border-radius:8px;cursor:pointer;transition:background .15s,border-color .15s;}
+.mco:hover:not(.dis){background:rgba(255,255,255,.03);border-color:rgba(245,158,11,.2);}
+.mco.cor{background:var(--ok-bg);border-color:rgba(74,222,128,.3);}
+.mco.wr{background:var(--bad-bg);border-color:rgba(248,113,113,.3);}
+.mco.dis{cursor:default;pointer-events:none;}
+.mcl{flex-shrink:0;font-family:var(--mono);font-size:.7rem;color:var(--accent);width:1.1rem;margin-top:.15rem;}
+.mco.cor .mcl{color:#4ade80;}
+.mco.wr .mcl{color:#f87171;}
+.mco span:last-child{font-size:.88rem;color:var(--text-muted);}
+.mco.cor span:last-child,.mco.wr span:last-child{color:var(--text);}
+.mce{display:none;margin-top:.7rem;font-size:.81rem;color:var(--text-muted);padding:.55rem .75rem;background:rgba(255,255,255,.03);border-radius:6px;border-left:2px solid var(--accent);}
+.mce.show{display:block;}
 
-  .fc-ctrls { display: flex; gap: 0.6rem; justify-content: center; }
-
-  .btn {
-    font-family: var(--sans); font-size: 0.8rem; font-weight: 600;
-    border: none; border-radius: 8px; padding: 0.55rem 1.15rem;
-    cursor: pointer; transition: all .15s; letter-spacing: .02em;
-  }
-  .btn-primary { background: var(--accent); color: #000; }
-  .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(245,158,11,0.35); }
-  .btn-ghost {
-    background: var(--card); color: var(--muted);
-    border: 1px solid var(--border);
-  }
-  .btn-ghost:hover { background: var(--card-h); color: var(--text); }
-  .btn:disabled { opacity: .35; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
-
-  /* ── COMPLETAR ── */
-  .progress-row { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.5rem; }
-  .prog-bar { flex: 1; height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; }
-  .prog-fill {
-    height: 100%; border-radius: 4px;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    transition: width .35s ease;
-  }
-  .prog-label { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); white-space: nowrap; }
-
-  .fill-item {
-    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-    padding: 1.2rem 1.4rem; margin-bottom: 0.9rem; transition: border-color .2s;
-  }
-  .fill-item.correct { border-color: var(--green); background: var(--green-bg); }
-  .fill-item.wrong   { border-color: var(--red); }
-  .fill-q { font-size: 0.88rem; color: var(--text); margin-bottom: 0.7rem; line-height: 1.6; }
-  .fill-blank {
-    font-family: var(--mono); color: var(--accent);
-    background: var(--accent-g); border: 1px dashed rgba(245,158,11,0.4);
-    border-radius: 4px; padding: 0 0.4rem; font-size: 0.83rem;
-  }
-  .fill-wrap { display: flex; gap: 0.5rem; align-items: center; }
-  .fill-input {
-    flex: 1; background: var(--bg); border: 1px solid var(--border);
-    border-radius: 8px; padding: 0.48rem 0.7rem;
-    color: var(--text); font-family: var(--mono); font-size: 0.86rem;
-    outline: none; transition: border-color .2s;
-  }
-  .fill-input:focus { border-color: var(--accent); }
-  .fill-input:disabled { opacity: .65; cursor: not-allowed; }
-  .fill-fb { margin-top: 0.55rem; font-size: 0.8rem; line-height: 1.5; display: none; }
-  .fill-fb.show { display: block; }
-  .fill-fb.ok { color: var(--green); }
-  .fill-fb.ko { color: var(--red); }
-
-  /* ── MULTIPLE CHOICE ── */
-  .mc-block {
-    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-    padding: 1.25rem 1.4rem; margin-bottom: 1.2rem;
-  }
-  .mc-num { font-family: var(--mono); font-size: 0.68rem; color: var(--accent); letter-spacing: .1em; margin-bottom: 0.45rem; }
-  .mc-q { font-family: var(--sans); font-size: 0.93rem; font-weight: 600; color: var(--text); margin-bottom: 0.9rem; }
-  .mc-opts { display: flex; flex-direction: column; gap: 0.45rem; }
-  .mc-opt {
-    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
-    padding: 0.6rem 0.9rem; cursor: pointer; font-size: 0.86rem; color: var(--text);
-    display: flex; gap: 0.65rem; align-items: flex-start; text-align: left;
-    transition: all .15s;
-  }
-  .mc-opt:hover { border-color: var(--accent); background: var(--accent-g); }
-  .mc-opt.correct { border-color: var(--green); background: var(--green-bg); color: var(--green); }
-  .mc-opt.wrong   { border-color: var(--red);   background: var(--red-bg);   color: var(--red); }
-  .mc-letter { font-family: var(--mono); font-weight: 700; font-size: 0.78rem; color: var(--dim); min-width: 1.1rem; }
-  .mc-fb {
-    margin-top: 0.7rem; font-size: 0.8rem; color: var(--muted);
-    background: rgba(255,255,255,0.02); border: 1px solid var(--border);
-    border-radius: 8px; padding: 0.55rem 0.85rem; display: none;
-  }
-  .mc-fb.show { display: block; }
-  .mc-fb.ok { border-color: rgba(34,197,94,0.3); color: var(--green); }
-  .mc-fb.ko { border-color: rgba(239,68,68,0.3); color: var(--red); }
-
-  @media (max-width: 600px) {
-    .container { padding: 1.4rem 1rem; }
-    header { padding: 1.75rem 1rem 1.25rem; }
-    .diff-grid { grid-template-columns: 1fr; }
-  }
-
-  /* ── BACK BUTTON ── */
-  .back-btn{position:fixed;top:1rem;left:1rem;z-index:200;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted,#7b8fa8);text-decoration:none;padding:.38rem .72rem;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:color .2s,border-color .2s,background .2s;white-space:nowrap;line-height:1;}
-  .back-btn:hover{color:var(--accent,#4fc3f7);border-color:rgba(255,255,255,.28);background:rgba(0,0,0,.75);}
-  .material-bar{background:rgba(255,255,255,.03);border-bottom:1px solid var(--border);padding:.6rem 1rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;justify-content:center;}
-  .material-link{display:inline-flex;align-items:center;gap:.3rem;font-family:var(--heading);font-size:.72rem;font-weight:500;color:var(--text-muted);text-decoration:none;background:rgba(255,255,255,.05);border:1px solid var(--border);padding:.22rem .65rem;border-radius:2rem;transition:color .2s,border-color .2s,background .2s;}
-  .material-link:hover{color:var(--accent);border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.08);}
+@media(max-width:600px){
+  header{padding:4rem 1.2rem 2.5rem;}
+  main{padding:1.8rem 1rem 4rem;}
+  .scene{height:195px;}
+  .tabs{padding:0 .5rem;}
+  .material-bar{padding:.55rem 1rem;}
+}
 </style>
 </head>
 <body>
-<a class="back-btn" href="../../../index.html">&#8592; Inicio</a>
 
+<a class="back-btn" href="../../../index.html">← Inicio</a>
 
 <header>
-  <div class="badge">Arquitectura y Sistemas Operativos · Unidad 2</div>
-  <h1><span>Procesos</span></h1>
-  <p>Tecnicatura Universitaria en Programación</p>
+  <div class="material-bar">
+    <span class="material-lbl">Material:</span>
+    <a class="material-link" href="../material/Clase_2-_PROCESOS.pdf" target="_blank">Clase 2 — Procesos</a>
+    <a class="material-link" href="../material/Clase_2.pdf" target="_blank">Clase 2 (presentación)</a>
+  </div>
+  <div class="hd">
+    <div class="tag-row">
+      <span class="tag">Arquitectura y SO · Unidad 2</span>
+      <span class="nlm-badge">&#9670; NotebookLM</span>
+    </div>
+    <h1>Procesos</h1>
+    <p>BCP · Modelos de estados · Swapping · Cambio de contexto · Excepciones</p>
+    <div class="state-strip">
+      <div class="state-dot new" title="Nuevo"></div>
+      <div class="state-dot ready" title="Listo"></div>
+      <div class="state-dot run" title="Ejecutando"></div>
+      <div class="state-dot blocked" title="Bloqueado"></div>
+      <div class="state-dot exit" title="Saliente"></div>
+      <span class="state-lbl">estados del proceso</span>
+    </div>
+  </div>
 </header>
 
-<div class="material-bar">
-  <span style="font-family:var(--heading);font-size:.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-right:.25rem;">📎 Material</span>
-  <a class="material-link" href="../material/Clase_2-_PROCESOS.pdf" target="_blank">📄 Clase_2-_PROCESOS.pdf</a>
-  <a class="material-link" href="../material/Clase_2.pdf" target="_blank">📄 Clase_2.pdf</a>
-</div>
-
 <div class="tabs-wrap">
-  <div class="tabs">
-    <button class="tab active" onclick="showTab('resumen',this)">Resumen</button>
-    <button class="tab" onclick="showTab('conceptos',this)">Conceptos</button>
-    <button class="tab" onclick="showTab('detalle',this)">Detalle</button>
-    <button class="tab" onclick="showTab('flashcards',this)">Flashcards</button>
-    <button class="tab" onclick="showTab('completar',this)">Completar</button>
-    <button class="tab" onclick="showTab('multiple',this)">Multiple Choice</button>
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" onclick="showTab('resumen',this)">Resumen</button>
+    <button class="tab-btn" onclick="showTab('conceptos',this)">Conceptos</button>
+    <button class="tab-btn" onclick="showTab('desarrollo',this)">Desarrollo</button>
+    <button class="tab-btn" onclick="showTab('flash',this)">Flashcards</button>
+    <button class="tab-btn" onclick="showTab('fill',this)">Completar</button>
+    <button class="tab-btn" onclick="showTab('mc',this)">Multiple Choice</button>
+  </nav>
+</div>
+
+<main>
+
+<!-- RESUMEN -->
+<div class="tab-panel active" id="tab-resumen">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-icon">&#9632;</div>Resumen General</div>
+    <p class="sec-sub">Síntesis de los contenidos de la unidad según NotebookLM</p>
+  </div>
+  <div class="overview-card">
+    <p>Un <strong>proceso</strong> es un programa en ejecución — entidad <em>activa</em>, a diferencia del programa que es una entidad <em>pasiva</em>. En memoria ocupa cinco secciones: Contexto (registros), Texto (código), Datos, Stack y Heap.</p>
+    <p>El SO administra cada proceso a través del <strong>Bloque de Control de Proceso (BCP/PCB)</strong>, que guarda su PID, estado, prioridad y contexto de registros. Los modelos de estados evolucionan: <em>2 estados</em> (básico), <em>5 estados</em> (Nuevo, Listo, Ejecutando, Bloqueado, Saliente) y <em>7 estados</em> con Swapping (agrega Listo/Suspendido y Bloqueado/Suspendido).</p>
+    <p>El <strong>cambio de contexto</strong> guarda el estado del proceso actual y restaura el de otro. Es desencadenado por interrupciones, syscalls o excepciones (Abort, Fault, Trap). Todo ocurre bajo dos modos del procesador: <strong>Usuario</strong> (restringido) y <strong>Kernel</strong> (control total).</p>
   </div>
 </div>
 
-<!-- ═══════════════════════════════ RESUMEN ═══════════════════════════════ -->
-<div id="resumen" class="section active">
-<div class="container">
-  <h2><span class="icon">📋</span>Resumen General</h2>
-  <div class="overview">
-    Un <strong>proceso</strong> es la abstracción central de cualquier sistema operativo: un programa en ejecución con su propio contexto, código, datos, pila y heap. El SO gestiona cada proceso mediante el <strong>BCP (Bloque de Control de Proceso)</strong>, que almacena PID, estado, prioridad y registros del procesador. Los procesos pasan por distintos estados: desde el modelo simple de 2 estados (Ejecutando / No ejecutando) hasta el modelo de 7 estados que incorpora swapping. El <strong>cambio de contexto</strong> ocurre ante interrupciones, excepciones o system calls, y el procesador opera en dos modos: usuario y núcleo.
+<!-- CONCEPTOS -->
+<div class="tab-panel" id="tab-conceptos">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-icon">&#9670;</div>Conceptos Clave</div>
+    <p class="sec-sub">Términos esenciales extraídos del material</p>
+  </div>
+  <div class="concepts-grid">
+    <div class="ccard"><div class="cterm">Proceso</div><div class="cdef">Programa en ejecución. Entidad activa con contexto, recursos y estado. Un programa es una entidad pasiva (archivo en disco).</div></div>
+    <div class="ccard"><div class="cterm">Pseudoparalelismo</div><div class="cdef">Ilusión de ejecución simultánea en un monoprocesador. El CPU alterna entre procesos tan rápido que parece paralelo. El verdadero paralelismo requiere múltiples CPUs físicas.</div></div>
+    <div class="ccard"><div class="cterm">BCP / PCB</div><div class="cdef">Bloque de Control de Proceso: estructura de datos con PID, estado, prioridad, contexto de registros y peticiones de E/S pendientes. Una entrada por proceso en la Tabla de Procesos.</div></div>
+    <div class="ccard"><div class="cterm">Dispatcher (Despachador)</div><div class="cdef">Pequeño programa del SO que gestiona la cola de procesos listos y asigna el procesador usando Round-Robin (FIFO).</div></div>
+    <div class="ccard"><div class="cterm">Swapping</div><div class="cdef">Técnica que mueve un proceso (parcial o totalmente) de RAM al disco para liberar memoria. Considerada una operación de E/S. Agrega los estados Suspendido al modelo.</div></div>
+    <div class="ccard"><div class="cterm">Cambio de Contexto</div><div class="cdef">El SO interrumpe el proceso actual, guarda su contexto en su BCP y restaura el contexto de otro proceso para ejecutarlo.</div></div>
+    <div class="ccard"><div class="cterm">Cambio de Modo</div><div class="cdef">Pasar de Modo Usuario a Modo Kernel (o viceversa). No siempre implica cambio de contexto: el SO puede atender la interrupción y retomar el mismo proceso.</div></div>
+    <div class="ccard"><div class="cterm">Excepción — Abort</div><div class="cdef">Error fatal e irreversible (hardware defectuoso, tablas corruptas). El proceso pasa directamente al estado Saliente.</div></div>
+    <div class="ccard"><div class="cterm">Excepción — Fault</div><div class="cdef">Error corregible. Ej: Page Fault. El proceso se bloquea, el SO corrige el problema y reinicia la instrucción que falló.</div></div>
+    <div class="ccard"><div class="cterm">Excepción — Trap</div><div class="cdef">Notificación después de ejecutar la instrucción; permite continuar sin reiniciar. Ej: breakpoints de debug, división por cero.</div></div>
+    <div class="ccard"><div class="cterm">Stack (Pila)</div><div class="cdef">Sección de memoria del proceso con variables locales, parámetros de funciones y direcciones de retorno. Crece hacia abajo dinámicamente.</div></div>
+    <div class="ccard"><div class="cterm">Heap (Montículo)</div><div class="cdef">Sección para asignación dinámica de memoria en tiempo de ejecución (listas, colas). Crece hacia arriba.</div></div>
+  </div>
+</div>
+
+<!-- DESARROLLO -->
+<div class="tab-panel" id="tab-desarrollo">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-icon">&#9632;</div>Desarrollo</div>
+    <p class="sec-sub">Explicación detallada con ejemplos del material</p>
   </div>
 
-  <h3 style="font-family:var(--sans);font-weight:700;color:var(--text);margin-bottom:0.75rem">Estructura de un proceso en memoria</h3>
-  <div style="display:flex;gap:2rem;flex-wrap:wrap;align-items:flex-start">
-    <div class="mem-diagram">
-      <div class="mem-row ctx">Contexto (PC, IR, PSW…)</div>
-      <div class="mem-row code">Texto (Código)</div>
-      <div class="mem-row data">Datos globales</div>
-      <div class="mem-row stk">Pila (Stack)</div>
-      <div class="mem-row heap">Heap</div>
-    </div>
-    <div style="flex:1;min-width:220px">
-      <div class="diff-grid">
-        <div class="diff-card">
-          <div class="label">Programa</div>
-          <div class="value">Entidad Pasiva</div>
-          <div class="sub">Archivo en disco con instrucciones</div>
-        </div>
-        <div class="diff-card">
-          <div class="label">Proceso</div>
-          <div class="value">Entidad Activa</div>
-          <div class="sub">Con contexto y recursos asociados</div>
-        </div>
+  <div class="ds">
+    <h3>Imagen del Proceso en Memoria</h3>
+    <p>Cuando un proceso se carga en memoria, su representación física se divide en cinco secciones:</p>
+    <div style="display:flex;gap:2rem;flex-wrap:wrap;align-items:flex-start;margin:.8rem 0">
+      <div class="mem-diagram">
+        <div class="mem-seg ms-ctx">Contexto</div>
+        <div class="mem-seg ms-txt">Texto (Código)</div>
+        <div class="mem-seg ms-dat">Datos</div>
+        <div class="mem-seg ms-heap">Heap ↑</div>
+        <div class="ms-arrow">· · ·</div>
+        <div class="mem-seg ms-stk">Stack ↓</div>
+      </div>
+      <div style="flex:1;min-width:200px">
+        <ul class="ds" style="margin:0">
+          <li><strong>Contexto:</strong> registros PC, IR, PSW usados por el SO para gestionar el proceso.</li>
+          <li><strong>Texto:</strong> instrucciones del programa (solo lectura).</li>
+          <li><strong>Datos:</strong> variables globales y estáticas.</li>
+          <li><strong>Heap:</strong> memoria dinámica (malloc/new). Crece hacia arriba.</li>
+          <li><strong>Stack:</strong> variables locales, parámetros y retornos. Crece hacia abajo.</li>
+        </ul>
       </div>
     </div>
-  </div>
-</div>
-</div>
-
-<!-- ═══════════════════════════════ CONCEPTOS ═══════════════════════════════ -->
-<div id="conceptos" class="section">
-<div class="container">
-  <h2><span class="icon">🔑</span>Conceptos Clave</h2>
-  <div class="concept-list">
-
-    <div class="concept-item">
-      <div class="concept-term">Proceso</div>
-      <div class="concept-def">Abstracción de un programa en ejecución. Compuesto por: Contexto de ejecución, Código (Texto), Datos globales, Pila (Stack) y Heap. Es una entidad <em>activa</em>, a diferencia del programa que es pasivo.</div>
-    </div>
-
-    <div class="concept-item">
-      <div class="concept-term">BCP — Bloque de Control de Proceso (PCB)</div>
-      <div class="concept-def">Estructura de datos que el SO crea para gestionar cada proceso. Contiene: PID (identificador único), Estado, Prioridad, PC (contador de programa), Datos de contexto, información de E/S, punteros a memoria y datos de auditoría.</div>
-    </div>
-
-    <div class="concept-item">
-      <div class="concept-term">Dispatcher</div>
-      <div class="concept-def">Pequeño programa del SO que se encarga de intercambiar los procesos en ejecución. Gestiona las colas y decide qué proceso corre a continuación.</div>
-    </div>
-
-    <div class="concept-item">
-      <div class="concept-term">Pseudoparalelismo</div>
-      <div class="concept-def">Ilusión de paralelismo generada cuando el CPU alterna entre procesos tan rápidamente (decenas o cientos de milisegundos) que el usuario percibe ejecución simultánea, aunque en realidad solo uno corre a la vez.</div>
-    </div>
-
-    <div class="concept-item">
-      <div class="concept-term">Modelo de 2 estados</div>
-      <div class="concept-def">El modelo más simple: un proceso está <em>Ejecutando</em> o <em>No ejecutando</em>. Los procesos esperan en una cola FIFO y el procesador los atiende con estrategia round-robin.</div>
-    </div>
-
-    <div class="concept-item">
-      <div class="concept-term">Modelo de 5 estados</div>
-      <div class="concept-def">Extiende el modelo de 2 estados. Los estados son: <strong>Nuevo</strong> (creado, sin cargar en RAM), <strong>Listo</strong> (en cola, listo para ejecutar), <strong>Ejecutando</strong>, <strong>Bloqueado</strong> (espera evento/E/S) y <strong>Saliente</strong> (terminó o fue abortado).</div>
-    </div>
-
-    <div class="concept-item">
-      <div class="concept-term">Swapping</div>
-      <div class="concept-def">Operación de mover una parte o todo el proceso de la memoria principal al disco. Se activa cuando todos los procesos están bloqueados y el procesador estaría ocioso. Es una operación de E/S.</div>
-    </div>
-
-    <div class="concept-item">
-      <div class="concept-term">Cambio de contexto (Context Switch)</div>
-      <div class="concept-def">Ocurre cada vez que el SO obtiene el control sobre el proceso en ejecución. Causas: interrupción (de reloj, de E/S), excepción (abort, fault, trap) o system call. Implica salvar y restaurar el contexto del proceso.</div>
-    </div>
-
-    <div class="concept-item">
-      <div class="concept-term">Modos de ejecución: Usuario y Núcleo</div>
-      <div class="concept-def">El procesador tiene 2 modos. <strong>Modo Usuario:</strong> solo puede hacer syscalls, referencias de memoria relativas al registro base. <strong>Modo Núcleo (Kernel):</strong> control absoluto, acceso a cualquier dirección física. El modo se almacena en el PSW.</div>
-    </div>
-
-    <div class="concept-item">
-      <div class="concept-term">Excepciones: Abort, Fault y Trap</div>
-      <div class="concept-def"><strong>Abort:</strong> error grave e irrecuperable (no se puede reiniciar). <strong>Fault:</strong> recuperable, reinicia la instrucción que falló (ej: page fault). <strong>Trap:</strong> continúa después de la instrucción que lo generó (ej: breakpoint, división por cero).</div>
-    </div>
-
-    <div class="concept-item">
-      <div class="concept-term">Modos de ejecución del SO</div>
-      <div class="concept-def"><strong>Núcleo sin procesos:</strong> SO fuera de todo proceso de usuario. <strong>Núcleo en procesos de usuario:</strong> SO en el contexto del proceso (evita doble cambio de contexto). <strong>Basado en procesos:</strong> SO como colección de procesos independientes (más modular).</div>
-    </div>
-
-    <div class="concept-item">
-      <div class="concept-term">Heap vs Pila (Stack)</div>
-      <div class="concept-def"><strong>Pila:</strong> datos temporales, llamadas a funciones, parámetros y puntos de retorno. <strong>Heap:</strong> asignación dinámica de memoria (estructuras dinámicas como listas, colas, pilas en memoria).</div>
-    </div>
-
-  </div>
-</div>
-</div>
-
-<!-- ═══════════════════════════════ DETALLE ═══════════════════════════════ -->
-<div id="detalle" class="section">
-<div class="container">
-  <h2><span class="icon">📖</span>Explicación Detallada</h2>
-
-  <div class="detail-block">
-    <h3>🧩 Proceso vs Programa</h3>
-    <p>Un <strong>programa</strong> es una entidad pasiva: un archivo en disco con instrucciones. Un <strong>proceso</strong> es ese mismo programa cuando está en ejecución, con todo lo necesario para correr: su contexto (registros del procesador), su código cargado en RAM, sus datos, su pila de llamadas y el heap para memoria dinámica.</p>
-    <p>Ejemplo: si tenés el archivo <code style="font-family:var(--mono);color:var(--accent)">mi_app.exe</code> en el disco, eso es un programa. Al hacer doble click, el SO crea un proceso: le asigna un PID, reserva memoria y crea el BCP.</p>
+    <p>El SO mantiene cuatro tipos de tablas: <strong>Tablas de Memoria</strong>, <strong>de Dispositivos (E/S)</strong>, <strong>de Archivos</strong> y <strong>de Procesos</strong> (donde está el BCP de cada proceso).</p>
   </div>
 
-  <div class="detail-block">
-    <h3>📊 Modelos de estado</h3>
-    <p><strong>Modelo de 2 estados</strong> — El más simple:</p>
-    <div class="states-flow">
-      <span class="state-box run">Ejecutando</span>
-      <span class="arrow">⇄</span>
-      <span class="state-box ready">No Ejecutando</span>
-    </div>
-    <p style="margin-top:0.5rem"><strong>Modelo de 5 estados</strong> — Separa "No Ejecutando" en Listo y Bloqueado:</p>
-    <div class="states-flow">
-      <span class="state-box new">Nuevo</span>
-      <span class="arrow">→</span>
-      <span class="state-box ready">Listo</span>
-      <span class="arrow">⇄</span>
-      <span class="state-box run">Ejecutando</span>
-      <span class="arrow">→</span>
-      <span class="state-box exit">Saliente</span>
-    </div>
-    <div class="states-flow">
-      <span class="arrow" style="margin-left:5.5rem">↕</span>
-    </div>
-    <div class="states-flow" style="margin-top:0">
-      <span style="margin-left:5rem"></span>
-      <span class="state-box block">Bloqueado</span>
-    </div>
-    <p style="margin-top:0.75rem">Transición clave: <strong>Ejecutando → Listo</strong> ocurre cuando el proceso agotó su tiempo máximo de CPU (time slice). <strong>Ejecutando → Bloqueado</strong> ocurre cuando necesita esperar E/S.</p>
-    <p><strong>Modelo de 7 estados</strong> — Agrega swapping (procesos en disco): <em>Listo/Suspendido</em> y <em>Bloqueado/Suspendido</em>. Se activa cuando no hay procesos en estado Listo en memoria.</p>
-  </div>
-
-  <div class="detail-block">
-    <h3>🔄 Cambio de contexto</h3>
-    <p>Cuando el SO toma control, guarda el estado completo del proceso actual en su BCP y carga el estado del próximo proceso desde su BCP. Este mecanismo permite la multiprogramación.</p>
+  <div class="ds">
+    <h3>El BCP y sus campos clave</h3>
+    <div class="hl"><strong>BCP/PCB</strong> es la estructura de datos fundamental para la multiprogramación. Sin él, el SO no podría pausar un proceso y retomarlo exactamente donde estaba.</div>
     <ul>
-      <li><strong>Interrupción de reloj:</strong> el proceso agotó su tiempo → pasa a Listo.</li>
-      <li><strong>Interrupción de E/S:</strong> un dispositivo terminó → procesos bloqueados pasan a Listo.</li>
-      <li><strong>System call:</strong> el proceso pide un servicio al SO (abrir archivo, crear proceso).</li>
-      <li><strong>Excepción:</strong> condición de error en el proceso (division por cero, page fault).</li>
+      <li><strong>PID:</strong> identificador único del proceso.</li>
+      <li><strong>Estado:</strong> Nuevo / Listo / Ejecutando / Bloqueado / Saliente.</li>
+      <li><strong>Prioridad:</strong> para scheduling.</li>
+      <li><strong>Datos de contexto:</strong> valores actuales de PC, IR y otros registros — se guardan al pausar y restauran al reanudar.</li>
+      <li><strong>Info adicional:</strong> peticiones de E/S pendientes, punteros a código/datos, tiempo de CPU usado.</li>
     </ul>
   </div>
 
-  <div class="detail-block">
-    <h3>⚠️ Tipos de Excepciones</h3>
+  <div class="ds">
+    <h3>Modelos de Estados</h3>
+
+    <div class="state-model">
+      <h4>Modelo de 2 Estados</h4>
+      <div class="states-row">
+        <span class="state-badge sb-run">Ejecutando</span>
+        <span class="state-badge sb-ready">No Ejecutando</span>
+      </div>
+      <p>Los procesos no activos esperan en una <strong>cola FIFO</strong> gestionada por el <em>dispatcher</em> usando <strong>Round-Robin</strong>. Simple pero ineficiente: mezcla procesos listos con procesos bloqueados esperando E/S.</p>
+    </div>
+
+    <div class="state-model">
+      <h4>Modelo de 5 Estados</h4>
+      <div class="states-row">
+        <span class="state-badge sb-new">Nuevo</span>
+        <span class="state-badge sb-ready">Listo</span>
+        <span class="state-badge sb-run">Ejecutando</span>
+        <span class="state-badge sb-blocked">Bloqueado</span>
+        <span class="state-badge sb-exit">Saliente</span>
+      </div>
+      <p><strong>Nuevo:</strong> proceso creado (tiene BCP y PID) pero aún no cargado en RAM. <strong>Listo:</strong> en memoria, esperando CPU. <strong>Bloqueado:</strong> esperando un evento de E/S. <strong>Saliente:</strong> finalizó o fue abortado.</p>
+      <p><strong>Transiciones clave:</strong> Ejecutando→Listo (agotó tiempo o prioridad), Bloqueado→Listo (llegó el evento esperado), Ejecutando/Listo→Saliente (si el proceso padre lo finaliza).</p>
+    </div>
+
+    <div class="state-model">
+      <h4>Modelo de 7 Estados — Con Swapping</h4>
+      <div class="states-row">
+        <span class="state-badge sb-new">Nuevo</span>
+        <span class="state-badge sb-ready">Listo</span>
+        <span class="state-badge sb-run">Ejecutando</span>
+        <span class="state-badge sb-blocked">Bloqueado</span>
+        <span class="state-badge sb-exit">Saliente</span>
+        <span class="state-badge sb-susp">Listo/Susp.</span>
+        <span class="state-badge sb-susp">Bloqueado/Susp.</span>
+      </div>
+      <p>Si la RAM se llena de procesos Bloqueados, el CPU queda ocioso. El SO resuelve esto con <strong>Swapping</strong>: mueve procesos al disco. <strong>Listo/Suspendido:</strong> en disco, listo para ejecutarse si vuelve a RAM. <strong>Bloqueado/Suspendido:</strong> en disco y además esperando un evento.</p>
+    </div>
+  </div>
+
+  <div class="ds">
+    <h3>Cambio de Contexto y Modos de Ejecución</h3>
+    <div class="grid2">
+      <div class="mc2"><h4>Modo Usuario</h4><p>Restringido. La memoria se accede de forma relativa. Solo puede pedir servicios al SO mediante Syscalls.</p></div>
+      <div class="mc2"><h4>Modo Kernel</h4><p>Control total. Referencias físicas a memoria. Aquí se ejecutan scheduling, swapping, creación de procesos e interrupciones.</p></div>
+    </div>
+    <p>El <strong>Cambio de Contexto</strong> ocurre cuando el SO toma el control, salva el contexto del proceso actual en su BCP y carga el contexto del siguiente proceso. Lo desencadenan:</p>
+    <div class="tl">
+      <div class="trow"><span class="tnum">INT</span><div class="ttext"><strong>Interrupciones:</strong> eventos asíncronos del hardware (reloj que agota el tiempo, dispositivo de E/S que terminó).</div></div>
+      <div class="trow"><span class="tnum">SYS</span><div class="ttext"><strong>Syscalls:</strong> petición voluntaria del proceso (crear archivo, leer disco, crear proceso hijo).</div></div>
+      <div class="trow"><span class="tnum">EXC</span><div class="ttext"><strong>Excepciones:</strong> errores síncronos internos del proceso (ver debajo).</div></div>
+    </div>
+    <div class="hl"><strong>Importante:</strong> un Cambio de Modo (Usuario→Kernel) no siempre implica un Cambio de Contexto. Si la rutina del SO termina rápido y retoma el mismo proceso, solo hubo cambio de modo.</div>
+  </div>
+
+  <div class="ds">
+    <h3>Tipos de Excepciones</h3>
     <div class="exc-grid">
-      <div class="exc-card abort">
-        <div class="exc-title">ABORT</div>
-        <div class="exc-desc">Error grave e irrecuperable. El proceso termina en estado Saliente. Ej: errores de hardware, valores ilegales en tablas del sistema.</div>
+      <div class="exc-card exc-abort">
+        <h4>Abort — Fatal</h4>
+        <p>Error irreversible (hardware defectuoso, tablas corruptas). El proceso pasa directo a estado <em>Saliente</em>. No hay recuperación.</p>
       </div>
-      <div class="exc-card fault">
-        <div class="exc-title">FAULT</div>
-        <div class="exc-desc">Recuperable. Reinicia la instrucción que falló. Ej: page fault → SO carga la página, proceso pasa de Bloqueado a Listo y reintenta.</div>
+      <div class="exc-card exc-fault">
+        <h4>Fault — Corregible</h4>
+        <p>Error que el SO puede resolver. Ej: <em>Page Fault</em>. El proceso se bloquea, el SO trae la página a RAM, y la instrucción se <strong>reinicia</strong>.</p>
       </div>
-      <div class="exc-card trap">
-        <div class="exc-title">TRAP</div>
-        <div class="exc-desc">Continúa después de la instrucción. Ej: breakpoint para depuración, división por cero (el SO decide si aborta o continúa).</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="detail-block">
-    <h3>⚙️ Modos de ejecución del SO</h3>
-    <ul>
-      <li><strong>Núcleo sin procesos:</strong> el SO es una única pieza separada de todo proceso de usuario. Cada interrupción implica un cambio de contexto completo. Analogía: kernel monolítico.</li>
-      <li><strong>Núcleo en procesos de usuario:</strong> el SO corre dentro del contexto del proceso de usuario. Ante una interrupción, solo cambia de modo (usuario → kernel) sin cambio de proceso completo. Ventaja: evita el doble cambio de contexto. Analogía: microkernel.</li>
-      <li><strong>Basado en procesos:</strong> el SO es una colección de procesos independientes. Mayor modularidad y posibilidad de paralelismo. Analogía: diseño cliente-servidor.</li>
-    </ul>
-    <div class="tag-list">
-      <span class="tag">modo usuario</span>
-      <span class="tag">modo kernel</span>
-      <span class="tag">PSW</span>
-      <span class="tag">context switch</span>
-    </div>
-  </div>
-</div>
-</div>
-
-<!-- ═══════════════════════════════ FLASHCARDS ═══════════════════════════════ -->
-<div id="flashcards" class="section">
-<div class="container">
-  <h2><span class="icon">🃏</span>Flashcards</h2>
-  <p style="color:var(--muted);font-family:var(--sans);font-size:0.84rem;margin-bottom:1.4rem">Hacé click en la carta para ver la respuesta.</p>
-
-  <div class="fc-header">
-    <button class="btn btn-ghost" id="fc-prev" onclick="fcMove(-1)" disabled>← Anterior</button>
-    <div class="fc-prog">Carta <span id="fc-cur">1</span> / <span id="fc-tot">12</span></div>
-    <button class="btn btn-ghost" id="fc-next" onclick="fcMove(1)">Siguiente →</button>
-  </div>
-
-  <div class="fc-scene" id="fc-scene" onclick="flipCard()">
-    <div class="fc-inner" id="fc-inner">
-      <div class="fc-face fc-front">
-        <div class="fc-hint">pregunta</div>
-        <div class="fc-q" id="fc-q"></div>
-      </div>
-      <div class="fc-face fc-back">
-        <div class="fc-hint">respuesta</div>
-        <div class="fc-a" id="fc-a"></div>
+      <div class="exc-card exc-trap">
+        <h4>Trap — Notificación</h4>
+        <p>Se notifica justo después de la instrucción. El proceso <strong>continúa</strong> (no reinicia). Ej: breakpoints, división por cero para debug.</p>
       </div>
     </div>
   </div>
 
-  <div class="fc-ctrls">
-    <button class="btn btn-primary" onclick="flipCard()">Dar vuelta</button>
+  <div class="ds">
+    <h3>Cómo se Ejecuta el propio SO</h3>
+    <div class="tl">
+      <div class="trow"><span class="tnum">1</span><div class="ttext"><strong>Núcleo sin procesos:</strong> el SO corre totalmente aislado como software monolítico. Cada interrupción genera un cambio de contexto completo.</div></div>
+      <div class="trow"><span class="tnum">2</span><div class="ttext"><strong>Dentro de procesos de usuario:</strong> las rutinas del SO se ejecutan dentro del entorno (y pila) del proceso actual. Evita dobles cambios de contexto — muy eficiente.</div></div>
+      <div class="trow"><span class="tnum">3</span><div class="ttext"><strong>Basado en procesos:</strong> el SO es una colección de procesos independientes en modo kernel. Máxima modularidad y permite paralelismo real entre servicios del sistema.</div></div>
+    </div>
   </div>
 </div>
-</div>
 
-<!-- ═══════════════════════════════ COMPLETAR ═══════════════════════════════ -->
-<div id="completar" class="section">
-<div class="container">
-  <h2><span class="icon">✏️</span>Completar el Espacio</h2>
-  <p style="color:var(--muted);font-family:var(--sans);font-size:0.84rem;margin-bottom:1rem">Escribí la respuesta y presioná Enter o "Verificar".</p>
-  <div class="progress-row">
-    <div class="prog-bar"><div class="prog-fill" id="fill-bar" style="width:0%"></div></div>
-    <div class="prog-label"><span id="fill-score">0</span>/12</div>
+<!-- FLASHCARDS -->
+<div class="tab-panel" id="tab-flash">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-icon">&#9670;</div>Flashcards</div>
+    <p class="sec-sub">Click para voltear · ← → para navegar · Espacio para voltear</p>
   </div>
-  <div id="fill-items"></div>
-</div>
+  <div class="srow">
+    <div><div class="snum"><span id="fc-cur">1</span>/<span id="fc-tot">14</span></div><div class="slbl">tarjeta</div></div>
+    <div class="bwrap"><div class="bfill" id="fc-bar" style="width:7%"></div></div>
+  </div>
+  <div class="scene" onclick="flipCard()">
+    <div class="fcard" id="fcard">
+      <div class="ffront"><p id="fc-q"></p></div>
+      <div class="fback"><p id="fc-a"></p></div>
+    </div>
+  </div>
+  <p class="fc-hint">click para revelar · teclas ← → para navegar</p>
+  <div class="fc-nav" style="margin-top:1rem">
+    <button class="btn" onclick="fcMove(-1)">← Anterior</button>
+    <span class="fc-ctr" id="fc-label"></span>
+    <button class="btn" onclick="fcMove(1)">Siguiente →</button>
+    <button class="btn btnp" onclick="fcShuffle()">&#8635; Mezclar</button>
+  </div>
 </div>
 
-<!-- ═══════════════════════════════ MULTIPLE CHOICE ═══════════════════════════════ -->
-<div id="multiple" class="section">
-<div class="container">
-  <h2><span class="icon">☑️</span>Multiple Choice</h2>
-  <p style="color:var(--muted);font-family:var(--sans);font-size:0.84rem;margin-bottom:1.5rem">Seleccioná la opción correcta para ver la explicación.</p>
-  <div id="mc-items"></div>
-</div>
+<!-- FILL IN -->
+<div class="tab-panel" id="tab-fill">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-icon">&#9632;</div>Completar el Espacio</div>
+    <p class="sec-sub">Escribí la respuesta y presioná Enter o "Verificar"</p>
+  </div>
+  <div class="srow">
+    <div><div class="snum"><span id="fi-sc">0</span>/<span id="fi-tot">12</span></div><div class="slbl">correctas</div></div>
+    <div class="bwrap"><div class="bfill" id="fi-bar" style="width:0%"></div></div>
+  </div>
+  <div id="fill-container"></div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- MULTIPLE CHOICE -->
+<div class="tab-panel" id="tab-mc">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-icon">&#9670;</div>Multiple Choice</div>
+    <p class="sec-sub">Seleccioná la opción correcta</p>
+  </div>
+  <div class="srow">
+    <div><div class="snum"><span id="mc-sc">0</span>/<span id="mc-tot">7</span></div><div class="slbl">correctas</div></div>
+    <div class="bwrap"><div class="bfill" id="mc-bar" style="width:0%"></div></div>
+  </div>
+  <div id="mc-container"></div>
+</div>
+
+</main>
+
 <script>
-// ── TAB NAVIGATION ──────────────────────────────────────────────
-function showTab(id, btn) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+function showTab(id,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
   btn.classList.add('active');
 }
 
-// ── FLASHCARD DATA ───────────────────────────────────────────────
-const flashcards = [
-  {
-    q: "¿Qué es un proceso?",
-    a: "Una <strong>abstracción de un programa en ejecución</strong>. No es solo código: incluye Contexto (registros), Código (texto), Datos globales, Pila (stack) y Heap. Es una entidad <strong>activa</strong>."
-  },
-  {
-    q: "¿Cuál es la diferencia entre un programa y un proceso?",
-    a: "<strong>Programa:</strong> entidad PASIVA. Archivo en disco con instrucciones.<br><strong>Proceso:</strong> entidad ACTIVA. El programa en ejecución, con contexto y recursos asociados."
-  },
-  {
-    q: "¿Qué es el BCP y qué contiene?",
-    a: "<strong>Bloque de Control de Proceso</strong> — estructura de datos que el SO usa para gestionar cada proceso.<br>Contiene: <strong>PID</strong>, Estado, Prioridad, PC, Datos de contexto, info de E/S, punteros a memoria."
-  },
-  {
-    q: "¿Qué es el dispatcher?",
-    a: "Pequeño programa del SO que se encarga de <strong>intercambiar los procesos en ejecución</strong>. Gestiona las colas y selecciona qué proceso corre a continuación."
-  },
-  {
-    q: "¿Cuáles son los 5 estados del modelo de 5 estados?",
-    a: "<strong>1. Nuevo</strong> — creado, aún sin cargar en RAM.<br><strong>2. Listo</strong> — en cola, listo para ejecutar.<br><strong>3. Ejecutando</strong> — en el procesador.<br><strong>4. Bloqueado</strong> — espera evento o E/S.<br><strong>5. Saliente</strong> — terminó o fue abortado."
-  },
-  {
-    q: "¿Qué es el swapping y cuándo ocurre?",
-    a: "<strong>Swapping:</strong> mover un proceso (parte o todo) de la memoria principal al disco.<br><br>Ocurre cuando <strong>todos los procesos en memoria están Bloqueados</strong> y el procesador quedaría ocioso. Es una operación de E/S."
-  },
-  {
-    q: "¿Cuáles son los 2 modos de ejecución del procesador y qué los diferencia?",
-    a: "<strong>Modo Usuario:</strong> solo syscalls, referencias de memoria relativas al registro base.<br><br><strong>Modo Núcleo (Kernel):</strong> control absoluto, acceso a cualquier dirección física.<br><br>El modo se guarda en el <strong>PSW</strong>."
-  },
-  {
-    q: "¿Qué es un cambio de contexto (context switch) y cuáles son sus causas?",
-    a: "Ocurre cuando el SO toma control del proceso en ejecución, guarda su estado y carga el del siguiente.<br><br><strong>Causas:</strong><br>• Interrupción (reloj, E/S)<br>• Excepción (fault, trap, abort)<br>• System call"
-  },
-  {
-    q: "¿Cuál es la diferencia entre Fault, Trap y Abort?",
-    a: "<strong>Fault:</strong> recuperable, <em>reinicia</em> la instrucción que falló. Ej: page fault.<br><br><strong>Trap:</strong> continúa <em>después</em> de la instrucción. Ej: breakpoint.<br><br><strong>Abort:</strong> irrecuperable. El proceso termina. Ej: error grave de hardware."
-  },
-  {
-    q: "¿Qué es el pseudoparalelismo?",
-    a: "La <strong>ilusión de ejecución simultánea</strong> en un sistema con un solo CPU. El procesador alterna entre procesos tan rápido (milisegundos) que el usuario percibe que corren al mismo tiempo."
-  },
-  {
-    q: "¿Qué ventaja tiene el modo de ejecución del SO 'Núcleo en procesos de usuario'?",
-    a: "Evita el <strong>doble cambio de contexto</strong>: cuando el SO termina su rutina y el proceso a restaurar es el mismo, no se realiza un cambio de proceso completo, solo un <strong>cambio de modo</strong> (kernel → usuario)."
-  },
-  {
-    q: "¿Cuáles son los 3 modos de ejecución del SO?",
-    a: "<strong>1. Núcleo sin procesos:</strong> SO fuera de todo proceso (monolítico).<br><strong>2. Núcleo en procesos de usuario:</strong> SO en el contexto del proceso (microkernel).<br><strong>3. Basado en procesos:</strong> SO como colección de procesos independientes (cliente-servidor)."
-  }
+const FC=[
+  {q:"¿Cuál es la diferencia entre programa y proceso?",a:"Programa: entidad pasiva (archivo en disco con instrucciones). Proceso: entidad activa con contexto, recursos asociados y estado de ejecución."},
+  {q:"¿Qué es el pseudoparalelismo?",a:"Ilusión de ejecución simultánea en un monoprocesador. El CPU alterna tan rápido entre procesos que parece paralelo. El verdadero paralelismo requiere múltiples CPUs físicas."},
+  {q:"¿Qué contiene el BCP/PCB?",a:"PID (identificador único), estado, prioridad, datos de contexto (registros PC/IR al momento de pausa), peticiones de E/S pendientes, punteros a código/datos y tiempo de CPU usado."},
+  {q:"¿Cuáles son los 5 estados del modelo de 5 estados?",a:"Nuevo (creado, sin cargar en RAM) · Listo (en RAM, esperando CPU) · Ejecutando (usando el procesador) · Bloqueado (esperando evento E/S) · Saliente (finalizó o fue abortado)."},
+  {q:"¿Qué estados agrega el modelo de 7 estados?",a:"Listo/Suspendido: proceso en disco listo para ejecutarse si vuelve a RAM. Bloqueado/Suspendido: proceso en disco esperando además un evento."},
+  {q:"¿Qué es el Swapping y por qué se usa?",a:"Técnica que mueve procesos de RAM al disco. Se usa cuando la RAM se llena de procesos Bloqueados y el CPU quedaría ocioso. Es considerada una operación de E/S."},
+  {q:"¿Qué es un Cambio de Contexto?",a:"El SO interrumpe el proceso actual, guarda su contexto completo en su BCP, y restaura el contexto del siguiente proceso a ejecutar."},
+  {q:"¿Qué diferencia hay entre Cambio de Modo y Cambio de Contexto?",a:"Cambio de modo: pasar de Usuario a Kernel (o viceversa). No siempre hay cambio de contexto: el SO puede atender la interrupción y retomar el mismo proceso."},
+  {q:"¿Qué es una excepción Fault?",a:"Error corregible. Ejemplo clásico: Page Fault. El proceso se bloquea, el SO corrige el problema (trae la página a RAM), y la instrucción que falló se reinicia."},
+  {q:"¿En qué se diferencia Fault de Trap?",a:"Fault: error corregible, la instrucción se reinicia. Trap: notificación después de ejecutar, el proceso continúa sin reiniciar (ej: breakpoints, división por cero en debug)."},
+  {q:"¿Qué contiene el Stack de un proceso?",a:"Variables locales, parámetros de funciones y direcciones de retorno. Su tamaño es dinámico y crece hacia abajo en memoria."},
+  {q:"¿Cuándo pasa un proceso de Ejecutando a Listo?",a:"Cuando agotó su quantum de tiempo (time slice) o fue desplazado por un proceso de mayor prioridad. No ocurrió un error, simplemente cedió el procesador."},
+  {q:"¿Qué hace el dispatcher?",a:"Pequeño programa del SO que gestiona la cola de procesos 'No Ejecutando' y asigna el procesador usando estrategia Round-Robin (FIFO cíclico)."},
+  {q:"¿Cuáles son los 3 enfoques de ejecución del propio SO?",a:"1) Núcleo sin procesos (monolítico, aislado) · 2) Dentro de procesos de usuario (eficiente, evita dobles cambios de contexto) · 3) Basado en procesos (modular, permite paralelismo real)."},
 ];
+let fcIdx=0,fcShuf=[...FC];
+function renderFC(){
+  const f=fcShuf[fcIdx];
+  document.getElementById('fc-q').textContent=f.q;
+  document.getElementById('fc-a').textContent=f.a;
+  document.getElementById('fc-cur').textContent=fcIdx+1;
+  document.getElementById('fc-label').textContent=(fcIdx+1)+' / '+fcShuf.length;
+  document.getElementById('fc-bar').style.width=((fcIdx+1)/fcShuf.length*100)+'%';
+  document.getElementById('fcard').classList.remove('flipped');
+}
+function flipCard(){document.getElementById('fcard').classList.toggle('flipped');}
+function fcMove(d){fcIdx=(fcIdx+d+fcShuf.length)%fcShuf.length;renderFC();}
+function fcShuffle(){fcShuf=[...FC].sort(()=>Math.random()-.5);fcIdx=0;renderFC();}
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('tab-flash').classList.contains('active'))return;
+  if(e.key==='ArrowRight')fcMove(1);
+  else if(e.key==='ArrowLeft')fcMove(-1);
+  else if(e.key===' '){e.preventDefault();flipCard();}
+});
+document.getElementById('fc-tot').textContent=FC.length;
+renderFC();
 
-// ── FLASHCARD LOGIC ──────────────────────────────────────────────
-let fcIdx = 0;
-
-function renderCard() {
-  const c = flashcards[fcIdx];
-  document.getElementById('fc-q').textContent = c.q;
-  document.getElementById('fc-a').innerHTML = c.a;
-  document.getElementById('fc-cur').textContent = fcIdx + 1;
-  document.getElementById('fc-tot').textContent = flashcards.length;
-  document.getElementById('fc-prev').disabled = fcIdx === 0;
-  document.getElementById('fc-next').disabled = fcIdx === flashcards.length - 1;
-  document.getElementById('fc-scene').classList.remove('flipped');
+const FI=[
+  {s:"La diferencia clave: el programa es una entidad <strong>___</strong> y el proceso es una entidad <strong>___</strong>.",ans:["pasiva / activa","pasiva/activa"],exp:"Programa: archivo estático en disco (pasivo). Proceso: ejecución en curso con estado y contexto (activo)."},
+  {s:"La ilusión de ejecución simultánea en un monoprocesador se llama <strong>___</strong>.",ans:["pseudoparalelismo"],exp:"El CPU alterna tan rápidamente entre procesos que crea la ilusión de paralelismo."},
+  {s:"La estructura de datos que el SO mantiene por cada proceso se llama <strong>___</strong>.",ans:["bcp","pcb","bloque de control de proceso"],exp:"El BCP (o PCB) almacena PID, estado, prioridad y contexto de registros de cada proceso."},
+  {s:"En el modelo de 5 estados, un proceso esperando un evento de E/S está en estado <strong>___</strong>.",ans:["bloqueado"],exp:"El estado Bloqueado significa que el proceso fue pausado obligatoriamente esperando que ocurra un evento externo."},
+  {s:"El mecanismo que mueve procesos de RAM al disco para liberar memoria se llama <strong>___</strong>.",ans:["swapping","swap"],exp:"El Swapping es considerado una operación de E/S y agrega dos nuevos estados suspendidos al modelo."},
+  {s:"El modelo de 7 estados agrega los estados <strong>___</strong> y <strong>___</strong>.",ans:["listo suspendido / bloqueado suspendido","listo/suspendido / bloqueado/suspendido"],exp:"Listo/Suspendido: en disco pero listo si vuelve a RAM. Bloqueado/Suspendido: en disco y además esperando un evento."},
+  {s:"Cuando el SO guarda el estado del proceso actual y carga el del siguiente, se produce un <strong>___</strong>.",ans:["cambio de contexto","context switch"],exp:"El cambio de contexto es la operación que guarda el BCP del proceso actual y restaura el BCP del siguiente."},
+  {s:"Una excepción <strong>___</strong> es fatal e irreversible: el proceso termina.",ans:["abort"],exp:"Un Abort ocurre por errores de hardware o tablas corruptas. El proceso pasa directamente a estado Saliente."},
+  {s:"Una excepción <strong>___</strong> es corregible: la instrucción que falló se reinicia.",ans:["fault"],exp:"El Fault clásico es el Page Fault: el SO trae la página del disco a RAM y reinicia la instrucción."},
+  {s:"El Stack crece hacia <strong>___</strong> y el Heap crece hacia <strong>___</strong>.",ans:["abajo / arriba","abajo/arriba"],exp:"Por convención de arquitectura, el Stack crece hacia direcciones menores (abajo) y el Heap hacia mayores (arriba)."},
+  {s:"En Modo <strong>___</strong>, el procesador tiene acceso total al hardware y referencias físicas a memoria.",ans:["kernel","nucleo","núcleo"],exp:"El Modo Kernel (o Núcleo) es el modo privilegiado donde el SO ejecuta scheduling, swapping e interrupciones."},
+  {s:"El pequeño programa del SO que gestiona la cola de procesos listos con Round-Robin se llama <strong>___</strong>.",ans:["dispatcher","despachador"],exp:"El dispatcher asigna el procesador al siguiente proceso en la cola FIFO de procesos listos."},
+];
+let fiSc=0;
+document.getElementById('fi-tot').textContent=FI.length;
+const fiC=document.getElementById('fill-container');
+function nfx(s){return s.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');}
+FI.forEach((item,i)=>{
+  const d=document.createElement('div');
+  d.className='fi';d.id='fi-'+i;
+  d.innerHTML=`<div class="fi-s">${item.s}</div><div class="fi-row"><input class="fi-in" id="fii-${i}" placeholder="tu respuesta…" autocomplete="off"><button class="btn btnp" onclick="checkFI(${i})">Verificar</button></div><div class="fi-fb" id="fif-${i}"></div>`;
+  fiC.appendChild(d);
+  document.getElementById('fii-'+i).addEventListener('keydown',e=>{if(e.key==='Enter')checkFI(i);});
+});
+function checkFI(i){
+  const inp=document.getElementById('fii-'+i),fb=document.getElementById('fif-'+i),card=document.getElementById('fi-'+i);
+  if(inp.disabled)return;
+  const ok=FI[i].ans.some(a=>nfx(inp.value)===nfx(a));
+  inp.disabled=true;
+  fb.className='fi-fb show '+(ok?'ok':'bad');
+  card.classList.add(ok?'ok':'bad');
+  if(ok){fiSc++;document.getElementById('fi-sc').textContent=fiSc;document.getElementById('fi-bar').style.width=(fiSc/FI.length*100)+'%';fb.textContent='✓ Correcto — '+FI[i].exp;}
+  else fb.innerHTML='✗ Incorrecto — Respuesta: <strong>'+FI[i].ans[0]+'</strong>. '+FI[i].exp;
 }
 
-function flipCard() { document.getElementById('fc-scene').classList.toggle('flipped'); }
-function fcMove(d) { fcIdx = Math.max(0, Math.min(flashcards.length - 1, fcIdx + d)); renderCard(); }
-renderCard();
-
-// ── FILL DATA ────────────────────────────────────────────────────
-const fillData = [
-  {
-    q: "Un proceso es una abstracción de un <span class='fill-blank'>___</span> en ejecución.",
-    ans: ["programa"],
-    exp: "Un <strong>programa</strong> en ejecución — aunque un proceso incluye mucho más que el código: contexto, datos, pila y heap."
-  },
-  {
-    q: "El <span class='fill-blank'>___</span> es la estructura de datos que el SO crea para gestionar cada proceso.",
-    ans: ["bcp", "bloque de control de proceso", "pcb"],
-    exp: "El <strong>BCP (Bloque de Control de Proceso)</strong> o PCB contiene toda la información necesaria para gestionar el proceso."
-  },
-  {
-    q: "El campo <span class='fill-blank'>___</span> del BCP contiene el identificador único de cada proceso.",
-    ans: ["pid"],
-    exp: "El <strong>PID (Process Identifier)</strong> es el identificador único que el SO asigna a cada proceso al crearlo."
-  },
-  {
-    q: "El <span class='fill-blank'>___</span> es el pequeño programa del SO que intercambia los procesos en ejecución.",
-    ans: ["dispatcher"],
-    exp: "El <strong>dispatcher</strong> selecciona el próximo proceso de la cola y le asigna el procesador."
-  },
-  {
-    q: "En el modelo de 2 estados, la cola de procesos es de tipo <span class='fill-blank'>___</span>.",
-    ans: ["fifo"],
-    exp: "<strong>FIFO</strong> (First In, First Out — primero en entrar, primero en salir). El procesador opera con estrategia round-robin sobre esta cola."
-  },
-  {
-    q: "En el modelo de 5 estados, un proceso en estado <span class='fill-blank'>___</span> no puede ejecutar hasta que ocurra un evento o complete una operación de E/S.",
-    ans: ["bloqueado"],
-    exp: "El estado <strong>Bloqueado</strong> significa que el proceso está esperando un evento externo (como fin de E/S) para poder pasar a Listo."
-  },
-  {
-    q: "El <span class='fill-blank'>___</span> es la operación que mueve procesos de memoria principal al disco cuando no hay procesos en estado Listo.",
-    ans: ["swapping"],
-    exp: "El <strong>swapping</strong> libera espacio en memoria principal moviendo procesos al disco, permitiendo admitir nuevos procesos."
-  },
-  {
-    q: "El modo de ejecución del procesador (usuario o kernel) se almacena en el registro <span class='fill-blank'>___</span>.",
-    ans: ["psw", "program status word"],
-    exp: "El <strong>PSW (Program Status Word)</strong> contiene un bit que indica el modo de ejecución actual del procesador."
-  },
-  {
-    q: "Una excepción de tipo <span class='fill-blank'>___</span> no es recuperable y se usa para reportar errores graves de hardware.",
-    ans: ["abort"],
-    exp: "Un <strong>Abort</strong> es una excepción irrecuperable: no informa la instrucción exacta que la causó y el proceso no puede reiniciarse."
-  },
-  {
-    q: "Una excepción de tipo <span class='fill-blank'>___</span> es recuperable y reinicia la instrucción que falló (ej: page fault).",
-    ans: ["fault"],
-    exp: "Un <strong>Fault</strong> es recuperable: el procesador restaura el estado anterior a la instrucción fallida. Una vez corregido el error, la instrucción se reintenta."
-  },
-  {
-    q: "El cambio de contexto que <strong>no</strong> realiza un cambio de proceso completo (solo cambia de modo) corresponde al modelo de ejecución del SO llamado <span class='fill-blank'>___</span>.",
-    ans: ["nucleo en procesos de usuario", "núcleo en procesos de usuario"],
-    exp: "El modelo <strong>Núcleo en procesos de usuario</strong> evita el doble cambio de contexto: el SO corre dentro del proceso de usuario y solo requiere cambio de modo."
-  },
-  {
-    q: "La <span class='fill-blank'>___</span> (stack) almacena llamadas a funciones, parámetros y puntos de retorno de un proceso.",
-    ans: ["pila", "stack"],
-    exp: "La <strong>Pila (Stack)</strong> guarda el historial de llamadas a funciones, parámetros y las direcciones de retorno. El <strong>Heap</strong>, en cambio, se usa para memoria dinámica."
-  }
+const MC=[
+  {q:"¿En qué estado está un proceso que fue creado pero su código aún no se cargó en RAM?",opts:["Listo","Bloqueado","Nuevo","Suspendido"],ans:2,exp:"El estado Nuevo indica que el proceso tiene BCP y PID asignados, pero su código permanece en almacenamiento secundario, aún no en memoria principal."},
+  {q:"¿Qué tipo de excepción provoca un Page Fault?",opts:["Abort","Trap","Interrupt","Fault"],ans:3,exp:"El Page Fault es un Fault: error corregible. El SO trae la página del disco a RAM y reinicia la instrucción que provocó el fallo."},
+  {q:"¿Qué contiene el Heap de un proceso?",opts:["Direcciones de retorno de funciones","Variables locales","Memoria asignada dinámicamente en ejecución","Instrucciones del programa"],ans:2,exp:"El Heap almacena memoria asignada dinámicamente (malloc, new). A diferencia del Stack, no tiene tamaño predeterminado y crece hacia arriba."},
+  {q:"¿Cuál es la diferencia entre Cambio de Modo y Cambio de Contexto?",opts:["Son exactamente lo mismo","Cambio de modo es pasar de usuario a kernel; cambio de contexto es cambiar de proceso activo","El cambio de contexto siempre ocurre sin cambio de modo","Solo los microkernels tienen cambio de modo"],ans:1,exp:"Cambio de modo: pasar de Usuario a Kernel. El SO puede atender una interrupción (cambio de modo) y retomar el mismo proceso sin cambiar de contexto."},
+  {q:"Un proceso en estado 'Bloqueado/Suspendido' está:",opts:["En RAM esperando el CPU","En disco esperando un evento externo","En RAM esperando un evento externo","En disco listo para ejecutarse"],ans:1,exp:"Bloqueado/Suspendido combina ambas condiciones: el proceso fue enviado al disco (suspendido) y además está esperando que ocurra un evento (bloqueado)."},
+  {q:"¿Qué estrategia de scheduling usa el dispatcher en el modelo de 2 estados?",opts:["Por prioridad","LIFO (último en entrar, primero en salir)","Round-Robin (FIFO cíclico)","Aleatoria"],ans:2,exp:"El dispatcher del modelo de 2 estados usa una cola FIFO simple con estrategia Round-Robin: cada proceso recibe su turno en orden circular."},
+  {q:"¿Cuál de estos datos NO almacena el BCP?",opts:["PID del proceso","Estado actual del proceso","Código fuente del programa","Registros del procesador al momento de pausa"],ans:2,exp:"El BCP almacena metadatos del proceso: PID, estado, prioridad, contexto de registros. El código fuente está en la sección Texto del espacio de memoria, no en el BCP."},
 ];
-
-let fillScore = 0;
-
-function buildFill() {
-  const c = document.getElementById('fill-items');
-  fillData.forEach((item, i) => {
-    const div = document.createElement('div');
-    div.className = 'fill-item';
-    div.id = `fi-${i}`;
-    div.innerHTML = `
-      <div class="fill-q">${item.q}</div>
-      <div class="fill-wrap">
-        <input class="fill-input" id="fi-in-${i}" placeholder="Tu respuesta…" onkeydown="if(event.key==='Enter')checkFill(${i})">
-        <button class="btn btn-primary" onclick="checkFill(${i})">Verificar</button>
-      </div>
-      <div class="fill-fb" id="fi-fb-${i}"></div>`;
-    c.appendChild(div);
+let mcSc=0;
+document.getElementById('mc-tot').textContent=MC.length;
+const L=['A','B','C','D'],mcC=document.getElementById('mc-container');
+MC.forEach((item,qi)=>{
+  const d=document.createElement('div');
+  d.className='mci';
+  const opts=item.opts.map((o,oi)=>`<div class="mco" id="mco-${qi}-${oi}" onclick="checkMC(${qi},${oi})"><span class="mcl">${L[oi]}</span><span>${o}</span></div>`).join('');
+  d.innerHTML=`<div class="mcn">Pregunta ${qi+1} / ${MC.length}</div><div class="mcq">${item.q}</div><div class="mco-wrap">${opts}</div><div class="mce" id="mce-${qi}">${item.exp}</div>`;
+  mcC.appendChild(d);
+});
+function checkMC(qi,oi){
+  if(document.getElementById('mco-'+qi+'-0').classList.contains('dis'))return;
+  MC[qi].opts.forEach((_,k)=>{
+    const el=document.getElementById('mco-'+qi+'-'+k);
+    el.classList.add('dis');
+    if(k===MC[qi].ans)el.classList.add('cor');
+    else if(k===oi)el.classList.add('wr');
   });
+  document.getElementById('mce-'+qi).classList.add('show');
+  if(oi===MC[qi].ans){mcSc++;document.getElementById('mc-sc').textContent=mcSc;document.getElementById('mc-bar').style.width=(mcSc/MC.length*100)+'%';}
 }
-
-function norm(s){ return s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""); }
-
-function checkFill(i) {
-  const inp = document.getElementById(`fi-in-${i}`);
-  const fb  = document.getElementById(`fi-fb-${i}`);
-  const box = document.getElementById(`fi-${i}`);
-  if (inp.disabled) return;
-  const val = norm(inp.value);
-  const ok  = fillData[i].ans.some(a => norm(a) === val);
-  inp.disabled = true;
-  fb.classList.add('show');
-  if (ok) {
-    box.classList.add('correct');
-    fb.classList.add('ok');
-    fb.innerHTML = `✓ ¡Correcto! ${fillData[i].exp}`;
-    fillScore++;
-    document.getElementById('fill-score').textContent = fillScore;
-    document.getElementById('fill-bar').style.width = `${(fillScore / fillData.length) * 100}%`;
-  } else {
-    box.classList.add('wrong');
-    fb.classList.add('ko');
-    fb.innerHTML = `✗ Incorrecto. ${fillData[i].exp}`;
-  }
-}
-buildFill();
-
-// ── MC DATA ──────────────────────────────────────────────────────
-const mcData = [
-  {
-    q: "¿Cuál es la diferencia principal entre un programa y un proceso?",
-    opts: [
-      "Son exactamente lo mismo, solo cambia el nombre según el contexto",
-      "Un programa es activo y tiene recursos; un proceso es pasivo y está en disco",
-      "Un proceso es una entidad activa con contexto y recursos; un programa es una entidad pasiva en disco",
-      "Un proceso es solo el código del programa, sin datos ni contexto"
-    ],
-    correct: 2,
-    exp: "Un <strong>proceso</strong> es activo: incluye contexto, datos, pila y heap. Un <strong>programa</strong> es pasivo: solo un archivo en disco."
-  },
-  {
-    q: "¿Qué ocurre en el modelo de 7 estados cuando no hay procesos en estado Listo en la memoria principal?",
-    opts: [
-      "El procesador se apaga para ahorrar energía",
-      "Se crean nuevos procesos automáticamente",
-      "Se realiza swapping: un proceso Bloqueado se mueve a disco",
-      "Todos los procesos son descartados y se reinician"
-    ],
-    correct: 2,
-    exp: "El <strong>swapping</strong> mueve un proceso Bloqueado al disco para liberar espacio en RAM, permitiendo admitir un nuevo proceso en estado Listo."
-  },
-  {
-    q: "¿En qué registro del procesador se almacena el bit que indica el modo de ejecución (usuario/kernel)?",
-    opts: ["PC (Program Counter)", "IR (Instruction Register)", "PSW (Program Status Word)", "BCP (Bloque de Control de Proceso)"],
-    correct: 2,
-    exp: "El <strong>PSW (Program Status Word)</strong> contiene el bit de modo de ejecución. El BCP no es un registro del procesador sino una estructura de datos del SO."
-  },
-  {
-    q: "¿Cuál de las siguientes NO es una causa de un cambio de contexto?",
-    opts: [
-      "Una interrupción de reloj",
-      "Una excepción como un page fault",
-      "La compilación del código fuente del proceso",
-      "Una system call como leer un archivo"
-    ],
-    correct: 2,
-    exp: "La <strong>compilación</strong> del código no causa un cambio de contexto. Los cambios de contexto son causados por interrupciones, excepciones y system calls."
-  },
-  {
-    q: "¿En qué sección de la memoria de un proceso se almacenan las estructuras dinámicas como listas enlazadas?",
-    opts: ["Contexto (registros del procesador)", "Texto (código del programa)", "Pila (Stack)", "Heap"],
-    correct: 3,
-    exp: "El <strong>Heap</strong> se usa para asignación dinámica de memoria (estructuras como pilas, colas y listas). La Pila se usa para llamadas a funciones y variables locales."
-  },
-  {
-    q: "¿Qué tipo de excepción reinicia la instrucción que falló y es recuperable?",
-    opts: ["Trap", "Abort", "Fault", "Interrupción de reloj"],
-    correct: 2,
-    exp: "Un <strong>Fault</strong> es recuperable: el procesador restaura el estado al punto anterior a la instrucción fallida, la corrige (ej: carga la página en un page fault) y la reintenta."
-  }
-];
-
-function buildMc() {
-  const c = document.getElementById('mc-items');
-  const L = ['A','B','C','D'];
-  mcData.forEach((item, i) => {
-    const div = document.createElement('div');
-    div.className = 'mc-block';
-    div.innerHTML = `
-      <div class="mc-num">PREGUNTA ${i+1} DE ${mcData.length}</div>
-      <div class="mc-q">${item.q}</div>
-      <div class="mc-opts">
-        ${item.opts.map((o,j)=>`
-        <button class="mc-opt" onclick="checkMc(${i},${j})" id="mo-${i}-${j}">
-          <span class="mc-letter">${L[j]}</span><span>${o}</span>
-        </button>`).join('')}
-      </div>
-      <div class="mc-fb" id="mc-fb-${i}"></div>`;
-    c.appendChild(div);
-  });
-}
-
-function checkMc(qi, sel) {
-  const item = mcData[qi];
-  const fb = document.getElementById(`mc-fb-${qi}`);
-  for (let j = 0; j < item.opts.length; j++) {
-    const b = document.getElementById(`mo-${qi}-${j}`);
-    b.onclick = null; b.style.cursor = 'default';
-  }
-  document.getElementById(`mo-${qi}-${item.correct}`).classList.add('correct');
-  fb.classList.add('show');
-  if (sel === item.correct) {
-    fb.classList.add('ok');
-    fb.innerHTML = `✓ ¡Correcto! ${item.exp}`;
-  } else {
-    document.getElementById(`mo-${qi}-${sel}`).classList.add('wrong');
-    fb.classList.add('ko');
-    fb.innerHTML = `✗ Incorrecto. ${item.exp}`;
-  }
-}
-buildMc();
 </script>
 </body>
 </html>

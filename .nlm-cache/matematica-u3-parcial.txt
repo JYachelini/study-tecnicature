@@ -1,0 +1,23 @@
+Different notebook specified, starting new conversation...
+Continuing conversation 3e148cbf...
+Answer:
+En los documentos que me compartiste, solo se incluye la presentación 
+introductoria de la clase de Lógica Proposicional. Allí se mencionan los 
+conectivos básicos ("y", "o", "no"), el concepto de proposiciones verdaderas o 
+falsas, y la simplificación mediante tablas de verdad [1, 2]. 
+
+La teoría detallada que pedís sobre condicional, bicondicional, tautologías y 
+contradicciones **no se encuentra en estos PDFs**.
+
+Lo que sí incluye el material de la Práctica 2 son **ejercicios resueltos que 
+usan tablas de verdad para probar equivalencias lógicas entre conjuntos**. 
+Utilizan valores de 1/0 y V/F para demostrar propiedades complejas fila por 
+fila, como por ejemplo comprobar si $(A \cap B) \Delta C = (A \Delta C) \cap (B 
+\Delta C)$ es una igualdad verdadera o falsa [3-5].
+
+Como nos falta la teoría específica para armar el resumen exhaustivo que buscás,
+¿te gustaría que busque nuevas fuentes en internet sobre Lógica Proposicional 
+para completar la información, o preferís que analicemos paso a paso cómo se 
+resolvieron estas tablas de verdad de la práctica?
+
+Resumed conversation: 3e148cbf-194d-4bab-8ab9-a99dbda945f7

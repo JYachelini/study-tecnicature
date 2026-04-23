@@ -1,364 +1,780 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unidad 3 — Organización, Empresa y Plan de Cuentas</title>
-<style>
-  :root {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --card: #1c2333;
-    --border: #30363d;
-    --accent: #f0883e;
-    --accent-light: rgba(240,136,62,0.12);
-    --accent2: #58a6ff;
-    --accent2-light: rgba(88,166,255,0.1);
-    --success: #3fb950;
-    --success-bg: rgba(63,185,80,0.12);
-    --error: #f85149;
-    --error-bg: rgba(248,81,73,0.12);
-    --text: #e6edf3;
-    --text-muted: #8b949e;
-    --text-dim: #484f58;
-    --font: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-    --mono: "SFMono-Regular", Consolas, monospace;
-    --sans: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.75; min-height: 100vh; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Org. Empresarial · Unidad 3: La Organización y Análisis de Cuentas</title>
+  <style>
+    :root {
+      --bg: #080f0a;
+      --surface: #0c1a0e;
+      --surface-2: #112016;
+      --surface-3: #172a1c;
+      --border: #1e3824;
+      --border-soft: #192e1f;
+      --green: #22c55e;
+      --green-bright: #4ade80;
+      --green-dim: rgba(34,197,94,0.1);
+      --green-border: rgba(34,197,94,0.25);
+      --gold: #fbbf24;
+      --gold-dim: rgba(251,191,36,0.1);
+      --gold-border: rgba(251,191,36,0.25);
+      --sky: #38bdf8;
+      --sky-dim: rgba(56,189,248,0.09);
+      --text: #d4e8d8;
+      --text-dim: #6b9475;
+      --text-faint: #2d4a35;
+      --success: #22c55e;
+      --success-dim: rgba(34,197,94,0.12);
+      --success-border: rgba(34,197,94,0.35);
+      --error: #f43f5e;
+      --error-dim: rgba(244,63,94,0.12);
+      --error-border: rgba(244,63,94,0.35);
+      --font-head: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+      --font-body: Georgia, 'Times New Roman', Times, serif;
+      --font-mono: 'Courier New', 'Lucida Console', monospace;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
 
-  header { background: linear-gradient(135deg, #0d1117 0%, #1a1410 60%, #1c1a10 100%); border-bottom: 1px solid var(--border); padding: 3rem 2rem 2.5rem; text-align: center; position: relative; overflow: hidden; }
-  header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(240,136,62,0.1) 0%, transparent 70%); pointer-events: none; }
-  .tag { display: inline-block; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); background: var(--accent-light); border: 1px solid rgba(240,136,62,0.3); padding: 0.2rem 0.8rem; border-radius: 2rem; margin-bottom: 1rem; }
-  header h1 { font-family: var(--sans); font-size: clamp(1.7rem,4vw,2.8rem); font-weight: 700; letter-spacing: -0.02em; color: #fff; margin-bottom: 0.4rem; }
-  header h1 em { color: var(--accent); font-style: normal; }
-  header p { color: var(--text-muted); font-family: var(--sans); font-size: 0.9rem; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--font-body); line-height: 1.75;
+      min-height: 100vh; overflow-x: hidden;
+    }
 
-  .tabs-wrap { position: sticky; top: 0; z-index: 100; background: rgba(13,17,23,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); padding: 0 1rem; overflow-x: auto; scrollbar-width: none; }
-  .tabs-wrap::-webkit-scrollbar { display: none; }
-  .tabs { display: flex; gap: 0.15rem; min-width: max-content; }
-  .tab { font-family: var(--sans); font-size: 0.82rem; font-weight: 500; padding: 0.75rem 1.1rem; cursor: pointer; color: var(--text-muted); border: none; background: none; border-bottom: 2px solid transparent; transition: color .2s, border-color .2s; white-space: nowrap; }
-  .tab:hover { color: var(--text); }
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    /* ─── ATMOSPHERE ─── */
+    .atmosphere { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .atm-glow { position: absolute; border-radius: 50%; filter: blur(120px); }
+    .atm-glow-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(34,197,94,0.07) 0%, transparent 70%); top: -150px; right: -200px; }
+    .atm-glow-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(251,191,36,0.05) 0%, transparent 70%); bottom: -100px; left: -100px; }
+    .atm-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(34,197,94,0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(34,197,94,0.018) 1px, transparent 1px); background-size: 64px 64px; }
+    .bg-sym { position: absolute; font-family: var(--font-head); color: rgba(34,197,94,0.022); user-select: none; line-height: 1; }
 
-  .panel { display: none; max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
-  .panel.active { display: block; }
+    /* ─── BACK ─── */
+    .back-btn {
+      position: fixed; top: 1rem; left: 1rem; z-index: 200;
+      font-family: var(--font-mono); font-size: .6rem; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--text-dim); text-decoration: none; padding: .38rem .72rem;
+      border: 1px solid var(--border); background: rgba(8,15,10,.88); backdrop-filter: blur(10px);
+      transition: color .2s, border-color .2s; white-space: nowrap;
+    }
+    .back-btn:hover { color: var(--green); border-color: var(--green-border); }
 
-  h2 { font-family: var(--sans); font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 1.2rem; }
-  h3 { font-family: var(--sans); font-size: 1.1rem; font-weight: 600; color: var(--accent2); margin: 1.8rem 0 0.6rem; }
-  h4 { font-family: var(--sans); font-size: 0.95rem; font-weight: 600; color: var(--accent); margin: 1.2rem 0 0.4rem; }
-  p { margin-bottom: 0.9rem; }
-  ul, ol { padding-left: 1.5rem; margin-bottom: 0.9rem; }
-  li { margin-bottom: 0.3rem; }
+    /* ─── MATERIAL BAR ─── */
+    .material-bar { position: relative; z-index: 1; background: rgba(34,197,94,.04); border-bottom: 1px solid var(--border); padding: .55rem 2rem; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+    .material-lbl { font-family: var(--font-mono); font-size: .6rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: .14em; }
+    .material-link { font-family: var(--font-mono); font-size: .64rem; color: var(--green); text-decoration: none; padding: .2rem .6rem; border: 1px solid rgba(34,197,94,.22); border-radius: 4px; transition: background .2s, border-color .2s; white-space: nowrap; }
+    .material-link:hover { background: var(--green-dim); border-color: rgba(34,197,94,.45); }
 
-  .summary-box { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 1.4rem 1.6rem; margin-bottom: 2rem; }
+    /* ─── HEADER ─── */
+    .header { position: relative; z-index: 1; padding: 64px 48px 52px; max-width: 1280px; margin: 0 auto; }
+    .header-eyebrow { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+    .eyebrow-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--green-dim); border: 1px solid var(--green-border); color: var(--green); font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; padding: 5px 14px; border-radius: 20px; }
+    .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .5; transform: scale(.8); } }
+    .eyebrow-nlm { background: var(--gold-dim); border: 1px solid var(--gold-border); color: var(--gold); font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; padding: 5px 14px; border-radius: 20px; }
+    .header-title { font-family: var(--font-head); font-size: clamp(2.6rem, 6.5vw, 5rem); font-weight: 700; color: #fff; line-height: 1.05; letter-spacing: -.02em; margin-bottom: 14px; }
+    .header-title .accent { color: var(--green); }
+    .header-title .line2 { display: block; color: rgba(255,255,255,.5); font-size: .52em; margin-top: 6px; font-weight: 400; }
+    .header-meta { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .header-meta-item { font-size: .85rem; color: var(--text-dim); display: flex; align-items: center; gap: 6px; }
+    .header-meta-item .dot { color: var(--green); }
 
-  .concept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-  .concept-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem; transition: border-color .2s, transform .2s; }
-  .concept-card:hover { border-color: var(--accent); transform: translateY(-2px); }
-  .concept-card .term { font-family: var(--sans); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 0.4rem; }
-  .concept-card .def { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+    /* Clasificación tag strip */
+    .tag-strip { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 24px; }
+    .org-tag { font-family: var(--font-mono); font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; padding: 5px 14px; border-radius: 20px; border: 1px solid; }
+    .tag-sin-lucro { background: rgba(56,189,248,.08); border-color: rgba(56,189,248,.3); color: var(--sky); }
+    .tag-con-lucro { background: var(--green-dim); border-color: var(--green-border); color: var(--green); }
+    .tag-publica { background: var(--gold-dim); border-color: var(--gold-border); color: var(--gold); }
+    .tag-privada { background: rgba(212,232,216,.06); border-color: var(--border); color: var(--text-dim); }
 
-  .process-steps { display: flex; flex-direction: column; gap: 0.6rem; margin: 1rem 0 1.5rem; }
-  .step { display: flex; gap: 1rem; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 0.9rem 1.2rem; }
-  .step-num { min-width: 28px; height: 28px; background: var(--accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--sans); font-size: 0.8rem; font-weight: 700; flex-shrink: 0; }
-  .step-text { font-size: 0.93rem; color: var(--text-muted); }
-  .step-text strong { color: var(--text); }
+    /* ─── TABS ─── */
+    .tabs-shell { position: sticky; top: 0; z-index: 100; background: rgba(8,15,10,.95); backdrop-filter: blur(20px) saturate(1.5); border-bottom: 1px solid var(--border-soft); }
+    .tabs { max-width: 1280px; margin: 0 auto; display: flex; padding: 0 48px; overflow-x: auto; scrollbar-width: none; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab-btn { background: none; border: none; color: var(--text-dim); font-family: var(--font-head); font-size: .88rem; font-weight: 600; padding: 15px 22px; cursor: pointer; position: relative; white-space: nowrap; transition: color .22s; letter-spacing: .03em; }
+    .tab-btn::after { content: ''; position: absolute; bottom: 0; left: 50%; right: 50%; height: 2px; background: linear-gradient(90deg, var(--green), var(--green-bright)); transition: left .3s cubic-bezier(.4,0,.2,1), right .3s cubic-bezier(.4,0,.2,1); border-radius: 2px 2px 0 0; }
+    .tab-btn.active { color: var(--green-bright); }
+    .tab-btn.active::after { left: 12px; right: 12px; }
+    .tab-btn:hover:not(.active) { color: var(--text); }
 
-  .cuenta-box { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.3rem; margin: 0.5rem 0; }
-  .cuenta-name { font-family: var(--mono); font-size: 0.9rem; color: var(--accent); font-weight: 600; margin-bottom: 0.3rem; }
-  .cuenta-desc { font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; }
+    /* ─── MAIN ─── */
+    .main { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 52px 48px; }
+    .section { display: none; animation: secIn .35s cubic-bezier(.4,0,.2,1) both; }
+    .section.active { display: block; }
+    @keyframes secIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .sec-head { margin-bottom: 40px; }
+    .sec-head h2 { font-family: var(--font-head); font-size: 1.8rem; font-weight: 700; color: #fff; margin-bottom: 6px; letter-spacing: -.01em; }
+    .sec-head p { color: var(--text-dim); font-size: .9rem; }
 
-  .example-box { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 1.2rem 1.5rem; margin: 1rem 0 1.5rem; }
-  .example-title { font-family: var(--sans); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 0.6rem; }
+    /* ─── RESUMEN ─── */
+    .resumen-layout { display: grid; grid-template-columns: 1fr 340px; gap: 32px; }
+    @media (max-width: 900px) { .resumen-layout { grid-template-columns: 1fr; } }
+    .rsum-card { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--green); border-radius: var(--radius); padding: 2rem; }
+    .rsum-card p { color: rgba(212,232,216,.85); font-size: .97rem; line-height: 1.85; }
+    .rsum-card p + p { margin-top: .9rem; }
+    .rsum-card strong { color: var(--green-bright); }
+    .rsum-label { font-family: var(--font-mono); font-size: .62rem; letter-spacing: .18em; text-transform: uppercase; color: var(--green); margin-bottom: .9rem; opacity: .8; }
+    .rsum-callout { background: var(--green-dim); border: 1px solid var(--green-border); border-radius: var(--radius-sm); padding: 1rem 1.2rem; font-style: italic; color: var(--green-bright); font-size: .92rem; margin: 1.1rem 0; }
+    .sidebar-card { display: flex; flex-direction: column; gap: 16px; }
+    .info-pill { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1rem 1.2rem; }
+    .info-pill-lbl { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .15em; text-transform: uppercase; color: var(--text-faint); margin-bottom: .4rem; }
+    .info-pill-val { font-size: .85rem; line-height: 1.8; color: var(--text-dim); }
 
-  .fc-controls { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-  .fc-progress { font-family: var(--mono); font-size: 0.85rem; color: var(--text-muted); }
-  .fc-progress span { color: var(--accent); font-weight: 700; }
-  .btn { font-family: var(--sans); font-size: 0.85rem; font-weight: 600; padding: 0.45rem 1.1rem; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; transition: all .15s; }
-  .btn:hover { border-color: var(--accent); color: var(--accent); }
-  .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .btn-primary:hover { opacity: 0.9; }
-  .progress-bar-wrap { background: var(--surface); border-radius: 99px; height: 4px; margin-bottom: 1.5rem; overflow: hidden; }
-  .progress-bar { height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s; }
+    /* ─── CONCEPTOS ─── */
+    .concepts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+    .concept-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; transition: border-color .2s, transform .2s; }
+    .concept-card:hover { border-color: var(--green-border); transform: translateY(-2px); }
+    .concept-num { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .18em; color: var(--green); margin-bottom: .6rem; }
+    .concept-term { font-family: var(--font-head); font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: .6rem; }
+    .concept-def { font-size: .9rem; color: rgba(212,232,216,.8); line-height: 1.7; }
+    .concept-def strong { color: var(--green-bright); }
 
-  .flashcard-scene { perspective: 1000px; height: 220px; cursor: pointer; margin-bottom: 1.5rem; user-select: none; }
-  .flashcard { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .5s cubic-bezier(.4,0,.2,1); }
-  .flashcard.flipped { transform: rotateY(180deg); }
-  .fc-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center; border: 1px solid var(--border); }
-  .fc-front { background: var(--card); }
-  .fc-back { background: linear-gradient(135deg, #1a1410, var(--card)); border-color: var(--accent); transform: rotateY(180deg); }
-  .fc-hint { font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim); margin-bottom: 0.5rem; }
-  .fc-question { font-size: 1.05rem; font-weight: 600; color: var(--text); line-height: 1.5; }
-  .fc-answer { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; }
+    /* ─── DESARROLLO ─── */
+    .dev-section { margin-bottom: 3rem; }
+    .dev-section h3 { font-family: var(--font-head); font-size: 1.2rem; font-weight: 700; color: var(--green-bright); margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; }
+    .dev-section h3::before { content: ''; width: 4px; height: 1.1em; background: var(--green); border-radius: 2px; flex-shrink: 0; }
+    .dev-p { color: rgba(212,232,216,.82); font-size: .97rem; line-height: 1.85; margin-bottom: .9rem; }
+    .dev-p strong { color: var(--text); }
+    .dev-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.2rem; }
+    .dev-list li { display: flex; align-items: flex-start; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .8rem 1rem; font-size: .93rem; }
+    .dev-list li::before { content: '▸'; color: var(--green); font-size: .8rem; flex-shrink: 0; margin-top: .15rem; }
+    .dev-list li strong { color: var(--green-bright); }
 
-  .fill-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem 1.5rem; margin-bottom: 1rem; }
-  .fill-item.correct { border-color: var(--success); background: var(--success-bg); }
-  .fill-item.wrong { border-color: var(--error); background: var(--error-bg); }
-  .fill-sentence { font-size: 0.97rem; margin-bottom: 0.7rem; line-height: 1.7; }
-  .fill-input { font-family: var(--mono); font-size: 0.9rem; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 0.4rem 0.8rem; border-radius: 5px; width: 220px; outline: none; }
-  .fill-input:focus { border-color: var(--accent2); }
-  .fill-feedback { font-family: var(--sans); font-size: 0.83rem; margin-top: 0.5rem; display: none; }
-  .fill-item.correct .fill-feedback { display: block; color: var(--success); }
-  .fill-item.wrong .fill-feedback { display: block; color: var(--error); }
+    /* Clasificación tabla */
+    .class-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; }
+    .class-table th { background: var(--surface-2); color: var(--green); font-family: var(--font-head); font-weight: 700; padding: .7rem 1rem; text-align: left; border-bottom: 2px solid var(--border); }
+    .class-table td { padding: .55rem 1rem; border-bottom: 1px solid rgba(30,56,36,.5); color: rgba(212,232,216,.82); vertical-align: top; }
+    .class-table td:first-child { color: var(--gold); font-weight: 700; font-family: var(--font-head); white-space: nowrap; }
+    .class-table tr:hover td { background: rgba(34,197,94,.04); }
 
-  .mc-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.4rem 1.5rem; margin-bottom: 1.2rem; }
-  .mc-question { font-size: 0.97rem; font-weight: 600; margin-bottom: 1rem; }
-  .mc-options { display: flex; flex-direction: column; gap: 0.5rem; }
-  .mc-option { display: flex; align-items: flex-start; gap: 0.7rem; padding: 0.6rem 0.9rem; border-radius: 7px; border: 1px solid var(--border); cursor: pointer; font-size: 0.9rem; transition: all .15s; background: var(--surface); }
-  .mc-option:hover { border-color: var(--accent); }
-  .mc-option.selected-correct { border-color: var(--success); background: var(--success-bg); color: var(--success); }
-  .mc-option.selected-wrong { border-color: var(--error); background: var(--error-bg); color: var(--error); }
-  .mc-option.reveal-correct { border-color: var(--success); background: var(--success-bg); }
-  .mc-letter { font-family: var(--mono); font-size: 0.75rem; font-weight: 700; color: var(--text-muted); min-width: 18px; padding-top: 1px; }
-  .mc-explanation { margin-top: 0.8rem; padding: 0.7rem 1rem; background: var(--surface); border-radius: 6px; font-size: 0.85rem; color: var(--text-muted); display: none; border-left: 2px solid var(--accent); }
-  .mc-item.answered .mc-explanation { display: block; }
-  .mc-item.answered .mc-option { pointer-events: none; }
+    /* Cuentas accordion */
+    .cuenta-group { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; overflow: hidden; }
+    .cuenta-group-hd { display: flex; align-items: center; gap: 12px; padding: 1rem 1.2rem; cursor: pointer; user-select: none; transition: background .2s; }
+    .cuenta-group-hd:hover { background: var(--surface-2); }
+    .cuenta-group-badge { font-family: var(--font-mono); font-size: .65rem; letter-spacing: .14em; text-transform: uppercase; padding: 3px 10px; border-radius: 12px; flex-shrink: 0; }
+    .badge-activo { background: var(--green-dim); border: 1px solid var(--green-border); color: var(--green); }
+    .badge-pasivo { background: rgba(244,63,94,.1); border: 1px solid rgba(244,63,94,.3); color: #fb7185; }
+    .cuenta-group-title { font-family: var(--font-head); font-weight: 700; color: #fff; font-size: .95rem; }
+    .cuenta-group-body { padding: 0 1.2rem 1.2rem; display: none; }
+    .cuenta-group-body.open { display: block; }
+    .cuenta-item { display: flex; gap: 10px; padding: .55rem 0; border-bottom: 1px solid rgba(30,56,36,.4); font-size: .9rem; }
+    .cuenta-item:last-child { border-bottom: none; }
+    .cuenta-name { color: var(--green-bright); font-weight: 700; min-width: 200px; font-family: var(--font-mono); font-size: .83rem; }
+    .cuenta-desc { color: rgba(212,232,216,.75); }
 
-  /* ── BACK BUTTON ── */
-  .back-btn{position:fixed;top:1rem;left:1rem;z-index:200;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted,#7b8fa8);text-decoration:none;padding:.38rem .72rem;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:color .2s,border-color .2s,background .2s;white-space:nowrap;line-height:1;}
-  .back-btn:hover{color:var(--accent,#4fc3f7);border-color:rgba(255,255,255,.28);background:rgba(0,0,0,.75);}
-  .material-bar{background:rgba(255,255,255,.03);border-bottom:1px solid var(--border);padding:.6rem 1rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;justify-content:center;}
-  .material-link{display:inline-flex;align-items:center;gap:.3rem;font-family:var(--heading);font-size:.72rem;font-weight:500;color:var(--text-muted);text-decoration:none;background:rgba(255,255,255,.05);border:1px solid var(--border);padding:.22rem .65rem;border-radius:2rem;transition:color .2s,border-color .2s,background .2s;}
-  .material-link:hover{color:var(--accent);border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.08);}
-</style>
+    /* ─── FLASHCARDS ─── */
+    .fc-wrap { max-width: 640px; margin: 0 auto; }
+    .fc-progress-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-family: var(--font-mono); font-size: .75rem; color: var(--text-dim); }
+    .fc-prog-bar-shell { flex: 1; height: 3px; background: var(--border); border-radius: 2px; margin: 0 16px; }
+    .fc-prog-bar { height: 100%; background: var(--green); border-radius: 2px; transition: width .4s cubic-bezier(.4,0,.2,1); }
+    .flashcard-scene { perspective: 1000px; height: 240px; cursor: pointer; user-select: none; margin-bottom: 24px; }
+    .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform .55s cubic-bezier(.4,0,.2,1); }
+    .flashcard.flipped { transform: rotateY(180deg); }
+    .fc-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: var(--radius); padding: 2rem; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+    .fc-front { background: var(--surface); border: 1px solid var(--border); }
+    .fc-back { background: var(--surface-2); border: 1px solid var(--green-border); transform: rotateY(180deg); }
+    .fc-label { font-family: var(--font-mono); font-size: .62rem; letter-spacing: .18em; text-transform: uppercase; margin-bottom: 1rem; }
+    .fc-front .fc-label { color: var(--text-faint); }
+    .fc-back .fc-label { color: var(--green); }
+    .fc-text { font-size: 1rem; color: var(--text); line-height: 1.55; }
+    .fc-back .fc-text { color: var(--green-bright); font-weight: 700; font-size: .95rem; }
+    .fc-hint { font-family: var(--font-mono); font-size: .65rem; color: var(--text-faint); margin-top: 1rem; }
+    .fc-controls { display: flex; gap: 12px; justify-content: center; margin-top: 8px; }
+    .fc-btn { font-family: var(--font-head); font-size: .82rem; font-weight: 600; padding: .6rem 1.4rem; border-radius: var(--radius-sm); cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text-dim); transition: background .2s, color .2s, border-color .2s; }
+    .fc-btn:hover { background: var(--surface-2); color: var(--text); border-color: var(--green-border); }
+    .fc-btn.primary { background: var(--green-dim); color: var(--green); border-color: var(--green-border); }
+    .fc-btn.primary:hover { background: rgba(34,197,94,.18); }
+
+    /* ─── COMPLETAR ─── */
+    .fill-progress-row { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; font-family: var(--font-mono); font-size: .75rem; color: var(--text-dim); }
+    .fill-prog-shell { flex: 1; height: 3px; background: var(--border); border-radius: 2px; }
+    .fill-prog-bar { height: 100%; background: var(--green); border-radius: 2px; width: 0; transition: width .4s cubic-bezier(.4,0,.2,1); }
+    .fill-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.4rem 1.6rem; margin-bottom: 14px; transition: border-color .2s; }
+    .fill-item.correct { border-color: var(--success-border); background: var(--success-dim); }
+    .fill-item.wrong { border-color: var(--error-border); background: var(--error-dim); }
+    .fill-q { font-size: .97rem; color: var(--text); margin-bottom: .9rem; line-height: 1.65; }
+    .fill-q .blank { display: inline-block; min-width: 80px; padding: 0 4px; border-bottom: 2px solid var(--text-faint); color: var(--text-faint); font-style: italic; }
+    .fill-input-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .fill-input { flex: 1; min-width: 180px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .55rem 1rem; font-family: var(--font-body); font-size: .9rem; color: var(--text); transition: border-color .2s; }
+    .fill-input:focus { outline: none; border-color: var(--green-border); }
+    .fill-input:disabled { opacity: .5; cursor: not-allowed; }
+    .fill-check-btn { font-family: var(--font-head); font-weight: 700; font-size: .82rem; padding: .55rem 1.2rem; border-radius: var(--radius-sm); cursor: pointer; background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); transition: background .2s; }
+    .fill-check-btn:hover { background: rgba(34,197,94,.18); }
+    .fill-check-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .fill-feedback { margin-top: .65rem; font-size: .87rem; line-height: 1.55; display: none; }
+    .fill-feedback.ok { display: block; color: var(--success); }
+    .fill-feedback.err { display: block; color: var(--error); }
+
+    /* ─── QUIZ ─── */
+    .quiz-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.6rem; margin-bottom: 20px; }
+    .quiz-q-num { font-family: var(--font-mono); font-size: .62rem; letter-spacing: .18em; text-transform: uppercase; color: var(--text-faint); margin-bottom: .6rem; }
+    .quiz-q-text { font-size: 1rem; color: var(--text); margin-bottom: 1.2rem; line-height: 1.65; }
+    .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+    .quiz-opt { display: flex; align-items: flex-start; gap: 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .75rem 1rem; font-family: var(--font-body); font-size: .9rem; color: var(--text-dim); cursor: pointer; text-align: left; transition: border-color .18s, color .18s; }
+    .quiz-opt:hover { border-color: var(--green-border); color: var(--text); }
+    .opt-ltr { font-family: var(--font-mono); font-size: .75rem; font-weight: 700; color: var(--text-faint); flex-shrink: 0; margin-top: .05rem; }
+    .quiz-opt.done { cursor: default; }
+    .quiz-opt.opt-correct { background: var(--success-dim); border-color: var(--success-border); color: var(--success); }
+    .quiz-opt.opt-correct .opt-ltr { color: var(--success); }
+    .quiz-opt.opt-wrong { background: var(--error-dim); border-color: var(--error-border); color: var(--error); }
+    .quiz-opt.opt-wrong .opt-ltr { color: var(--error); }
+    .quiz-opt.opt-reveal { background: rgba(34,197,94,.06); border-color: rgba(34,197,94,.3); color: rgba(34,197,94,.8); }
+    .quiz-explanation { display: none; margin-top: 1rem; background: var(--surface-3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .9rem 1.1rem; font-size: .88rem; color: var(--text-dim); line-height: 1.65; }
+    .quiz-explanation.visible { display: block; animation: secIn .3s both; }
+
+    @media (max-width: 768px) { .header { padding: 80px 24px 40px; } .main { padding: 32px 20px; } .tabs { padding: 0 20px; } }
+  </style>
 </head>
 <body>
-<a class="back-btn" href="../../../index.html">&#8592; Inicio</a>
 
-<header>
-  <div class="tag">Organización Empresarial · Unidad 3</div>
-  <h1>Organización, <em>Empresa</em> y Plan de Cuentas</h1>
-  <p>Las Organizaciones · Proceso Administrativo · Análisis de Cuentas Contables</p>
-</header>
+<div class="atmosphere">
+  <div class="atm-glow atm-glow-1"></div>
+  <div class="atm-glow atm-glow-2"></div>
+  <div class="atm-grid"></div>
+  <div class="bg-sym" style="font-size:15rem;bottom:-60px;right:-60px;opacity:.022;">Org</div>
+  <div class="bg-sym" style="font-size:10rem;top:80px;left:-40px;opacity:.018;">PyME</div>
+</div>
+
+<a class="back-btn" href="../../../index.html">← Inicio</a>
 
 <div class="material-bar">
-  <span style="font-family:var(--heading);font-size:.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-right:.25rem;">📎 Material</span>
-  <a class="material-link" href="../material/(F)_LA_ORGANIZACION_._EMPRESA_-_CARACTERISTICAS.pdf" target="_blank">📄 (F)_LA_ORGANIZACION_._EMPRESA_-_CARACTERISTICAS.pdf</a>
-  <a class="material-link" href="../material/ANALISIS_DE_CUENTAS.pdf" target="_blank">📄 ANALISIS_DE_CUENTAS.pdf</a>
+  <span class="material-lbl">📎 Material</span>
+  <a class="material-link" href="../material/(F)_LA_ORGANIZACION_._EMPRESA_-_CARACTERISTICAS.pdf" target="_blank">📄 La Organización — Empresa · Características</a>
+  <a class="material-link" href="../material/ANALISIS_DE_CUENTAS.pdf" target="_blank">📄 Análisis de Cuentas</a>
 </div>
 
-<div class="tabs-wrap">
+<div class="header">
+  <div class="header-eyebrow">
+    <span class="eyebrow-badge"><span class="eyebrow-dot"></span>Org. Empresarial · Unidad 3</span>
+    <span class="eyebrow-nlm">◆ NotebookLM</span>
+  </div>
+  <h1 class="header-title">
+    <span class="accent">La Organización</span><br>
+    <span class="line2">Empresa, Tipos y Plan de Cuentas</span>
+  </h1>
+  <div class="header-meta">
+    <span class="header-meta-item"><span class="dot">◆</span> 12 conceptos</span>
+    <span class="header-meta-item"><span class="dot">◆</span> 12 flashcards</span>
+    <span class="header-meta-item"><span class="dot">◆</span> 12 ejercicios</span>
+    <span class="header-meta-item"><span class="dot">◆</span> 7 preguntas</span>
+  </div>
+  <div class="tag-strip">
+    <span class="org-tag tag-sin-lucro">Sin fines de lucro</span>
+    <span class="org-tag tag-con-lucro">Con fines de lucro</span>
+    <span class="org-tag tag-publica">Pública</span>
+    <span class="org-tag tag-privada">Privada · PyME</span>
+  </div>
+</div>
+
+<nav class="tabs-shell">
   <div class="tabs">
-    <button class="tab active" onclick="showTab('resumen')">Resumen</button>
-    <button class="tab" onclick="showTab('conceptos')">Conceptos Clave</button>
-    <button class="tab" onclick="showTab('detalle')">Explicación Detallada</button>
-    <button class="tab" onclick="showTab('flashcards')">Flashcards</button>
-    <button class="tab" onclick="showTab('completar')">Completar el Espacio</button>
-    <button class="tab" onclick="showTab('multiple')">Multiple Choice</button>
+    <button class="tab-btn active" data-tab="resumen">Resumen</button>
+    <button class="tab-btn" data-tab="conceptos">Conceptos</button>
+    <button class="tab-btn" data-tab="desarrollo">Desarrollo</button>
+    <button class="tab-btn" data-tab="flashcards">Flashcards</button>
+    <button class="tab-btn" data-tab="completar">Completar</button>
+    <button class="tab-btn" data-tab="quiz">Quiz</button>
   </div>
-</div>
+</nav>
 
-<div id="panel-resumen" class="panel active">
-  <h2>Resumen General</h2>
-  <div class="summary-box">
-    <p>Esta unidad aborda qué son las organizaciones, cómo se administran y cómo se clasifican las cuentas contables. Una organización es un conjunto de personas con metas comunes que necesitan recursos y coordinación. La administración involucra planificar, organizar, dirigir y controlar. El Plan de Cuentas clasifica los elementos patrimoniales (Activo, Pasivo y PN) con cuentas específicas para Caja, Banco, Deudores, Mercaderías, Inmuebles, y más.</p>
-  </div>
-  <h3>Temas principales</h3>
-  <ul>
-    <li>Definición y características de las organizaciones</li>
-    <li>El proceso administrativo (planificación, organización, dirección, control)</li>
-    <li>El Plan de Cuentas y su estructura</li>
-    <li>Cuentas del Activo: Caja, Banco, Deudores, Mercaderías, Bienes de Uso</li>
-    <li>Rubros contables: Caja y Bancos, Inversiones, Cuentas por Cobrar, Bienes de Cambio, Bienes de Uso</li>
-  </ul>
-</div>
+<main class="main">
 
-<div id="panel-conceptos" class="panel">
-  <h2>Conceptos Clave</h2>
-  <div class="concept-grid">
-    <div class="concept-card"><div class="term">Organización</div><div class="def">Conjunto de personas que, actuando según un orden, tienen una meta común y recursos para alcanzarla.</div></div>
-    <div class="concept-card"><div class="term">Administración</div><div class="def">Ciencia que elabora teorías sobre las organizaciones para posibilitar decisiones correctas a partir de información precisa.</div></div>
-    <div class="concept-card"><div class="term">Planificación</div><div class="def">Fijar objetivos y determinar cómo alcanzarlos. Responde al "Qué hacer" y "Cómo hacerlo".</div></div>
-    <div class="concept-card"><div class="term">Gestión</div><div class="def">Realizar actividades conducentes al logro de los objetivos propuestos.</div></div>
-    <div class="concept-card"><div class="term">Control</div><div class="def">Comprobación, inspección, fiscalización e intervención sobre los procesos de la organización.</div></div>
-    <div class="concept-card"><div class="term">Plan de Cuentas</div><div class="def">Listado de cuentas que la organización usa para realizar registraciones contables, ordenado por Activo, Pasivo y PN con codificación numérica.</div></div>
-    <div class="concept-card"><div class="term">Cuenta Caja</div><div class="def">Se debita cuando ingresa dinero; se acredita cuando se paga en efectivo. Saldo deudor = dinero disponible.</div></div>
-    <div class="concept-card"><div class="term">Deudores por Ventas</div><div class="def">Se debita cuando nos deben por venta de mercaderías. Se acredita cuando pagan. Saldo deudor.</div></div>
-    <div class="concept-card"><div class="term">Mercaderías</div><div class="def">Se debita al comprar productos para venta; se acredita en el asiento de costo de ventas. Saldo deudor = stock.</div></div>
-    <div class="concept-card"><div class="term">Saldo Deudor</div><div class="def">Indica un activo: la empresa tiene ese importe a su favor o en su poder.</div></div>
-    <div class="concept-card"><div class="term">Débito</div><div class="def">Registro en el debe de una cuenta. Aumenta cuentas de Activo; disminuye cuentas de Pasivo y PN.</div></div>
-    <div class="concept-card"><div class="term">Crédito (Acreditar)</div><div class="def">Registro en el haber de una cuenta. Disminuye cuentas de Activo; aumenta cuentas de Pasivo y PN.</div></div>
-  </div>
-</div>
-
-<div id="panel-detalle" class="panel">
-  <h2>Explicación Detallada</h2>
-  <h3>Las Organizaciones</h3>
-  <p>Se llama <strong>organización</strong> al conjunto de personas que, actuando según un orden establecido, se juntan porque poseen una meta en común. Para alcanzar sus objetivos necesitan recursos (humanos, materiales, etc.) que actúan con coherencia, eficacia y coordinación.</p>
-  <div class="example-box">
-    <div class="example-title">¿Un hospital es una organización?</div>
-    <p>Sí: tiene un grupo de personas (director, médicos, enfermeras), un orden establecido (horarios y funciones específicas) y una meta común: atender la salud de la comunidad. Un colectivo de pasajeros NO es una organización porque cada pasajero tiene un destino diferente; no comparten la misma meta.</p>
-  </div>
-
-  <h3>El Proceso Administrativo</h3>
-  <p>Administrar una organización significa:</p>
-  <div class="process-steps">
-    <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Fijar objetivos</strong> — Decidir qué hacer</div></div>
-    <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Planificar</strong> — Determinar cómo hacerlo</div></div>
-    <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Gestión</strong> — Hacerlo: ejecutar las actividades planificadas</div></div>
-    <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Control</strong> — Verificar lo que se ha hecho</div></div>
-    <div class="step"><div class="step-num">5</div><div class="step-text"><strong>Evaluación</strong> — Valorar los procesos anteriores (retroalimentación)</div></div>
-  </div>
-
-  <h3>El Plan de Cuentas</h3>
-  <p>Es un listado de cuentas ordenado según normas contables (Activo → Pasivo → PN), con codificación numérica. Cada empresa lo adapta a su actividad.</p>
-
-  <h4>Rubro Caja y Bancos (Activo Corriente)</h4>
-  <div class="cuenta-box"><div class="cuenta-name">Caja</div><div class="cuenta-desc">Débito: ingresa dinero efectivo. Crédito: se paga en efectivo. Saldo deudor = efectivo disponible.</div></div>
-  <div class="cuenta-box"><div class="cuenta-name">Banco x Cuenta Corriente</div><div class="cuenta-desc">Débito: depósitos y cheques recibidos. Crédito: pagos con cheque. Saldo deudor = saldo bancario.</div></div>
-  <div class="cuenta-box"><div class="cuenta-name">Valores a Depositar</div><div class="cuenta-desc">Débito: recibo cheque de tercero. Crédito: lo deposito, cobro o endoso. Saldo deudor = cheques pendientes.</div></div>
-
-  <h4>Rubro Inversiones (Activo No Corriente)</h4>
-  <div class="cuenta-box"><div class="cuenta-name">Banco x Caja de Ahorros</div><div class="cuenta-desc">Débito: depósito. Crédito: retiro. Saldo = dinero en Caja de Ahorros.</div></div>
-  <div class="cuenta-box"><div class="cuenta-name">Banco x Plazo Fijo</div><div class="cuenta-desc">Débito: depósito en plazo fijo. Crédito: retiro o renovación. Saldo = dinero a plazo fijo.</div></div>
-
-  <h4>Rubro Cuentas por Cobrar</h4>
-  <div class="cuenta-box"><div class="cuenta-name">Deudores por Ventas</div><div class="cuenta-desc">Débito: venta de mercaderías en cuenta corriente. Crédito: cobro o conversión en incobrable. Saldo deudor = dinero que nos deben por ventas.</div></div>
-  <div class="cuenta-box"><div class="cuenta-name">Documentos a Cobrar</div><div class="cuenta-desc">Débito: recibo pagaré. Crédito: cobro o mora. Saldo = documentos pendientes de cobro.</div></div>
-  <div class="cuenta-box"><div class="cuenta-name">Tarjetas de Crédito</div><div class="cuenta-desc">Débito: venta con tarjeta. Crédito: depósito de cupones. Saldo = cupones a cobrar.</div></div>
-
-  <h4>Rubro Bienes de Cambio</h4>
-  <div class="cuenta-box"><div class="cuenta-name">Mercaderías</div><div class="cuenta-desc">Débito: compra de productos para venta. Crédito: asiento de costo de ventas. Saldo deudor = stock en depósito.</div></div>
-  <div class="cuenta-box"><div class="cuenta-name">Materias Primas</div><div class="cuenta-desc">Débito: compra. Crédito: envío a producción. Saldo = materias primas en poder de la empresa.</div></div>
-
-  <h4>Rubro Bienes de Uso</h4>
-  <div class="cuenta-box"><div class="cuenta-name">Rodados</div><div class="cuenta-desc">Débito: adquisición. Crédito: venta. Saldo = vehículos de la empresa.</div></div>
-  <div class="cuenta-box"><div class="cuenta-name">Inmuebles</div><div class="cuenta-desc">Débito: compra (terreno + edificio). Crédito: venta. Saldo = propiedades de la empresa.</div></div>
-</div>
-
-<div id="panel-flashcards" class="panel">
-  <h2>Flashcards</h2>
-  <div class="progress-bar-wrap"><div class="progress-bar" id="fc-bar" style="width:9%"></div></div>
-  <div class="fc-controls">
-    <div class="fc-progress">Carta <span id="fc-current">1</span> / <span id="fc-total">11</span></div>
-    <div style="display:flex;gap:0.5rem;">
-      <button class="btn" onclick="fcPrev()">← Anterior</button>
-      <button class="btn btn-primary" onclick="fcNext()">Siguiente →</button>
+  <!-- ══════════════ RESUMEN ══════════════ -->
+  <section class="section active" id="resumen">
+    <div class="sec-head">
+      <h2>Resumen General</h2>
+      <p>Contenido extraído del material de cátedra vía NotebookLM</p>
     </div>
-  </div>
-  <div class="flashcard-scene" onclick="document.getElementById('flashcard').classList.toggle('flipped')">
-    <div class="flashcard" id="flashcard">
-      <div class="fc-face fc-front"><div class="fc-hint">Pregunta — click para ver respuesta</div><div class="fc-question" id="fc-q">¿Qué es una organización?</div></div>
-      <div class="fc-face fc-back"><div class="fc-hint">Respuesta</div><div class="fc-answer" id="fc-a">Conjunto de personas que actúan según un orden establecido, tienen una meta común y utilizan recursos con coherencia y coordinación.</div></div>
+    <div class="resumen-layout">
+      <div>
+        <div class="rsum-card">
+          <div class="rsum-label">¿De qué trata esta unidad?</div>
+          <p>La Unidad 3 estudia <strong>La Organización</strong> como concepto fundamental: qué es, qué tipos existen y cómo se diferencia de la empresa. Una organización es un grupo de personas que actúan bajo un orden establecido, compartiendo metas y recursos con coherencia y eficacia.</p>
+          <div class="rsum-callout">
+            "Toda empresa es una organización, pero no toda organización es una empresa. La empresa busca ganancias; las ONGs y fundaciones, no."
+          </div>
+          <p>
+            Se analizan las <strong>clasificaciones de empresas</strong>: por localización, tamaño (incluyendo las <strong>PyMEs</strong>), propiedad de capital, actividad económica y tipo legal. También se detalla el <strong>Plan de Cuentas</strong> y la clasificación de cuentas contables del Activo y Pasivo.
+          </p>
+          <p>
+            El <strong>Proceso Administrativo</strong> que toda organización requiere: fijar objetivos → planificar → gestionar → controlar → evaluar.
+          </p>
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="info-pill">
+          <div class="info-pill-lbl">Tipos de Org. según fin</div>
+          <div class="info-pill-val">
+            <span style="color:var(--sky)">Sin fines de lucro:</span> ONGs, fundaciones, hospitales públicos<br>
+            <span style="color:var(--green)">Con fines de lucro:</span> Empresas de todo tipo
+          </div>
+        </div>
+        <div class="info-pill">
+          <div class="info-pill-lbl">Clasificación de empresas</div>
+          <div class="info-pill-val">
+            Por localización · Por tamaño<br>
+            Por propiedad · Por actividad<br>
+            Por tipo legal (SA, SRL, Unipersonal)
+          </div>
+        </div>
+        <div class="info-pill">
+          <div class="info-pill-lbl">Proceso Administrativo</div>
+          <div class="info-pill-val">
+            Fijar objetivos → Planificar<br>
+            → Gestionar → Controlar → Evaluar
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+  </section>
 
-<div id="panel-completar" class="panel">
-  <h2>Completar el Espacio</h2>
-  <p style="color:var(--text-muted);margin-bottom:1.5rem;font-family:var(--sans);font-size:0.9rem;">Escribí la palabra correcta y presioná Enter.</p>
-  <div id="fill-container"></div>
-</div>
+  <!-- ══════════════ CONCEPTOS ══════════════ -->
+  <section class="section" id="conceptos">
+    <div class="sec-head">
+      <h2>Conceptos Clave</h2>
+      <p>Definiciones extraídas directamente del material de cátedra</p>
+    </div>
+    <div class="concepts-grid">
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 01</div>
+        <div class="concept-term">Organización</div>
+        <div class="concept-def">Grupo de personas que actúan bajo un orden establecido, compartiendo una <strong>meta y objetivo en común</strong>, integrando recursos con coherencia y eficacia. Tiene ambiente interno y externo.</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 02</div>
+        <div class="concept-term">Empresa</div>
+        <div class="concept-def">Organización <strong>con fines de lucro</strong> que reúne los factores de naturaleza, trabajo y capital. Su propósito principal es ganar dinero y obtener beneficios. Toda empresa es una organización.</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 03</div>
+        <div class="concept-term">Organización sin fines de lucro</div>
+        <div class="concept-def">Busca mejorar la calidad de vida sin perseguir ganancias económicas. Ejemplos: <strong>Fundación Favaloro, Club San Miguel, Greenpeace</strong>. No toda organización es una empresa.</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 04</div>
+        <div class="concept-term">PyME</div>
+        <div class="concept-def"><strong>Pequeña y Mediana Empresa</strong>. Impulsadas por la Ley 24.467 para otorgarles ventajas laborales y comerciales. Clasificadas por tamaño junto con grandes empresas y microempresas.</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 05</div>
+        <div class="concept-term">Empresa Multinacional</div>
+        <div class="concept-def">Empresa que controla actividades en <strong>2 o más países</strong>. Las <strong>transnacionales</strong> van más allá: operan por encima de las fronteras y son manejadas por diferentes nacionalidades.</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 06</div>
+        <div class="concept-term">Proceso Administrativo</div>
+        <div class="concept-def">Ciclo que toda organización aplica para alcanzar sus fines: <strong>fijar objetivos → planificar → gestionar → controlar → evaluar</strong>. La administración es el medio que lo ejecuta.</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 07</div>
+        <div class="concept-term">Plan de Cuentas</div>
+        <div class="concept-def">Listado <strong>codificado y ordenado</strong> de las cuentas contables de una empresa, según normas contables. Es la "guía" para registrar metódicamente todas las operaciones financieras.</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 08</div>
+        <div class="concept-term">Cuentas del Activo</div>
+        <div class="concept-def">Registran los <strong>bienes y derechos</strong> bajo control de la empresa. Se agrupan en rubros: Caja y Bancos, Inversiones, Cuentas por Cobrar, Bienes de Cambio, Bienes de Uso, Bienes Intangibles.</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 09</div>
+        <div class="concept-term">Cuentas del Pasivo</div>
+        <div class="concept-def">Registran las <strong>deudas y obligaciones</strong> de la empresa. Se agrupan en: Cuentas por Pagar (Proveedores, Acreedores Varios, Documentos a Pagar).</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 10</div>
+        <div class="concept-term">Mercaderías (Bienes de Cambio)</div>
+        <div class="concept-def">Productos <strong>listos para vender</strong>. Se distinguen de las Materias Primas (insumos para fabricar) y de los Bienes de Uso (elementos de trabajo permanente).</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 11</div>
+        <div class="concept-term">Deudores por Ventas vs. Deudores Varios</div>
+        <div class="concept-def"><strong>Deudores por Ventas:</strong> deben dinero por llevarse <em>mercaderías</em>. <strong>Deudores Varios:</strong> deben por compra de cosas que NO son mercadería (ej. un bien de uso vendido).</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-num">CONCEPTO 12</div>
+        <div class="concept-term">Proveedores vs. Acreedores Varios</div>
+        <div class="concept-def"><strong>Proveedores:</strong> deudas en cuenta corriente por comprar <em>mercaderías</em>. <strong>Acreedores Varios:</strong> deudas por comprar bienes que NO son mercadería (ej. maquinaria o inmueble).</div>
+      </div>
+    </div>
+  </section>
 
-<div id="panel-multiple" class="panel">
-  <h2>Multiple Choice</h2>
-  <div id="mc-container"></div>
-</div>
+  <!-- ══════════════ DESARROLLO ══════════════ -->
+  <section class="section" id="desarrollo">
+    <div class="sec-head">
+      <h2>Desarrollo Detallado</h2>
+      <p>Explicación completa con clasificaciones y plan de cuentas del material</p>
+    </div>
+
+    <div class="dev-section">
+      <h3>1. La Organización — Concepto y Ambiente</h3>
+      <p class="dev-p">Una <strong>organización</strong> es un grupo de personas que actúan bajo un orden establecido, compartiendo metas y objetivos comunes, integrando recursos con coherencia y eficacia.</p>
+      <p class="dev-p">Ejemplo clave del material: los pasajeros de un colectivo <em>no</em> forman una organización (cada uno tiene un destino distinto). En cambio, <em>la empresa de transporte sí</em> — sus integrantes buscan ofrecer un servicio y ganar dinero.</p>
+      <ul class="dev-list">
+        <li><strong>Ambiente Interno:</strong> personas, procesos y relaciones de autoridad dentro de la organización.</li>
+        <li><strong>Ambiente Externo (contexto):</strong> proveedores, clientes, mercado y factores que influyen desde afuera.</li>
+        <li><strong>Recursos:</strong> humanos, materiales (edificios, máquinas), intelectuales (información), tecnológicos, naturales y energéticos.</li>
+      </ul>
+    </div>
+
+    <div class="dev-section">
+      <h3>2. Tipos de Organizaciones y Clasificación de Empresas</h3>
+      <p class="dev-p">Las organizaciones se dividen en dos grandes grupos según su finalidad:</p>
+
+      <table class="class-table">
+        <tr><th>Criterio</th><th>Tipos</th><th>Ejemplos</th></tr>
+        <tr><td>Según fin</td><td>Sin fines de lucro / Con fines de lucro</td><td>ONG Greenpeace / SANCOR S.A.</td></tr>
+        <tr><td>Por localización</td><td>Nacional · Regional · Internacional · Multinacional · Transnacional</td><td>Multinacional: opera en 2+ países</td></tr>
+        <tr><td>Por tamaño</td><td>Grande · Mediana · Pequeña · Micro (PyMEs)</td><td>PyME: Ley 24.467</td></tr>
+        <tr><td>Por capital</td><td>Pública · Privada · Mixta</td><td>YPF (Mixta), AFIP (Pública)</td></tr>
+        <tr><td>Por actividad</td><td>Primaria/Extracción · Secundaria/Industrial · Terciaria/Servicios o Comercial</td><td>Minería · Textil · Tintorería</td></tr>
+        <tr><td>Por tipo legal</td><td>Unipersonal · Sociedad (SA, SRL, etc.)</td><td>Ley 19.550 regula las sociedades</td></tr>
+      </table>
+    </div>
+
+    <div class="dev-section">
+      <h3>3. Análisis y Plan de Cuentas Contables</h3>
+      <p class="dev-p">El <strong>Plan de Cuentas</strong> es un listado codificado y ordenado de todas las cuentas contables de la empresa. Las cuentas se clasifican principalmente en <strong>Activo</strong> y <strong>Pasivo</strong>.</p>
+
+      <div class="cuenta-group">
+        <div class="cuenta-group-hd" onclick="toggleGroup(this)">
+          <span class="cuenta-group-badge badge-activo">ACTIVO</span>
+          <span class="cuenta-group-title">Rubro Caja y Bancos</span>
+        </div>
+        <div class="cuenta-group-body">
+          <div class="cuenta-item"><span class="cuenta-name">Caja</span><span class="cuenta-desc">Dinero en efectivo disponible en la empresa.</span></div>
+          <div class="cuenta-item"><span class="cuenta-name">Banco X C/C</span><span class="cuenta-desc">Dinero y cheques depositados en cuenta corriente bancaria.</span></div>
+          <div class="cuenta-item"><span class="cuenta-name">Valores a Depositar</span><span class="cuenta-desc">Cheques recibidos de terceros que aún no se cobraron ni depositaron.</span></div>
+        </div>
+      </div>
+
+      <div class="cuenta-group">
+        <div class="cuenta-group-hd" onclick="toggleGroup(this)">
+          <span class="cuenta-group-badge badge-activo">ACTIVO</span>
+          <span class="cuenta-group-title">Rubro Inversiones</span>
+        </div>
+        <div class="cuenta-group-body">
+          <div class="cuenta-item"><span class="cuenta-name">Banco X Caja de Ahorros</span><span class="cuenta-desc">Dinero depositado en caja de ahorros bancaria.</span></div>
+          <div class="cuenta-item"><span class="cuenta-name">Moneda Extranjera</span><span class="cuenta-desc">Dinero de otro país (divisas) en poder de la empresa.</span></div>
+          <div class="cuenta-item"><span class="cuenta-name">Banco X Plazo Fijo</span><span class="cuenta-desc">Dinero invertido a plazo fijo en una entidad bancaria.</span></div>
+        </div>
+      </div>
+
+      <div class="cuenta-group">
+        <div class="cuenta-group-hd" onclick="toggleGroup(this)">
+          <span class="cuenta-group-badge badge-activo">ACTIVO</span>
+          <span class="cuenta-group-title">Rubro Cuentas por Cobrar (Derechos)</span>
+        </div>
+        <div class="cuenta-group-body">
+          <div class="cuenta-item"><span class="cuenta-name">Documentos a Cobrar</span><span class="cuenta-desc">Pagarés firmados a favor de la empresa por terceros.</span></div>
+          <div class="cuenta-item"><span class="cuenta-name">Deudores por Ventas</span><span class="cuenta-desc">Personas que deben dinero por llevarse mercaderías en cuenta corriente.</span></div>
+          <div class="cuenta-item"><span class="cuenta-name">Deudores Varios</span><span class="cuenta-desc">Personas que deben por ventas de bienes que NO son mercadería (ej. un rodado).</span></div>
+          <div class="cuenta-item"><span class="cuenta-name">Tarjetas de Crédito</span><span class="cuenta-desc">Cupones a favor de la empresa por ventas realizadas con tarjeta.</span></div>
+        </div>
+      </div>
+
+      <div class="cuenta-group">
+        <div class="cuenta-group-hd" onclick="toggleGroup(this)">
+          <span class="cuenta-group-badge badge-activo">ACTIVO</span>
+          <span class="cuenta-group-title">Rubro Bienes de Cambio</span>
+        </div>
+        <div class="cuenta-group-body">
+          <div class="cuenta-item"><span class="cuenta-name">Mercaderías</span><span class="cuenta-desc">Productos terminados listos para vender al público.</span></div>
+          <div class="cuenta-item"><span class="cuenta-name">Materias Primas</span><span class="cuenta-desc">Insumos comprados para elaborar o fabricar productos (no listos aún).</span></div>
+        </div>
+      </div>
+
+      <div class="cuenta-group">
+        <div class="cuenta-group-hd" onclick="toggleGroup(this)">
+          <span class="cuenta-group-badge badge-activo">ACTIVO</span>
+          <span class="cuenta-group-title">Rubro Bienes de Uso</span>
+        </div>
+        <div class="cuenta-group-body">
+          <div class="cuenta-item"><span class="cuenta-name">Rodados</span><span class="cuenta-desc">Vehículos utilizados en la operación de la empresa.</span></div>
+          <div class="cuenta-item"><span class="cuenta-name">Inmuebles</span><span class="cuenta-desc">Terrenos y edificios propiedad de la empresa.</span></div>
+          <div class="cuenta-item"><span class="cuenta-name">Equipos de Computación</span><span class="cuenta-desc">Computadoras, servidores y equipos tecnológicos de trabajo.</span></div>
+          <div class="cuenta-item"><span class="cuenta-name">Muebles y Útiles</span><span class="cuenta-desc">Instalaciones, muebles de oficina y elementos de trabajo físico.</span></div>
+          <div class="cuenta-item"><span class="cuenta-name">Maquinarias · Herramientas</span><span class="cuenta-desc">Equipos productivos y herramientas de uso continuo.</span></div>
+        </div>
+      </div>
+
+      <div class="cuenta-group">
+        <div class="cuenta-group-hd" onclick="toggleGroup(this)">
+          <span class="cuenta-group-badge badge-activo">ACTIVO</span>
+          <span class="cuenta-group-title">Rubro Bienes Intangibles</span>
+        </div>
+        <div class="cuenta-group-body">
+          <div class="cuenta-item"><span class="cuenta-name">Llave de Negocio</span><span class="cuenta-desc">Valor del "nombre" o clientela de un negocio adquirido (goodwill).</span></div>
+          <div class="cuenta-item"><span class="cuenta-name">Marcas · Patentes</span><span class="cuenta-desc">Derechos de propiedad intelectual registrados a favor de la empresa.</span></div>
+        </div>
+      </div>
+
+      <div class="cuenta-group">
+        <div class="cuenta-group-hd" onclick="toggleGroup(this)">
+          <span class="cuenta-group-badge badge-pasivo">PASIVO</span>
+          <span class="cuenta-group-title">Rubro Cuentas por Pagar</span>
+        </div>
+        <div class="cuenta-group-body">
+          <div class="cuenta-item"><span class="cuenta-name">Proveedores</span><span class="cuenta-desc">Deudas en cuenta corriente por comprar mercaderías a proveedores.</span></div>
+          <div class="cuenta-item"><span class="cuenta-name">Acreedores Varios</span><span class="cuenta-desc">Deudas por comprar bienes que NO son mercadería (ej. maquinaria, inmueble).</span></div>
+          <div class="cuenta-item"><span class="cuenta-name">Documentos a Pagar</span><span class="cuenta-desc">Pagarés que la empresa firmó a favor de terceros (deuda documentada).</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ FLASHCARDS ══════════════ -->
+  <section class="section" id="flashcards">
+    <div class="sec-head">
+      <h2>Flashcards</h2>
+      <p>Hacé click en la tarjeta para dar vuelta · 12 tarjetas</p>
+    </div>
+    <div class="fc-wrap">
+      <div class="fc-progress-row">
+        <span id="fc-counter">1 / 12</span>
+        <div class="fc-prog-bar-shell"><div class="fc-prog-bar" id="fc-prog-bar" style="width:8.33%"></div></div>
+        <span id="fc-score">0 vistas</span>
+      </div>
+      <div class="flashcard-scene" onclick="flipCard()">
+        <div class="flashcard" id="fc-card">
+          <div class="fc-face fc-front">
+            <div class="fc-label">Pregunta</div>
+            <div class="fc-text" id="fc-q"></div>
+            <div class="fc-hint">click para ver respuesta</div>
+          </div>
+          <div class="fc-face fc-back">
+            <div class="fc-label">Respuesta</div>
+            <div class="fc-text" id="fc-a"></div>
+          </div>
+        </div>
+      </div>
+      <div class="fc-controls">
+        <button class="fc-btn" onclick="fcPrev()">← Anterior</button>
+        <button class="fc-btn primary" onclick="fcNext()">Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ COMPLETAR ══════════════ -->
+  <section class="section" id="completar">
+    <div class="sec-head">
+      <h2>Completar el Espacio</h2>
+      <p>Escribí la palabra que falta y presioná Enter o Verificar · 12 ejercicios</p>
+    </div>
+    <div class="fill-progress-row">
+      <span id="fill-prog-label">0 / 12</span>
+      <div class="fill-prog-shell"><div class="fill-prog-bar" id="fill-prog-bar"></div></div>
+      <span id="fill-score">0 correctas</span>
+    </div>
+    <div id="fill-container"></div>
+  </section>
+
+  <!-- ══════════════ QUIZ ══════════════ -->
+  <section class="section" id="quiz">
+    <div class="sec-head">
+      <h2>Multiple Choice</h2>
+      <p>Seleccioná la opción correcta · 7 preguntas</p>
+    </div>
+    <div id="quiz-list"></div>
+  </section>
+
+</main>
 
 <script>
-function showTab(id) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('panel-' + id).classList.add('active');
-  event.target.classList.add('active');
+// ─── TABS ───
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ─── ACCORDION ───
+function toggleGroup(hd) {
+  const body = hd.nextElementSibling;
+  body.classList.toggle('open');
 }
 
-const cards = [
-  { q: '¿Qué es una organización?', a: 'Conjunto de personas que actúan según un orden, tienen una meta común y recursos para alcanzarla.' },
-  { q: '¿Por qué el colectivo de pasajeros NO es una organización?', a: 'Porque los pasajeros no tienen una meta en común: cada uno va a un destino diferente.' },
-  { q: '¿Qué significa "Gestión" en el proceso administrativo?', a: 'Realizar actividades conducentes al logro de los objetivos propuestos.' },
-  { q: '¿Qué es el Plan de Cuentas?', a: 'Listado de cuentas que usa la empresa para sus registraciones contables, ordenado en Activo, Pasivo y PN con codificación numérica.' },
-  { q: '¿Cuándo se debita la cuenta Caja?', a: 'Cuando ingresa dinero efectivo a la empresa.' },
-  { q: '¿Qué indica el saldo deudor de la cuenta Caja?', a: 'El dinero en efectivo que aún tiene la empresa disponible.' },
-  { q: '¿Qué son los "Deudores por Ventas"?', a: 'Cuentas de activo que representan el dinero que nos deben los clientes por venta de mercaderías en cuenta corriente.' },
-  { q: '¿Qué diferencia hay entre "Bienes de Cambio" y "Bienes de Uso"?', a: 'Bienes de Cambio son para venta (mercaderías, materias primas). Bienes de Uso son para uso de la empresa (rodados, inmuebles, maquinaria).' },
-  { q: '¿Cuándo se acredita la cuenta Mercaderías?', a: 'En el asiento de costo de las mercaderías vendidas.' },
-  { q: '¿Qué etapas incluye el proceso administrativo?', a: 'Fijar objetivos → Planificar → Gestión → Control → Evaluación (con retroalimentación).' },
-  { q: '¿Qué son los "Valores a Depositar"?', a: 'Cheques de terceros recibidos pero aún no depositados. Se acreditan al depositarlos, cobrarlos o endosarlos.' },
+// ─── FLASHCARDS ───
+const CARDS = [
+  { q: '¿Qué es una organización?', a: 'Grupo de personas que actúan bajo un orden establecido, compartiendo metas y objetivos comunes, integrando recursos con coherencia y eficacia.' },
+  { q: '¿Cuál es la diferencia entre organización y empresa?', a: 'Toda empresa es una organización (con fines de lucro), pero no toda organización es una empresa (las ONGs y fundaciones no buscan ganancias).' },
+  { q: '¿Qué es una PyME y qué ley la regula?', a: 'Pequeña y Mediana Empresa. Regulada por la Ley 24.467, que les otorga ventajas laborales y comerciales.' },
+  { q: '¿Qué es una empresa transnacional?', a: 'Opera por encima de las fronteras nacionales, manejada por personas de distintas nacionalidades. Es diferente a la multinacional (opera en 2+ países).' },
+  { q: '¿Cuáles son los 5 pasos del Proceso Administrativo?', a: 'Fijar objetivos → Planificar (cómo hacerlo) → Gestionar (hacerlo) → Controlar (verificarlo) → Evaluar (valorar los procesos).' },
+  { q: '¿Qué es el Plan de Cuentas?', a: 'Listado codificado y ordenado de las cuentas contables de la empresa, elaborado según normas contables. Es la guía para registrar todas las operaciones.' },
+  { q: '¿Cuál es la diferencia entre Mercaderías y Materias Primas?', a: 'Mercaderías: productos listos para vender. Materias Primas: insumos comprados para fabricar productos (no listos para vender aún).' },
+  { q: '¿Cuál es la diferencia entre Deudores por Ventas y Deudores Varios?', a: 'Deudores por Ventas: deben por mercaderías. Deudores Varios: deben por cosas que NO son mercadería (ej. un bien de uso vendido).' },
+  { q: '¿Cuál es la diferencia entre Proveedores y Acreedores Varios?', a: 'Proveedores: deudas por compra de mercaderías. Acreedores Varios: deudas por compra de bienes que NO son mercadería.' },
+  { q: '¿Qué son los "Valores a Depositar"?', a: 'Cheques recibidos de terceros que la empresa aún no cobró ni depositó. Se clasifican en el Activo — Rubro Caja y Bancos.' },
+  { q: '¿Qué son los Bienes Intangibles? Dá ejemplos.', a: 'Bienes sin existencia física: Llave de Negocio (goodwill), marcas comerciales, patentes y derechos de autor.' },
+  { q: '¿Qué tipos de empresas existen según su actividad económica?', a: 'Primarias/Extracción (minería, agricultura) · Secundarias/Industriales (fabrican productos) · Terciarias (comerciales o de servicios).' },
 ];
-let fcIdx = 0;
-function updateFC() {
-  const c = cards[fcIdx];
+
+let fcIndex = 0, fcSeen = 0;
+function renderCard() {
+  const c = CARDS[fcIndex];
   document.getElementById('fc-q').textContent = c.q;
   document.getElementById('fc-a').textContent = c.a;
-  document.getElementById('fc-current').textContent = fcIdx + 1;
-  document.getElementById('fc-total').textContent = cards.length;
-  document.getElementById('fc-bar').style.width = ((fcIdx+1)/cards.length*100) + '%';
-  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('fc-card').classList.remove('flipped');
+  document.getElementById('fc-counter').textContent = (fcIndex + 1) + ' / ' + CARDS.length;
+  document.getElementById('fc-prog-bar').style.width = ((fcIndex + 1) / CARDS.length * 100) + '%';
 }
-function fcNext() { fcIdx = (fcIdx + 1) % cards.length; updateFC(); }
-function fcPrev() { fcIdx = (fcIdx - 1 + cards.length) % cards.length; updateFC(); }
+function flipCard() {
+  const card = document.getElementById('fc-card');
+  card.classList.toggle('flipped');
+  if (!card.classList.contains('flipped')) return;
+  fcSeen = Math.max(fcSeen, fcIndex + 1);
+  document.getElementById('fc-score').textContent = fcSeen + ' vista' + (fcSeen !== 1 ? 's' : '');
+}
+function fcNext() { fcIndex = (fcIndex + 1) % CARDS.length; renderCard(); }
+function fcPrev() { fcIndex = (fcIndex - 1 + CARDS.length) % CARDS.length; renderCard(); }
+renderCard();
 
-const fills = [
-  { sentence: 'Una ___ es un conjunto de personas con meta común que actúan según un orden establecido.', answer: 'organización', hint: 'Concepto central de la unidad.' },
-  { sentence: 'La ___ es la función de fijar objetivos y determinar cómo alcanzarlos.', answer: 'planificación', hint: 'Primera etapa del proceso administrativo.' },
-  { sentence: 'El ___ es un listado de cuentas con codificación numérica para registraciones contables.', answer: 'plan de cuentas', hint: 'Herramienta contable clave.' },
-  { sentence: 'La cuenta ___ se debita cuando ingresa dinero en efectivo y su saldo deudor indica el efectivo disponible.', answer: 'caja', hint: 'Cuenta del rubro Caja y Bancos.' },
-  { sentence: 'La cuenta Mercaderías se acredita en el asiento de ___ de las mercaderías vendidas.', answer: 'costo', hint: 'Registración cuando se vende.' },
-  { sentence: 'Los ___ de Uso son bienes que la empresa utiliza (no vende): rodados, inmuebles, maquinaria.', answer: 'bienes', hint: 'Rubro del activo no corriente.' },
-  { sentence: 'La cuenta "Deudores por Ventas" tiene saldo ___ y representa el dinero que nos deben los clientes.', answer: 'deudor', hint: 'Tipo de saldo de las cuentas del activo.' },
-  { sentence: 'La ___ es la función de verificar lo que se ha hecho en la organización.', answer: 'control', hint: 'Cuarta etapa del proceso administrativo.' },
-  { sentence: 'El Banco x ___ ___ se acredita cuando se paga con cheque.', answer: 'cuenta corriente', hint: 'Modalidad bancaria corriente.' },
-  { sentence: 'Los "Valores a Depositar" representan ___ de terceros aún no depositados.', answer: 'cheques', hint: 'Documento bancario de pago.' },
+// ─── COMPLETAR ───
+const FILL_QS = [
+  { q: 'Una organización es un grupo de personas que comparten metas comunes bajo un <span class="blank">___</span> establecido.', ans: ['orden'], exp: 'La organización actúa bajo un orden establecido que coordina personas, recursos y procesos hacia objetivos comunes.' },
+  { q: 'Las PyMEs están reguladas por la Ley <span class="blank">___</span>.', ans: ['24467', '24.467'], exp: 'La Ley 24.467 regula las Pequeñas y Medianas Empresas, otorgándoles ventajas laborales y comerciales especiales.' },
+  { q: 'Toda empresa es una organización, pero no toda <span class="blank">___</span> es una empresa.', ans: ['organizacion', 'organización'], exp: 'Las organizaciones sin fines de lucro (ONGs, fundaciones) son organizaciones pero no empresas.' },
+  { q: 'Las empresas que operan en 2 o más países se llaman <span class="blank">___</span>.', ans: ['multinacionales', 'multinacional'], exp: 'Las multinacionales controlan actividades en 2 o más países. Las transnacionales van más lejos: operan por encima de las fronteras.' },
+  { q: 'El listado codificado y ordenado de cuentas contables se llama Plan de <span class="blank">___</span>.', ans: ['cuentas'], exp: 'El Plan de Cuentas es la guía codificada que toda empresa usa para registrar metódicamente sus operaciones contables.' },
+  { q: 'Las personas que deben dinero a la empresa por llevarse mercaderías se registran como <span class="blank">___</span>.', ans: ['deudores por ventas'], exp: 'Deudores por Ventas: deben por mercaderías. Deudores Varios: deben por bienes que NO son mercadería.' },
+  { q: 'Las deudas de la empresa por comprar mercaderías a sus proveedores se registran en la cuenta <span class="blank">___</span>.', ans: ['proveedores'], exp: 'Proveedores: deudas en cuenta corriente por comprar mercaderías. Acreedores Varios: por bienes que no son mercadería.' },
+  { q: 'Los cheques recibidos que aún no fueron cobrados ni depositados se llaman Valores a <span class="blank">___</span>.', ans: ['depositar'], exp: 'Los Valores a Depositar son cheques en mano que la empresa aún no procesó. Son Activo — Rubro Caja y Bancos.' },
+  { q: 'Los productos listos para vender se clasifican en el rubro Bienes de <span class="blank">___</span>.', ans: ['cambio'], exp: 'Bienes de Cambio incluye Mercaderías (listos para vender) y Materias Primas (para fabricar).' },
+  { q: 'Las empresas extractivas (minería, agricultura) son de actividad <span class="blank">___</span>.', ans: ['primaria'], exp: 'Las empresas primarias o de extracción incluyen minería y agricultura. Las secundarias fabrican. Las terciarias comercian o dan servicios.' },
+  { q: 'Los vehículos de trabajo se registran en Bienes de Uso bajo la cuenta <span class="blank">___</span>.', ans: ['rodados'], exp: 'Rodados es una cuenta de Bienes de Uso que incluye todos los vehículos utilizados en la operación de la empresa.' },
+  { q: 'Los pagarés firmados a favor de la empresa por terceros se llaman Documentos a <span class="blank">___</span>.', ans: ['cobrar'], exp: 'Documentos a Cobrar: la empresa tiene un pagaré a su favor. Documentos a Pagar: la empresa firmó un pagaré a favor de terceros.' },
 ];
-const fillContainer = document.getElementById('fill-container');
-fills.forEach((f, i) => {
-  const div = document.createElement('div');
-  div.className = 'fill-item';
-  div.id = 'fill-' + i;
-  div.innerHTML = `
-    <div class="fill-sentence">${f.sentence.replace('___', '<strong>___</strong>')}</div>
-    <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
-      <input class="fill-input" id="fi-${i}" placeholder="Respuesta..." onkeydown="if(event.key==='Enter')checkFill(${i})">
-      <button class="btn" style="font-size:0.8rem;padding:0.3rem 0.8rem;" onclick="checkFill(${i})">Verificar</button>
-    </div>
-    <div class="fill-feedback" id="ff-${i}"></div>`;
-  fillContainer.appendChild(div);
-});
-function norm(s){return s.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
+
+let fillAnswered = 0, fillCorrect = 0;
+function normalize(s) { return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim(); }
+
+function buildFill() {
+  const container = document.getElementById('fill-container');
+  FILL_QS.forEach((fq, i) => {
+    const div = document.createElement('div');
+    div.className = 'fill-item'; div.id = 'fi-' + i;
+    div.innerHTML = `
+      <div class="fill-q">${i + 1}. ${fq.q}</div>
+      <div class="fill-input-row">
+        <input class="fill-input" id="fni-${i}" placeholder="Escribí tu respuesta…" type="text"
+          onkeydown="if(event.key==='Enter')checkFill(${i})">
+        <button class="fill-check-btn" id="fnb-${i}" onclick="checkFill(${i})">Verificar</button>
+      </div>
+      <div class="fill-feedback" id="fnf-${i}"></div>`;
+    container.appendChild(div);
+  });
+}
+
 function checkFill(i) {
-  const val = norm(document.getElementById('fi-'+i).value);
-  const correct = norm(fills[i].answer);
-  const item = document.getElementById('fill-'+i);
-  const fb = document.getElementById('ff-'+i);
-  if (val === correct) {
-    item.classList.remove('wrong'); item.classList.add('correct');
-    fb.textContent = '✓ Correcto!';
+  const fq = FILL_QS[i];
+  const inp = document.getElementById('fni-' + i);
+  const fb = document.getElementById('fnf-' + i);
+  const btn = document.getElementById('fnb-' + i);
+  const item = document.getElementById('fi-' + i);
+  if (inp.disabled) return;
+  inp.disabled = true; btn.disabled = true;
+  fillAnswered++;
+  const val = normalize(inp.value);
+  const ok = fq.ans.some(a => normalize(a) === val || val.includes(normalize(a)));
+  if (ok) {
+    fillCorrect++;
+    item.classList.add('correct');
+    fb.className = 'fill-feedback ok';
+    fb.innerHTML = '✓ ¡Correcto! ' + fq.exp;
   } else {
-    item.classList.remove('correct'); item.classList.add('wrong');
-    fb.textContent = `✗ Respuesta correcta: "${fills[i].answer}". ${fills[i].hint}`;
+    item.classList.add('wrong');
+    fb.className = 'fill-feedback err';
+    fb.innerHTML = '✗ Incorrecto. La respuesta es: <strong>' + fq.ans[0] + '</strong>. ' + fq.exp;
   }
+  document.getElementById('fill-prog-bar').style.width = (fillAnswered / FILL_QS.length * 100) + '%';
+  document.getElementById('fill-prog-label').textContent = fillAnswered + ' / ' + FILL_QS.length;
+  document.getElementById('fill-score').textContent = fillCorrect + ' correcta' + (fillCorrect !== 1 ? 's' : '');
+}
+buildFill();
+
+// ─── QUIZ ───
+const QUIZ = [
+  {
+    q: '¿Cuál de los siguientes ejemplos es una organización pero NO una empresa?',
+    opts: ['SANCOR S.A.', 'Mercado Libre', 'Fundación Favaloro', 'Supermercado Dia'],
+    correct: 2,
+    exp: 'La Fundación Favaloro es una organización sin fines de lucro: no busca ganancias económicas. Las otras tres son empresas (con fines de lucro).'
+  },
+  {
+    q: '¿Cuántos países como mínimo debe controlar una empresa para ser considerada MULTINACIONAL?',
+    opts: ['1 país', '2 o más países', '5 o más países', 'Solo opera en su país de origen'],
+    correct: 1,
+    exp: 'Las empresas multinacionales controlan actividades en 2 o más países. Las transnacionales van más lejos, operando por encima de las fronteras y gestionadas por múltiples nacionalidades.'
+  },
+  {
+    q: 'Una empresa que fabrica ropa (producto terminado) es de tipo:',
+    opts: ['Primaria o de extracción', 'Terciaria comercial', 'Terciaria de servicios', 'Secundaria o industrial'],
+    correct: 3,
+    exp: 'Las empresas secundarias o industriales fabrican o elaboran productos. Las primarias extraen recursos naturales. Las terciarias comercializan o prestan servicios.'
+  },
+  {
+    q: 'Un cliente llevó mercadería sin pagar de contado. ¿En qué cuenta se registra esa deuda?',
+    opts: ['Acreedores Varios', 'Proveedores', 'Deudores por Ventas', 'Documentos a Pagar'],
+    correct: 2,
+    exp: 'Deudores por Ventas: personas que deben dinero a la empresa por llevarse mercaderías en cuenta corriente. Si hubiera llevado otro bien (no mercadería), sería "Deudores Varios".'
+  },
+  {
+    q: 'La empresa compró maquinaria a crédito (no pagó aún). ¿Cómo se registra esa deuda?',
+    opts: ['Proveedores', 'Acreedores Varios', 'Documentos a Cobrar', 'Mercaderías'],
+    correct: 1,
+    exp: 'Acreedores Varios: deudas de la empresa por comprar bienes que NO son mercadería (como maquinaria, inmuebles). "Proveedores" es solo para deudas por mercaderías.'
+  },
+  {
+    q: '¿Qué cuenta del Activo registra los cheques recibidos que aún no se depositaron?',
+    opts: ['Banco X Cuenta Corriente', 'Documentos a Cobrar', 'Valores a Depositar', 'Caja'],
+    correct: 2,
+    exp: 'Valores a Depositar: cheques recibidos de terceros que aún no se cobraron ni depositaron. Pertenecen al rubro Caja y Bancos del Activo.'
+  },
+  {
+    q: '¿Cuál de las siguientes cuentas NO pertenece a los Bienes de Uso?',
+    opts: ['Rodados', 'Maquinarias', 'Mercaderías', 'Inmuebles'],
+    correct: 2,
+    exp: 'Mercaderías pertenece a los Bienes de Cambio (productos listos para vender), no a Bienes de Uso. Rodados, Maquinarias e Inmuebles son Bienes de Uso — elementos de trabajo permanentes de la empresa.'
+  },
+];
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-list');
+  const letters = ['A', 'B', 'C', 'D'];
+  QUIZ.forEach((qd, qi) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-item';
+    const optsHtml = qd.opts.map((opt, j) => `
+      <button class="quiz-opt" id="qo-${qi}-${j}" onclick="checkQuiz(${qi},${j})">
+        <span class="opt-ltr">${letters[j]})</span><span>${opt}</span>
+      </button>`).join('');
+    div.innerHTML = `
+      <div class="quiz-q-num">Pregunta ${qi + 1} de ${QUIZ.length}</div>
+      <div class="quiz-q-text">${qd.q}</div>
+      <div class="quiz-options">${optsHtml}</div>
+      <div class="quiz-explanation" id="qe-${qi}">${qd.exp}</div>`;
+    container.appendChild(div);
+  });
 }
 
-const mcData = [
-  { q: '¿Cuál de los siguientes NO es una organización según los criterios de la unidad?', options: ['Un hospital', 'Una empresa de transporte', 'Un colectivo de pasajeros en viaje', 'Una escuela'], correct: 2, exp: 'Los pasajeros de un colectivo no comparten la misma meta: cada uno va a un destino distinto. La empresa de transporte sí es una organización.' },
-  { q: '¿Qué significa "Gestión" en administración?', options: ['Fijar los objetivos de la empresa', 'Realizar actividades para lograr los objetivos propuestos', 'Verificar los resultados obtenidos', 'Contratar personal'], correct: 1, exp: 'La gestión es la ejecución: hacer las actividades planificadas para alcanzar los objetivos.' },
-  { q: 'Una empresa compra mercaderías para revender. ¿En qué cuenta se registra?', options: ['Bienes de Uso', 'Caja', 'Mercaderías', 'Banco'], correct: 2, exp: 'Mercaderías es la cuenta del rubro Bienes de Cambio destinada a productos para la venta.' },
-  { q: '¿Qué sucede con la cuenta "Banco x Cuenta Corriente" cuando se emite un cheque para pagar?', options: ['Se debita (aumenta)', 'Se acredita (disminuye)', 'No se modifica', 'Se debita y acredita por igual'], correct: 1, exp: 'Al pagar con cheque se usa el dinero del banco, por lo que la cuenta se acredita (disminuye el saldo deudor).' },
-  { q: '¿En qué rubro contable se clasifica la cuenta "Banco x Plazo Fijo"?', options: ['Caja y Bancos', 'Inversiones', 'Cuentas por Cobrar', 'Bienes de Uso'], correct: 1, exp: 'El plazo fijo es una inversión temporal, por lo que se clasifica en el rubro Inversiones del activo.' },
-  { q: '¿Cuál es el orden correcto del proceso administrativo?', options: ['Gestión → Planificación → Control → Objetivos', 'Objetivos → Planificación → Gestión → Control → Evaluación', 'Control → Planificación → Gestión → Evaluación', 'Evaluación → Planificación → Control → Gestión'], correct: 1, exp: 'El proceso sigue: fijar objetivos → planificar → gestión (hacer) → control (verificar) → evaluación (valorar), con retroalimentación.' },
-];
-const mcContainer = document.getElementById('mc-container');
-mcData.forEach((mc, i) => {
-  const div = document.createElement('div');
-  div.className = 'mc-item';
-  div.id = 'mc-' + i;
-  const L = ['A','B','C','D'];
-  div.innerHTML = `<div class="mc-question">${i+1}. ${mc.q}</div>
-    <div class="mc-options">${mc.options.map((o,j)=>`<div class="mc-option" onclick="checkMC(${i},${j})"><span class="mc-letter">${L[j]}</span>${o}</div>`).join('')}</div>
-    <div class="mc-explanation" id="mce-${i}">${mc.exp}</div>`;
-  mcContainer.appendChild(div);
-});
-function checkMC(qi, oi) {
-  const item = document.getElementById('mc-'+qi);
-  if (item.classList.contains('answered')) return;
-  item.classList.add('answered');
-  const opts = item.querySelectorAll('.mc-option');
-  opts[oi].classList.add(oi === mcData[qi].correct ? 'selected-correct' : 'selected-wrong');
-  if (oi !== mcData[qi].correct) opts[mcData[qi].correct].classList.add('reveal-correct');
+function checkQuiz(qi, chosen) {
+  const qd = QUIZ[qi];
+  const opts = document.querySelectorAll(`[id^="qo-${qi}-"]`);
+  opts.forEach(o => { o.setAttribute('onclick', ''); o.classList.add('done'); o.style.cursor = 'default'; });
+  opts.forEach((o, j) => {
+    if (j === qd.correct) o.classList.add(chosen === j ? 'opt-correct' : 'opt-reveal');
+    if (j === chosen && j !== qd.correct) o.classList.add('opt-wrong');
+  });
+  document.getElementById('qe-' + qi).classList.add('visible');
 }
+buildQuiz();
 </script>
 </body>
 </html>
