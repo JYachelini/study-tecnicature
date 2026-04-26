@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arquitectura y SO — Unidad 4: Concurrencia</title>
+<style>
+:root{
+  --bg:#030d12;--surface:#071620;--surface2:#0a1e2c;
+  --accent:#06b6d4;--accent-dim:rgba(6,182,212,.1);--accent-glow:rgba(6,182,212,.25);
+  --accent2:#a855f7;--accent2-dim:rgba(168,85,247,.1);
+  --ok:#4ade80;--ok-bg:rgba(74,222,128,.08);
+  --bad:#f87171;--bad-bg:rgba(248,113,113,.08);
+  --warn:#fbbf24;
+  --text:#e2e8f0;--text-muted:#94a3b8;--text-dim:#475569;
+  --border:rgba(6,182,212,.18);--border2:rgba(255,255,255,.06);
+  --sans:'Trebuchet MS','Gill Sans',Optima,sans-serif;
+  --body:Georgia,'Book Antiqua',Palatino,serif;
+  --mono:'Courier New',Courier,monospace;
+  --r:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.75;min-height:100vh;overflow-x:hidden;}
+
+.back-btn{position:fixed;top:1rem;left:1rem;z-index:200;font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;padding:.38rem .72rem;border:1px solid var(--border);background:rgba(3,13,18,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:color .2s,border-color .2s;white-space:nowrap;}
+.back-btn:hover{color:var(--accent);border-color:rgba(6,182,212,.5);}
+
+.material-bar{background:rgba(6,182,212,.04);border-bottom:1px solid var(--border);padding:.55rem 2rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+.material-lbl{font-family:var(--mono);font-size:.6rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.14em;}
+.material-link{font-family:var(--mono);font-size:.64rem;color:var(--accent);text-decoration:none;padding:.2rem .6rem;border:1px solid rgba(6,182,212,.22);border-radius:4px;transition:background .2s,border-color .2s;white-space:nowrap;}
+.material-link:hover{background:var(--accent-dim);border-color:rgba(6,182,212,.45);}
+
+header{position:relative;padding:5rem 2rem 3.5rem;overflow:hidden;border-bottom:1px solid var(--border);}
+header::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(168,85,247,.07) 0%,transparent 55%),repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(6,182,212,.025) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(6,182,212,.025) 40px);pointer-events:none;}
+header::after{content:'CON';position:absolute;right:3%;top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:7rem;font-weight:700;letter-spacing:-.04em;color:rgba(6,182,212,.04);pointer-events:none;line-height:1;}
+.hd{position:relative;z-index:1;max-width:860px;}
+.tag-row{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin-bottom:1.4rem;}
+.tag{font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);background:rgba(255,255,255,.04);border:1px solid var(--border2);padding:.2rem .7rem;border-radius:2rem;}
+.nlm-badge{display:inline-flex;align-items:center;gap:.3rem;font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(6,182,212,.35);padding:.2rem .7rem;border-radius:2rem;}
+header h1{font-family:var(--sans);font-size:clamp(1.9rem,4.5vw,3rem);font-weight:700;letter-spacing:-.02em;color:#fff;margin-bottom:.7rem;line-height:1.15;}
+header h1 span{color:var(--accent);}
+header p{color:var(--text-muted);font-family:var(--mono);font-size:.76rem;letter-spacing:.06em;}
+.thread-vis{display:flex;gap:.4rem;margin-top:1.8rem;align-items:center;flex-wrap:wrap;}
+.t-bar{height:7px;border-radius:4px;}
+.t-bar.a{width:140px;background:rgba(6,182,212,.5);border:1px solid rgba(6,182,212,.7);}
+.t-bar.b{width:140px;background:rgba(168,85,247,.4);border:1px solid rgba(168,85,247,.6);}
+.t-bar.c{width:80px;background:rgba(6,182,212,.25);border:1px solid rgba(6,182,212,.35);}
+.t-sep{width:2px;height:16px;background:rgba(255,255,255,.1);}
+.t-lbl{font-family:var(--mono);font-size:.55rem;color:var(--text-dim);letter-spacing:.1em;}
+
+.tabs-wrap{position:sticky;top:0;z-index:100;background:rgba(3,13,18,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border2);}
+.tabs{display:flex;overflow-x:auto;padding:0 1.5rem;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab-btn{flex-shrink:0;font-family:var(--mono);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);padding:.85rem 1.2rem;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;white-space:nowrap;}
+.tab-btn:hover{color:var(--text-muted);}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+main{max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;animation:fi .25s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:translateY(0);}}
+
+.sec-hd{margin-bottom:2rem;}
+.sec-title{display:flex;align-items:center;gap:.75rem;font-family:var(--sans);font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:.3rem;}
+.sec-icon{width:1.9rem;height:1.9rem;border-radius:7px;background:var(--accent-dim);border:1px solid rgba(6,182,212,.3);display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--accent);flex-shrink:0;}
+.sec-sub{color:var(--text-muted);font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;padding-left:2.65rem;}
+
+.overview-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);padding:1.8rem 2rem;}
+.overview-card p{color:var(--text-muted);font-size:.96rem;line-height:1.85;}
+.overview-card p+p{margin-top:.9rem;}
+.overview-card strong{color:var(--text);}
+
+.concepts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.9rem;}
+.ccard{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:1.2rem 1.35rem;transition:border-color .2s,background .2s;}
+.ccard:hover{border-color:var(--border);background:var(--surface2);}
+.cterm{font-family:var(--sans);font-size:.84rem;font-weight:700;color:var(--accent);margin-bottom:.35rem;}
+.cdef{font-size:.86rem;color:var(--text-muted);line-height:1.6;}
+
+.ds{margin-bottom:2.4rem;}
+.ds h3{font-family:var(--sans);font-size:.97rem;font-weight:700;color:var(--accent2);margin-bottom:.85rem;}
+.ds p{color:var(--text-muted);margin-bottom:.75rem;font-size:.93rem;}
+.ds ul{padding-left:1.4rem;color:var(--text-muted);font-size:.92rem;}
+.ds li{margin-bottom:.35rem;}
+.ds strong{color:var(--text);}
+.ds code{font-family:var(--mono);font-size:.82rem;color:var(--accent);background:var(--accent-dim);padding:.1rem .35rem;border-radius:3px;}
+
+.warn-box{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.22);border-left:3px solid var(--warn);border-radius:var(--r);padding:1rem 1.2rem;margin:.8rem 0;font-size:.9rem;color:var(--text-muted);}
+.warn-box strong{color:var(--warn);}
+.info-box{background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.2);border-left:3px solid var(--accent);border-radius:var(--r);padding:1rem 1.2rem;margin:.8rem 0;font-size:.9rem;color:var(--text-muted);}
+.info-box strong{color:var(--accent);}
+.example-box{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r);padding:1.2rem 1.4rem;margin:.8rem 0;font-size:.89rem;color:var(--text-muted);}
+.example-box .ex-label{font-family:var(--mono);font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent2);margin-bottom:.5rem;}
+
+/* FLASHCARDS */
+.fc-nav{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+.fc-progress{font-family:var(--mono);font-size:.72rem;color:var(--text-muted);letter-spacing:.06em;}
+.fc-counter{color:var(--accent);font-weight:700;}
+.fc-btns{display:flex;gap:.5rem;margin-left:auto;}
+.fc-btn{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;padding:.4rem .9rem;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--text-muted);cursor:pointer;transition:all .2s;}
+.fc-btn:hover{border-color:var(--accent);color:var(--accent);}
+.fc-btn.primary{background:var(--accent-dim);border-color:rgba(6,182,212,.4);color:var(--accent);}
+
+.card-wrap{perspective:900px;width:100%;max-width:600px;height:220px;margin:0 auto 1.5rem;cursor:pointer;}
+.card-inner{width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);position:relative;}
+.card-inner.flipped{transform:rotateY(180deg);}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;}
+.card-front{background:var(--surface);border:1px solid var(--border);}
+.card-back{background:linear-gradient(135deg,var(--surface2),var(--surface));border:1px solid rgba(6,182,212,.3);transform:rotateY(180deg);}
+.card-hint{font-family:var(--mono);font-size:.58rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.14em;margin-bottom:.8rem;}
+.card-front .card-text{font-family:var(--sans);font-size:1.05rem;font-weight:600;color:#fff;line-height:1.4;}
+.card-back .card-text{font-size:.92rem;color:var(--text-muted);line-height:1.6;}
+.card-back .card-text strong{color:var(--accent);}
+
+.fc-dots{display:flex;justify-content:center;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem;}
+.fc-dot{width:8px;height:8px;border-radius:50%;background:var(--border2);border:1px solid var(--border2);cursor:pointer;transition:all .2s;}
+.fc-dot.seen{background:rgba(6,182,212,.3);border-color:rgba(6,182,212,.5);}
+.fc-dot.active{background:var(--accent);border-color:var(--accent);}
+
+/* FILL IN THE BLANK */
+.blank-list{display:flex;flex-direction:column;gap:1rem;}
+.blank-item{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:1.3rem 1.5rem;transition:border-color .2s;}
+.blank-item.correct{border-color:var(--ok);background:var(--ok-bg);}
+.blank-item.wrong{border-color:var(--bad);background:var(--bad-bg);}
+.blank-q{font-size:.93rem;color:var(--text);margin-bottom:.75rem;line-height:1.6;}
+.blank-q code{font-family:var(--mono);font-size:.82rem;background:rgba(255,255,255,.06);padding:.1rem .35rem;border-radius:3px;}
+.blank-input-row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;}
+.blank-input{font-family:var(--mono);font-size:.88rem;background:rgba(255,255,255,.04);border:1px solid var(--border2);color:var(--text);padding:.45rem .8rem;border-radius:6px;min-width:200px;flex:1;outline:none;transition:border-color .2s;}
+.blank-input:focus{border-color:var(--accent);}
+.blank-submit{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;padding:.45rem 1rem;border-radius:6px;border:1px solid rgba(6,182,212,.35);background:var(--accent-dim);color:var(--accent);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.blank-submit:hover{background:rgba(6,182,212,.2);}
+.blank-feedback{margin-top:.65rem;font-size:.85rem;display:none;}
+.blank-feedback.show{display:block;}
+.blank-feedback.ok{color:var(--ok);}
+.blank-feedback.err{color:var(--bad);}
+.blank-explain{font-size:.82rem;color:var(--text-muted);margin-top:.35rem;}
+
+/* MULTIPLE CHOICE */
+.mc-list{display:flex;flex-direction:column;gap:1.5rem;}
+.mc-item{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:1.3rem 1.5rem;}
+.mc-q{font-size:.94rem;color:var(--text);margin-bottom:1rem;font-weight:600;line-height:1.5;}
+.mc-options{display:flex;flex-direction:column;gap:.45rem;}
+.mc-opt{font-size:.88rem;color:var(--text-muted);padding:.6rem 1rem;border:1px solid var(--border2);border-radius:7px;cursor:pointer;transition:all .2s;display:flex;align-items:flex-start;gap:.6rem;}
+.mc-opt:hover:not(.locked){border-color:rgba(6,182,212,.3);background:var(--accent-dim);}
+.mc-opt.correct{border-color:var(--ok);background:var(--ok-bg);color:var(--text);}
+.mc-opt.wrong{border-color:var(--bad);background:var(--bad-bg);}
+.mc-opt.locked{cursor:default;}
+.mc-letter{font-family:var(--mono);font-size:.7rem;font-weight:700;color:var(--text-dim);min-width:1.1rem;margin-top:.05rem;}
+.mc-opt.correct .mc-letter{color:var(--ok);}
+.mc-opt.wrong .mc-letter{color:var(--bad);}
+.mc-explain{margin-top:.8rem;font-size:.83rem;color:var(--text-muted);padding:.7rem 1rem;background:rgba(255,255,255,.03);border-radius:6px;border-left:2px solid var(--accent);display:none;}
+.mc-explain.show{display:block;}
+.mc-score{font-family:var(--mono);font-size:.72rem;color:var(--text-muted);margin-bottom:1rem;}
+.mc-score span{color:var(--accent);}
+
+@media(max-width:600px){
+  header{padding:4rem 1.2rem 2.5rem;}
+  main{padding:2rem 1rem 4rem;}
+  .concepts-grid{grid-template-columns:1fr;}
+  .card-wrap{height:250px;}
+}
+</style>
+</head>
+<body>
+<a class="back-btn" href="../../../index.html">&#8592; Inicio</a>
+
+<header>
+  <div class="material-bar">
+    <span class="material-lbl">📎 Material</span>
+    <a class="material-link" href="../material/Material_de_Lectura_Clase_4-_Concurrencia,_Exclusi%C3%B3n_mutua_y_Sincronizaci%C3%B3n.pdf" target="_blank">Material de Lectura Clase 4</a>
+    <a class="material-link" href="../material/Unidad_4_-_Concurrencia._Presentacion.pdf" target="_blank">Presentación Unidad 4</a>
+  </div>
+  <div class="hd">
+    <div class="tag-row">
+      <span class="tag">Arquitectura y SO</span>
+      <span class="tag">Unidad 4</span>
+      <span class="nlm-badge">⬡ NotebookLM</span>
+    </div>
+    <h1>Concurrencia, <span>Exclusión Mutua</span><br>y Sincronización</h1>
+    <p>Tecnicatura Universitaria en Programación</p>
+    <div class="thread-vis">
+      <div class="t-bar a"></div>
+      <div class="t-sep"></div>
+      <div class="t-bar b"></div>
+      <div class="t-sep"></div>
+      <div class="t-bar c"></div>
+      <span class="t-lbl">P1 · P2 · P3 ejecutando</span>
+    </div>
+  </div>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('resumen',this)">Resumen</button>
+    <button class="tab-btn" onclick="showTab('conceptos',this)">Conceptos</button>
+    <button class="tab-btn" onclick="showTab('detalle',this)">Detalle</button>
+    <button class="tab-btn" onclick="showTab('flashcards',this)">Flashcards</button>
+    <button class="tab-btn" onclick="showTab('completar',this)">Completar</button>
+    <button class="tab-btn" onclick="showTab('mc',this)">Multiple Choice</button>
+  </div>
+</div>
+
+<main>
+
+<!-- RESUMEN -->
+<div id="resumen" class="tab-panel active">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-icon">📋</div>Resumen General</div>
+    <div class="sec-sub">Overview de la unidad</div>
+  </div>
+  <div class="overview-card">
+    <p>La <strong>Concurrencia</strong> es la capacidad de un SO de gestionar múltiples procesos que avanzan de forma aparentemente simultánea, ya sea entrelazándose en un solo procesador o ejecutando en paralelo real con múltiples procesadores. El problema central es que <strong>no se puede predecir la velocidad relativa de ejecución</strong> de los procesos, lo que genera condiciones de carrera y corrupción de datos.</p>
+    <p>Para proteger los recursos compartidos el SO necesita <strong>Exclusión Mutua</strong>: garantizar que solo un proceso acceda a la <strong>Sección Crítica</strong> a la vez. Las soluciones van desde mecanismos de hardware (deshabilitar interrupciones, instrucciones atómicas) hasta software de alto nivel (<strong>Semáforos</strong>, <strong>Monitores</strong> y <strong>Paso de Mensajes</strong>). Sin estas herramientas aparecen problemas graves como Starvation (inanición) y Deadlock (interbloqueo).</p>
+  </div>
+</div>
+
+<!-- CONCEPTOS -->
+<div id="conceptos" class="tab-panel">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-icon">🔑</div>Conceptos Clave</div>
+    <div class="sec-sub">Definiciones esenciales del material</div>
+  </div>
+  <div class="concepts-grid">
+    <div class="ccard"><div class="cterm">Concurrencia</div><div class="cdef">Gestión de procesos que se ejecutan simulando simultaneidad (entrelazándose) o con paralelismo real, compitiendo o compartiendo recursos del sistema.</div></div>
+    <div class="ccard"><div class="cterm">Condición de Carrera</div><div class="cdef">Error donde el resultado final de múltiples procesos sobre un recurso compartido depende del orden temporal de sus ejecuciones (el último en escribir gana).</div></div>
+    <div class="ccard"><div class="cterm">Sección Crítica</div><div class="cdef">Porción del código de un programa donde se accede o modifica un recurso compartido. El SO debe evitar que dos procesos estén en ella al mismo tiempo.</div></div>
+    <div class="ccard"><div class="cterm">Exclusión Mutua</div><div class="cdef">Mecanismo que garantiza que solo un proceso a la vez accede a un recurso compartido o recurso crítico.</div></div>
+    <div class="ccard"><div class="cterm">Starvation (Inanición)</div><div class="cdef">Un proceso nunca termina su ejecución porque el sistema le niega indefinidamente el acceso a los recursos que necesita (generalmente por baja prioridad).</div></div>
+    <div class="ccard"><div class="cterm">Deadlock (Interbloqueo)</div><div class="cdef">Dos o más procesos quedan bloqueados permanentemente porque cada uno retiene un recurso que el otro necesita. Ninguno puede avanzar.</div></div>
+    <div class="ccard"><div class="cterm">Semáforo</div><div class="cdef">Variable entera inicializada a valor no negativo. Se controla con semWait (decrementa/bloquea) y semSignal (incrementa/desbloquea) de forma atómica.</div></div>
+    <div class="ccard"><div class="cterm">Monitor</div><div class="cdef">Construcción del lenguaje de programación (alto nivel) que garantiza exclusión mutua nativa: solo un proceso ejecuta dentro del monitor a la vez.</div></div>
+    <div class="ccard"><div class="cterm">Espera Activa</div><div class="cdef">Un proceso consume ciclos de CPU en un bucle comprobando constantemente si puede entrar a la sección crítica (busy waiting).</div></div>
+    <div class="ccard"><div class="cterm">Semáforo Binario (Mutex)</div><div class="cdef">Semáforo cuyos valores solo pueden ser 0 o 1. Usado específicamente para exclusión mutua.</div></div>
+    <div class="ccard"><div class="cterm">Buzón (Mailbox)</div><div class="cdef">Estructura compartida para el paso de mensajes donde el emisor deposita mensajes sin necesitar conocer el PID del receptor.</div></div>
+    <div class="ccard"><div class="cterm">Atomicidad</div><div class="cdef">Propiedad de una operación que no puede ser interrumpida a la mitad. Las operaciones de semáforo (semWait/semSignal) deben ser siempre atómicas.</div></div>
+  </div>
+</div>
+
+<!-- DETALLE -->
+<div id="detalle" class="tab-panel">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-icon">📖</div>Explicación Detallada</div>
+    <div class="sec-sub">Todos los temas del material</div>
+  </div>
+
+  <div class="ds">
+    <h3>1. Principios de la Concurrencia</h3>
+    <p>La concurrencia aparece en tres contextos: <strong>multiprogramación</strong> (múltiples procesos en un procesador), <strong>multiprocesamiento</strong> (múltiples procesadores) y <strong>procesamiento distribuido</strong> (máquinas en red). En todos el problema central es el mismo:</p>
+    <div class="info-box"><strong>Regla fundamental:</strong> En un sistema multiprogramado no se puede predecir la velocidad relativa de ejecución de los procesos, ya que depende del planificador del SO, las interrupciones y la actividad de los demás procesos.</div>
+  </div>
+
+  <div class="ds">
+    <h3>2. La Condición de Carrera (Race Condition)</h3>
+    <div class="example-box">
+      <div class="ex-label">Ejemplo del material — función eco()</div>
+      <p>Una función lee un carácter del teclado y lo guarda en <code>vglob</code>, luego lo imprime. Si el SO interrumpe al Proceso A justo después de <code>vglob = getchar()</code> y ejecuta al Proceso B, este sobrescribe <code>vglob</code>. Cuando A retoma, imprime el carácter de B. Resultado: un carácter se pierde y otro aparece duplicado.</p>
+    </div>
+    <p>Una <strong>Race Condition</strong> ocurre cuando múltiples procesos leen y escriben un recurso compartido y el resultado depende del orden temporal. El último proceso en acceder define el valor final.</p>
+  </div>
+
+  <div class="ds">
+    <h3>3. Tipos de Interacción entre Procesos</h3>
+    <ul>
+      <li><strong>Competencia (no se perciben):</strong> Los procesos son independientes pero compiten por recursos críticos (ej: una impresora). El SO gestiona el acceso.</li>
+      <li><strong>Cooperación por compartición (indirecta):</strong> No conocen sus PIDs pero comparten memoria o dispositivos. Las escrituras deben ser mutuamente excluyentes para mantener coherencia.</li>
+      <li><strong>Cooperación por comunicación (directa):</strong> Conocen sus PIDs y están diseñados para trabajar juntos intercambiando mensajes, sincronizando sus actividades.</li>
+    </ul>
+  </div>
+
+  <div class="ds">
+    <h3>4. Consecuencias de la Concurrencia sin Control</h3>
+    <ul>
+      <li><strong>Exclusión Mutua:</strong> Solo un proceso puede estar en su sección crítica a la vez. Requiere intervención del SO para marcar el recurso como bloqueado.</li>
+      <li><strong>Starvation:</strong> P1 y P3 se alternan el CPU por prioridad; P2 nunca logra ejecutar.</li>
+      <li><strong>Deadlock:</strong> P4 tiene el disco y necesita la impresora; P5 tiene la impresora y necesita el disco. Ninguno avanza.</li>
+    </ul>
+  </div>
+
+  <div class="ds">
+    <h3>5. Soluciones por Hardware</h3>
+    <p><strong>A) Deshabilitar Interrupciones:</strong> El proceso deshabilita las interrupciones antes de entrar a su sección crítica. El SO no puede pausarlo.</p>
+    <div class="warn-box"><strong>Advertencia:</strong> Solo funciona en monoprocesador. Degrada gravemente el rendimiento general del sistema.</div>
+    <p><strong>B) Instrucciones especiales del procesador (testAndSet / Exchange):</strong> Operaciones atómicas sobre memoria compartida. Ambas funcionan usando una variable compartida en memoria para garantizar exclusión mutua entre procesos.</p>
+    <div class="example-box">
+      <div class="ex-label">Mecanismo general</div>
+      <p>Estas instrucciones son <strong>indivisibles a nivel de hardware</strong>: el procesador ejecuta la lectura y escritura de la variable de control en un único ciclo de bus, garantizando que ningún otro proceso pueda interferir en el medio. <code>testAndSet</code> lee el valor de una variable, la pone en 1 y devuelve el valor anterior, todo en un solo paso atómico. <code>Exchange</code> intercambia los valores de dos variables atómicamente.</p>
+    </div>
+    <ul>
+      <li>Ventajas: sirven para cualquier número de procesos y múltiples secciones críticas.</li>
+      <li>Desventajas: generan <strong>Espera Activa</strong> (ciclos de CPU desperdiciados), riesgo de Starvation (selección arbitraria) y riesgo de Deadlock (si un proceso de alta prioridad necesita entrar a una sección crítica que está bloqueada por un proceso de menor prioridad que no puede terminar porque el de alta prioridad monopoliza el CPU).</li>
+    </ul>
+  </div>
+
+  <div class="ds">
+    <h3>5b. Ejemplo clásico con Semáforos: Productor-Consumidor</h3>
+    <p>El problema Productor-Consumidor ilustra cómo usar semáforos para <strong>sincronización</strong> (no solo exclusión mutua). Dos procesos comparten un buffer de tamaño fijo: el Productor genera datos y los inserta, el Consumidor los retira y procesa.</p>
+    <p>Se necesitan <strong>tres semáforos</strong>:</p>
+    <ul>
+      <li><code>mutex</code> (iniciado en 1): exclusión mutua sobre el buffer.</li>
+      <li><code>vacíos</code> (iniciado en N, el tamaño del buffer): cuenta espacios libres.</li>
+      <li><code>llenos</code> (iniciado en 0): cuenta elementos disponibles para consumir.</li>
+    </ul>
+    <div class="example-box">
+      <div class="ex-label">Flujo del Productor y Consumidor</div>
+      <p><strong>Productor:</strong> <code>semWait(vacíos)</code> → espera si no hay espacio. <code>semWait(mutex)</code> → entra al buffer. Inserta dato. <code>semSignal(mutex)</code> → libera buffer. <code>semSignal(llenos)</code> → avisa que hay un dato nuevo.</p>
+      <p><strong>Consumidor:</strong> <code>semWait(llenos)</code> → espera si no hay datos. <code>semWait(mutex)</code> → entra al buffer. Retira dato. <code>semSignal(mutex)</code> → libera buffer. <code>semSignal(vacíos)</code> → avisa que liberó un espacio.</p>
+    </div>
+    <div class="info-box"><strong>Clave:</strong> Este ejemplo demuestra que los semáforos sirven para dos cosas distintas: <em>exclusión mutua</em> (con mutex) y <em>sincronización de condiciones</em> (con vacíos y llenos).</div>
+  </div>
+
+  <div class="ds">
+    <h3>6. Semáforos</h3>
+    <p>Un semáforo es una variable entera inicializada a valor no negativo que se opera de forma atómica:</p>
+    <ul>
+      <li><code>semWait(s)</code> — Decrementa <code>s</code>. Si el resultado es negativo, el proceso se bloquea y entra a la cola.</li>
+      <li><code>semSignal(s)</code> — Incrementa <code>s</code>. Si el valor pasa a ≤ 0, desbloquea un proceso de la cola.</li>
+    </ul>
+    <div class="example-box">
+      <div class="ex-label">Mecánica del semáforo</div>
+      <p>Semáforo <code>s = 1</code>. Proceso A llama <code>semWait</code> → <code>s = 0</code>, A entra a la sección crítica. Proceso B llama <code>semWait</code> → <code>s = -1</code>, B se bloquea. A termina, llama <code>semSignal</code> → <code>s = 0</code>, B se desbloquea.</p>
+    </div>
+    <ul>
+      <li><strong>Semáforo fuerte:</strong> cola interna con política FIFO → no hay Starvation.</li>
+      <li><strong>Semáforo débil:</strong> sin orden definido en la cola.</li>
+      <li><strong>Semáforo binario (mutex):</strong> valores 0 o 1 solamente.</li>
+    </ul>
+    <div class="warn-box"><strong>Advertencia:</strong> Usar semáforos directamente en el código es propenso a errores humanos. Se recomiendan alternativas de mayor nivel.</div>
+  </div>
+
+  <div class="ds">
+    <h3>7. Monitores</h3>
+    <p>Los monitores son construcciones del propio lenguaje de programación que resuelven las limitaciones de los semáforos:</p>
+    <ul>
+      <li><strong>Privacidad:</strong> sus datos internos solo se pueden modificar invocando los métodos del monitor (encapsulamiento).</li>
+      <li><strong>Exclusión nativa:</strong> solo un proceso puede ejecutar dentro del monitor a la vez. Si otro intenta ingresar, se suspende automáticamente.</li>
+      <li>Maneja variables de condición y colas internas para sincronización.</li>
+    </ul>
+  </div>
+
+  <div class="ds">
+    <h3>8. Paso de Mensajes</h3>
+    <p>Sirve tanto para comunicación como para sincronización. Primitivas: <code>send(destino, mensaje)</code> y <code>receive(origen, mensaje)</code>. Funciona en monoprocesador, multiprocesador y distribuido.</p>
+    <p><strong>Configuraciones de bloqueo:</strong></p>
+    <ul>
+      <li>Envío bloqueante + Recepción bloqueante: ambos esperan hasta que se entregue el mensaje.</li>
+      <li><strong>Envío no bloqueante + Recepción bloqueante</strong> (la más usada): el emisor sigue trabajando, el receptor espera.</li>
+      <li>Envío no bloqueante + Recepción no bloqueante: ninguno frena.</li>
+    </ul>
+    <div class="warn-box"><strong>Advertencia envío no bloqueante:</strong> si hay error, el emisor puede saturar el sistema enviando mensajes repetidamente. La responsabilidad de confirmar recepción queda en el programador.</div>
+    <p><strong>Direccionamiento:</strong></p>
+    <ul>
+      <li><strong>Directo:</strong> los procesos usan el PID del otro explícitamente.</li>
+      <li><strong>Indirecto (buzón/mailbox):</strong> los mensajes van a estructuras compartidas. Desacopla emisor del receptor. Cuando hay N emisores y 1 receptor, el buzón se llama <strong>puerto</strong>.</li>
+    </ul>
+    <p><strong>Formato del mensaje:</strong></p>
+    <ul>
+      <li><strong>Longitud fija:</strong> mínimo overhead de procesamiento.</li>
+      <li><strong>Longitud variable:</strong> <em>Cabecera</em> (origen, destino, tipo, longitud) + <em>Cuerpo o Payload</em> (los datos reales).</li>
+    </ul>
+  </div>
+</div>
+
+<!-- FLASHCARDS -->
+<div id="flashcards" class="tab-panel">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-icon">🃏</div>Flashcards</div>
+    <div class="sec-sub">Click en la carta para dar vuelta · <span id="fc-total-lbl"></span></div>
+  </div>
+  <div class="fc-nav">
+    <span class="fc-progress">Carta <span class="fc-counter" id="fc-cur">1</span> / <span class="fc-counter" id="fc-tot">12</span></span>
+    <div class="fc-btns">
+      <button class="fc-btn" onclick="fcMove(-1)">← Anterior</button>
+      <button class="fc-btn primary" onclick="fcMove(1)">Siguiente →</button>
+    </div>
+  </div>
+  <div class="fc-dots" id="fc-dots"></div>
+  <div class="card-wrap" onclick="fcFlip()">
+    <div class="card-inner" id="fc-card">
+      <div class="card-face card-front">
+        <div class="card-hint">Pregunta — click para ver respuesta</div>
+        <div class="card-text" id="fc-q"></div>
+      </div>
+      <div class="card-face card-back">
+        <div class="card-hint">Respuesta</div>
+        <div class="card-text" id="fc-a"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPLETAR -->
+<div id="completar" class="tab-panel">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-icon">✏️</div>Completar el Espacio</div>
+    <div class="sec-sub">Escribí la respuesta y presioná Enter o Verificar</div>
+  </div>
+  <div class="blank-list" id="blank-list"></div>
+</div>
+
+<!-- MULTIPLE CHOICE -->
+<div id="mc" class="tab-panel">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-icon">🎯</div>Multiple Choice</div>
+    <div class="sec-sub">Seleccioná la respuesta correcta</div>
+  </div>
+  <div class="mc-score">Puntaje: <span id="mc-score">0</span> / <span id="mc-total">5</span></div>
+  <div class="mc-list" id="mc-list"></div>
+</div>
+
+</main>
+
+<script>
+// ── TABS ──
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── FLASHCARDS ──
+const cards = [
+  { q: "¿Qué es la Concurrencia en sistemas operativos?", a: "Gestión de procesos que se ejecutan simulando simultaneidad (entrelazados) o con paralelismo real en múltiples procesadores, compitiendo o compartiendo recursos." },
+  { q: "¿Qué es una Condición de Carrera (Race Condition)?", a: "Error donde el resultado final sobre un recurso compartido depende del <strong>orden temporal</strong> de ejecución de los procesos. El último en acceder define el valor final." },
+  { q: "¿Qué es la Exclusión Mutua?", a: "Mecanismo que garantiza que <strong>solo un proceso a la vez</strong> accede a un recurso compartido o a su sección crítica." },
+  { q: "¿Qué es una Sección Crítica?", a: "Porción de código donde un proceso usa recursos compartidos. El SO debe asegurar que <strong>dos procesos no estén en ella simultáneamente</strong>." },
+  { q: "¿Qué es el Starvation (Inanición)?", a: "Un proceso nunca termina su ejecución porque el sistema le niega <strong>indefinidamente</strong> el acceso a los recursos que necesita." },
+  { q: "¿Qué es un Deadlock (Interbloqueo)?", a: "Dos o más procesos quedan <strong>bloqueados permanentemente</strong> porque cada uno retiene un recurso que el otro necesita." },
+  { q: "¿Cómo funciona semWait?", a: "<strong>Decrementa</strong> el valor del semáforo. Si el resultado es negativo, el proceso se bloquea y entra a la cola de espera." },
+  { q: "¿Cómo funciona semSignal?", a: "<strong>Incrementa</strong> el valor del semáforo. Si el valor pasa a ≤ 0, desbloquea y extrae un proceso de la cola." },
+  { q: "¿Qué es un Monitor?", a: "Construcción del lenguaje de programación (alto nivel) con <strong>exclusión mutua nativa</strong>: solo un proceso ejecuta dentro del monitor a la vez. Sus datos son privados." },
+  { q: "¿Qué es la Espera Activa?", a: "Un proceso consume ciclos de CPU en un bucle comprobando si puede entrar a la sección crítica (busy waiting). <strong>Ineficiente</strong>." },
+  { q: "¿Cuál es la diferencia entre semáforo fuerte y débil?", a: "<strong>Fuerte:</strong> cola interna con política FIFO (evita Starvation). <strong>Débil:</strong> sin orden definido en la cola de espera." },
+  { q: "¿Cuáles son los 3 tipos de interacción entre procesos?", a: "1. <strong>Competencia</strong> (no se perciben). 2. <strong>Cooperación por compartición</strong> (indirecta, misma memoria). 3. <strong>Cooperación por comunicación</strong> (directa, mensajes)." }
+];
+
+let fcIdx = 0;
+const seen = new Set();
+
+function renderDots() {
+  const wrap = document.getElementById('fc-dots');
+  wrap.innerHTML = cards.map((_, i) =>
+    `<div class="fc-dot ${i===fcIdx?'active':seen.has(i)?'seen':''}" onclick="fcGoto(${i})"></div>`
+  ).join('');
+}
+
+function renderCard() {
+  document.getElementById('fc-card').classList.remove('flipped');
+  document.getElementById('fc-q').textContent = cards[fcIdx].q;
+  document.getElementById('fc-a').innerHTML = cards[fcIdx].a;
+  document.getElementById('fc-cur').textContent = fcIdx + 1;
+  document.getElementById('fc-tot').textContent = cards.length;
+  renderDots();
+}
+
+function fcFlip() {
+  seen.add(fcIdx);
+  document.getElementById('fc-card').classList.toggle('flipped');
+  renderDots();
+}
+
+function fcMove(dir) {
+  seen.add(fcIdx);
+  fcIdx = (fcIdx + dir + cards.length) % cards.length;
+  renderCard();
+}
+
+function fcGoto(i) { seen.add(fcIdx); fcIdx = i; renderCard(); }
+
+renderCard();
+
+// ── BLANKS ──
+const blanks = [
+  { q: "En un sistema multiprogramado no se puede predecir la ___ relativa de ejecución de los procesos.", a: ["velocidad"], explain: "La velocidad relativa depende del planificador, las interrupciones y la actividad de otros procesos." },
+  { q: "La ___ ocurre cuando el resultado final sobre un recurso compartido depende del orden temporal de ejecución.", a: ["condicion de carrera","condición de carrera","race condition"], explain: "El último proceso en acceder al recurso compartido es quien define el valor final." },
+  { q: "La porción de código donde un proceso usa recursos compartidos se llama ___.", a: ["seccion critica","sección crítica"], explain: "El SO debe garantizar que dos procesos no estén en la sección crítica al mismo tiempo." },
+  { q: "semWait ___ el valor del semáforo.", a: ["decrementa"], explain: "Si el valor queda negativo tras el decremento, el proceso se bloquea en la cola." },
+  { q: "semSignal ___ el valor del semáforo.", a: ["incrementa"], explain: "Si el valor pasa a ≤ 0 tras el incremento, desbloquea un proceso de la cola." },
+  { q: "Un semáforo solo puede inicializarse a un valor ___.", a: ["no negativo"], explain: "Esta es una regla matemática: el valor inicial debe ser ≥ 0." },
+  { q: "En un Monitor, solo ___ proceso puede ejecutar dentro de él a la vez.", a: ["un","1","uno"], explain: "La exclusión mutua es nativa en el monitor: si otro intenta entrar, se suspende automáticamente." },
+  { q: "El tipo de paso de mensajes más utilizado es: envío ___ y recepción ___. (formato: X, Y)", a: ["no bloqueante, bloqueante"], explain: "El emisor sigue trabajando mientras el receptor espera. Es el esquema más común en la práctica." },
+  { q: "Un ___ es una estructura compartida para mensajes donde el emisor no necesita conocer el PID del receptor.", a: ["buzon","buzón","mailbox"], explain: "El buzón desacopla emisor y receptor. Cuando hay N emisores y 1 receptor se llama puerto." },
+  { q: "Las operaciones sobre el semáforo (semWait y semSignal) deben ser siempre ___.", a: ["atomicas","atómicas"], explain: "La atomicidad garantiza que no puedan ser interrumpidas a la mitad de su ejecución." },
+  { q: "Los mensajes de longitud variable se dividen en Cabecera y ___.", a: ["cuerpo","payload"], explain: "La Cabecera contiene origen, destino, tipo y longitud. El Cuerpo contiene los datos reales." },
+  { q: "Deshabilitar interrupciones para exclusión mutua solo funciona en máquinas con ___ procesador.", a: ["un","1","unico","único"], explain: "Esta técnica no escala a multiprocesadores y degrada el rendimiento del sistema." }
+];
+
+function normalize(s){ return s.trim().toLowerCase().replace(/\s+/g,' '); }
+
+const blankList = document.getElementById('blank-list');
+blanks.forEach((b, i) => {
+  const div = document.createElement('div');
+  div.className = 'blank-item';
+  div.innerHTML = `
+    <div class="blank-q">${b.q}</div>
+    <div class="blank-input-row">
+      <input class="blank-input" id="bi-${i}" placeholder="Tu respuesta…" />
+      <button class="blank-submit" onclick="checkBlank(${i})">Verificar</button>
+    </div>
+    <div class="blank-feedback" id="bf-${i}">
+      <div id="bf-msg-${i}"></div>
+      <div class="blank-explain" id="bf-ex-${i}"></div>
+    </div>`;
+  blankList.appendChild(div);
+  document.getElementById(`bi-${i}`).addEventListener('keydown', e => { if(e.key==='Enter') checkBlank(i); });
+});
+
+function checkBlank(i) {
+  const input = document.getElementById(`bi-${i}`);
+  const val = normalize(input.value);
+  const item = document.querySelector(`#blank-list .blank-item:nth-child(${i+1})`);
+  const fb = document.getElementById(`bf-${i}`);
+  const msg = document.getElementById(`bf-msg-${i}`);
+  const ex = document.getElementById(`bf-ex-${i}`);
+  const ok = blanks[i].a.some(a => normalize(a) === val);
+  item.classList.toggle('correct', ok);
+  item.classList.toggle('wrong', !ok);
+  fb.classList.add('show');
+  fb.classList.toggle('ok', ok);
+  fb.classList.toggle('err', !ok);
+  msg.textContent = ok ? '✓ Correcto' : `✗ Incorrecto. Respuesta: ${blanks[i].a[0]}`;
+  ex.textContent = blanks[i].explain;
+}
+
+// ── MULTIPLE CHOICE ──
+const questions = [
+  {
+    q: "¿Cuál es el riesgo principal de deshabilitar interrupciones para lograr exclusión mutua?",
+    opts: ["Solo funciona con múltiples procesadores","Degrada gravemente el rendimiento y solo funciona en monoprocesador","No puede usarse en secciones críticas","Requiere soporte especial del lenguaje"],
+    correct: 1,
+    explain: "Esta técnica tiene la restricción arquitectónica de solo funcionar en monoprocesador y puede degradar gravemente el rendimiento al impedir que el SO intercambie procesos."
+  },
+  {
+    q: "¿Qué ocurre cuando semWait lleva el valor del semáforo a un número negativo?",
+    opts: ["El semáforo se reinicia a cero","El proceso continúa sin entrar a la sección crítica","El proceso se bloquea y espera en la cola del semáforo","Se genera un deadlock automáticamente"],
+    correct: 2,
+    explain: "Cuando el valor queda negativo, el proceso que ejecutó semWait se bloquea y se agrega a la cola de espera del semáforo."
+  },
+  {
+    q: "¿Cuál es la ventaja principal del Paso de Mensajes respecto a los semáforos?",
+    opts: ["Es más rápido en ejecución","Funciona para comunicación y sincronización, incluso en arquitecturas distribuidas","No requiere intervención del SO","Solo sirve para procesos en el mismo procesador"],
+    correct: 1,
+    explain: "El paso de mensajes sirve tanto para comunicación como para sincronización y funciona en monoprocesador, multiprocesador y procesamiento distribuido."
+  },
+  {
+    q: "Un proceso que nunca puede terminar porque otros siempre tienen mayor prioridad sufre de:",
+    opts: ["Deadlock","Condición de Carrera","Starvation (Inanición)","Espera Activa"],
+    correct: 2,
+    explain: "El Starvation ocurre cuando un proceso nunca termina porque el sistema le niega indefinidamente los recursos que necesita, típicamente por baja prioridad."
+  },
+  {
+    q: "¿Qué diferencia al buzón (mailbox) del direccionamiento directo en el Paso de Mensajes?",
+    opts: ["El buzón es más rápido","En el buzón el emisor no necesita conocer el PID del receptor","El direccionamiento directo no requiere sincronización","El buzón solo acepta mensajes de longitud fija"],
+    correct: 1,
+    explain: "El direccionamiento indirecto (buzón) desacopla emisor y receptor: los mensajes se depositan en la estructura compartida sin usar el PID del destinatario."
+  }
+];
+
+let mcScore = 0;
+document.getElementById('mc-total').textContent = questions.length;
+const mcList = document.getElementById('mc-list');
+
+questions.forEach((q, qi) => {
+  const div = document.createElement('div');
+  div.className = 'mc-item';
+  const letters = ['A','B','C','D'];
+  div.innerHTML = `
+    <div class="mc-q">${qi+1}. ${q.q}</div>
+    <div class="mc-options">
+      ${q.opts.map((o,oi)=>`<div class="mc-opt" id="mc-${qi}-${oi}" onclick="pickMC(${qi},${oi})"><span class="mc-letter">${letters[oi]}</span><span>${o}</span></div>`).join('')}
+    </div>
+    <div class="mc-explain" id="mc-ex-${qi}">${q.explain}</div>`;
+  mcList.appendChild(div);
+});
+
+function pickMC(qi, oi) {
+  const opts = document.querySelectorAll(`[id^="mc-${qi}-"]`);
+  if(opts[0].classList.contains('locked')) return;
+  opts.forEach(o => o.classList.add('locked'));
+  const isOk = oi === questions[qi].correct;
+  opts[oi].classList.add(isOk ? 'correct' : 'wrong');
+  opts[questions[qi].correct].classList.add('correct');
+  document.getElementById(`mc-ex-${qi}`).classList.add('show');
+  if(isOk){ mcScore++; document.getElementById('mc-score').textContent = mcScore; }
+}
+</script>
+</body>
+</html>
