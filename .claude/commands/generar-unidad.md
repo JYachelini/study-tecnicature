@@ -1,7 +1,7 @@
 # Generar Unidad de Estudio
 
 Antes de arrancar, leé estos dos archivos para entender cómo trabajar:
-- `.claude/skills/pdf-to-study.md` → cómo extraer contenido desde NotebookLM
+- `.claude/skills/pdf-to-study.md` → flujo completo de NotebookLM (IDs de notebooks, comandos, archivos a guardar)
 - El archivo de la skill de diseño frontend en tu instalación de Claude Code
 
 Luego preguntame:
@@ -10,28 +10,56 @@ Luego preguntame:
 
 ## Pasos a seguir
 
-### 1. Extraer el contenido desde NotebookLM
+### 1. Preparar el material
 
-Usá el notebook de la materia correspondiente (IDs en `.claude/skills/pdf-to-study.md`).
+- Verificar que los PDFs estén en `$MATERIA/unidad-$N/material/` sin espacios en los nombres.
+  Si hay espacios, renombrar antes de continuar.
+- Verificar que existan las carpetas `material/` y `output/`. Crearlas si no están.
 
+### 2. Extraer contenido desde NotebookLM
+
+Seguir el flujo completo de `.claude/skills/pdf-to-study.md`:
+
+**a) Listar fuentes y encontrar los source IDs de la unidad:**
 ```bash
-# Listar fuentes para identificar los PDFs de la unidad
 notebooklm source list --json --notebook <NOTEBOOK_ID>
 ```
-
-Cruzá los títulos de las fuentes con los archivos en `$MATERIA/unidad-$N/material/`.
-Con los source IDs identificados, consultá el contenido completo:
-
+Si los PDFs no están en NotebookLM, subirlos:
 ```bash
-notebooklm ask "Analizá todo el contenido de la Unidad N y dame un resumen exhaustivo y completo de todo lo que se enseña. No omitas ningún concepto, tema, ejemplo, regla, código o detalle importante." \
-  --notebook <NOTEBOOK_ID> -s <SOURCE_ID_1> [-s <SOURCE_ID_2> ...]
+notebooklm source add "$MATERIA/unidad-$N/material/archivo.pdf" \
+  --type file --notebook <NOTEBOOK_ID> --json
 ```
 
-Si el material es extenso, hacer consultas adicionales sobre código, reglas y advertencias.
+**b) Consulta inicial al chat:**
+```bash
+notebooklm ask "Analizá todo el contenido de la Unidad N..." \
+  --notebook <NOTEBOOK_ID> -s <SOURCE_ID_1> [-s <SOURCE_ID_2> ...]
+```
+Guardar la respuesta en `$MATERIA/unidad-$N/notebooklm-content.md`.
 
-### 2. Analizar el contenido
+**c) Generar guía de estudio (SIEMPRE):**
+```bash
+notebooklm generate report \
+  --format study-guide \
+  --append "Incluí todos los conceptos, definiciones, ejemplos y técnicas de la unidad. Exhaustivo." \
+  --notebook <NOTEBOOK_ID> \
+  -s <SOURCE_ID_1> [-s <SOURCE_ID_2> ...] \
+  --json
+```
+Esperar y descargar:
+```bash
+notebooklm artifact wait <TASK_ID> -n <NOTEBOOK_ID> --timeout 900
+notebooklm download report $MATERIA/unidad-$N/notebooklm-report.md \
+  -a <TASK_ID> -n <NOTEBOOK_ID>
+```
 
-De la respuesta de NotebookLM identificá:
+Al finalizar este paso deben existir:
+- `$MATERIA/unidad-$N/notebooklm-content.md`
+- `$MATERIA/unidad-$N/notebooklm-report.md`
+
+### 3. Analizar el contenido
+
+Leer ambos archivos (`notebooklm-content.md` y `notebooklm-report.md`) e identificar:
 - Tema central de la unidad
 - Conceptos y definiciones clave
 - Procesos o pasos secuenciales
@@ -39,7 +67,7 @@ De la respuesta de NotebookLM identificá:
 - Términos técnicos importantes
 - Reglas, restricciones o advertencias
 
-### 3. Diseño
+### 4. Diseño
 
 Antes de escribir una línea de CSS, definí una dirección estética clara siguiendo la skill de frontend-design:
 - Elegí una paleta de colores cohesiva con variables CSS
@@ -47,7 +75,7 @@ Antes de escribir una línea de CSS, definí una dirección estética clara sigu
 - Definí animaciones y micro-interacciones
 - El diseño tiene que ser memorable y production-grade
 
-### 4. Generar el HTML
+### 5. Generar el HTML
 
 Creá `$MATERIA/unidad-$N/output/unidad-$N.html` con estas secciones:
 
@@ -100,3 +128,37 @@ Creá `$MATERIA/unidad-$N/output/unidad-$N.html` con estas secciones:
 
 Guardá el archivo en `$MATERIA/unidad-$N/output/unidad-$N.html`
 Confirmame cuando esté listo y decime cuántos conceptos, flashcards y preguntas generaste.
+
+## Actualizar index.html (OBLIGATORIO)
+
+Después de generar el HTML, actualizá **todas** las partes del `index.html` raíz:
+
+1. **Nuevo `<li>` en la card de la materia** — dentro de `<ul class="units">` del bloque correspondiente:
+   ```html
+   <li class="u-item">
+     <span class="u-dot ok"></span>
+     <a class="u-link" href="$MATERIA/unidad-$N/output/unidad-$N.html">
+       <span class="u-label">Unidad N</span>
+     </a>
+     <span class="u-badge ok">OK</span>
+   </li>
+   ```
+
+2. **Ratio de la card** (`card-ratio`) — actualizar el número generado. Ej: `3<sup>/3</sup>` → `4<sup>/4</sup>`
+
+3. **Stats bar** — actualizar el número hardcodeado de "Generadas":
+   ```html
+   <span class="stat-num g">N</span>
+   ```
+
+4. **Footer texto** — actualizar el texto hardcodeado:
+   ```html
+   <strong>N</strong> / M unidades generadas
+   ```
+
+5. **Footer JS** — actualizar las constantes del script:
+   ```js
+   const generated = N, total = M;
+   ```
+
+Los puntos 3, 4 y 5 son fáciles de olvidar porque están hardcodeados en lugares distintos. Verificar los 5 siempre.

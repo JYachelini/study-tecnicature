@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matemática 1 · Unidad 6: Ejercicios de Relaciones</title>
+  <style>
+    :root {
+      --bg: #080b12;
+      --surface: #0f1220;
+      --surface-2: #161929;
+      --surface-3: #1d2035;
+      --border: #252840;
+      --border-soft: #1e2138;
+      --primary: #38bdf8;
+      --primary-bright: #7dd3fc;
+      --primary-dim: rgba(56,189,248,0.1);
+      --primary-border: rgba(56,189,248,0.28);
+      --accent: #a78bfa;
+      --accent-dim: rgba(167,139,250,0.1);
+      --accent-border: rgba(167,139,250,0.28);
+      --warm: #f59e0b;
+      --text: #dde3f0;
+      --text-dim: #7b8ab0;
+      --text-faint: #3d4560;
+      --success: #10b981;
+      --success-dim: rgba(16,185,129,0.12);
+      --success-border: rgba(16,185,129,0.35);
+      --error: #f43f5e;
+      --error-dim: rgba(244,63,94,0.12);
+      --error-border: rgba(244,63,94,0.35);
+      --font-head: 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+      --font-body: Georgia, 'Times New Roman', Times, serif;
+      --font-mono: 'Courier New', 'Lucida Console', monospace;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); line-height: 1.75; min-height: 100vh; overflow-x: hidden; }
+
+    .atmosphere { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .atm-glow { position: absolute; border-radius: 50%; filter: blur(100px); }
+    .atm-glow-1 { width: 700px; height: 700px; background: radial-gradient(circle, rgba(56,189,248,0.07) 0%, transparent 70%); top: -200px; right: -200px; }
+    .atm-glow-2 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(167,139,250,0.05) 0%, transparent 70%); bottom: -150px; left: -150px; }
+
+    .back-btn { position: fixed; top: 1rem; left: 1rem; z-index: 200; color: var(--text-dim); text-decoration: none; font-family: var(--font-body); font-size: 0.85rem; background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 0.9rem; border-radius: 20px; transition: all 0.2s; }
+    .back-btn:hover { color: var(--primary); border-color: var(--primary-border); }
+
+    .container { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+    header { text-align: center; padding: 3.5rem 0 1.5rem; border-bottom: 1px solid var(--border-soft); margin-bottom: 0; }
+    .unit-badge { display: inline-block; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--primary); border: 1px solid var(--primary-border); background: var(--primary-dim); padding: 0.3rem 1rem; border-radius: 20px; margin-bottom: 1rem; }
+    h1 { font-family: var(--font-head); font-size: clamp(1.7rem, 4vw, 2.6rem); font-weight: 400; color: var(--text); letter-spacing: -0.02em; line-height: 1.2; }
+    h1 em { color: var(--primary); font-style: normal; }
+    .subtitle { color: var(--text-dim); font-size: 0.95rem; margin-top: 0.6rem; }
+
+    .material-bar { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; padding: 0.9rem 1rem; background: var(--surface); border-bottom: 1px solid var(--border-soft); }
+    .material-link { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--text-dim); text-decoration: none; font-size: 0.8rem; border: 1px solid var(--border); background: var(--surface-2); padding: 0.3rem 0.8rem; border-radius: 6px; transition: all 0.2s; }
+    .material-link:hover { color: var(--primary); border-color: var(--primary-border); }
+    .material-link::before { content: "📄"; font-size: 0.75rem; }
+
+    .tabs-nav { display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--border-soft); padding-top: 1.5rem; }
+    .tabs-nav::-webkit-scrollbar { display: none; }
+    .tab-btn { flex-shrink: 0; padding: 0.7rem 1.3rem; background: none; border: none; color: var(--text-dim); font-family: var(--font-body); font-size: 0.88rem; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    .tab-panel { display: none; padding-top: 2rem; animation: fadeIn 0.3s ease; }
+    .tab-panel.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    h2 { font-family: var(--font-head); font-size: 1.5rem; font-weight: 400; color: var(--primary); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--primary-border); }
+    h3 { font-family: var(--font-head); font-size: 1.1rem; font-weight: 400; color: var(--accent); margin: 1.5rem 0 0.5rem; }
+    p { margin-bottom: 0.9rem; }
+    ul, ol { margin-left: 1.5rem; margin-bottom: 0.9rem; }
+    li { margin-bottom: 0.3rem; }
+
+    .overview-box { background: var(--surface-2); border: 1px solid var(--primary-border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 2rem; border-left: 3px solid var(--primary); }
+    .overview-box p { margin-bottom: 0; }
+
+    .concept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+    .concept-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; transition: border-color 0.2s, transform 0.2s; }
+    .concept-card:hover { border-color: var(--primary-border); transform: translateY(-2px); }
+    .concept-card .term { font-family: var(--font-head); font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem; display: block; }
+    .concept-card .def { font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; }
+
+    .detail-section { background: var(--surface-2); border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; }
+    .detail-section h3 { margin-top: 0; }
+
+    .step-list { counter-reset: steps; list-style: none; margin-left: 0; }
+    .step-list li { counter-increment: steps; padding: 0.6rem 0 0.6rem 2.5rem; position: relative; border-bottom: 1px solid var(--border-soft); }
+    .step-list li:last-child { border-bottom: none; }
+    .step-list li::before { content: counter(steps); position: absolute; left: 0; top: 0.6rem; width: 1.6rem; height: 1.6rem; background: var(--primary-dim); border: 1px solid var(--primary-border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--primary); font-weight: bold; }
+
+    .prop-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.88rem; }
+    .prop-table th { background: var(--surface-3); color: var(--primary); padding: 0.7rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+    .prop-table td { padding: 0.65rem 1rem; border-bottom: 1px solid var(--border-soft); vertical-align: top; }
+    .prop-table tr:last-child td { border-bottom: none; }
+    .prop-table tr:hover td { background: var(--surface-3); }
+
+    .example-box { background: var(--surface-3); border-left: 3px solid var(--accent); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 1rem 1.2rem; margin: 1rem 0; font-size: 0.9rem; }
+    .example-box strong { color: var(--accent); }
+    code { font-family: var(--font-mono); background: var(--surface-3); padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.85rem; color: var(--primary-bright); }
+
+    .flashcards-controls { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .fc-progress { color: var(--text-dim); font-size: 0.9rem; margin-left: auto; }
+    .flashcard-wrapper { perspective: 1000px; height: 200px; cursor: pointer; margin-bottom: 1rem; }
+    .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1); }
+    .flashcard.flipped { transform: rotateY(180deg); }
+    .fc-front, .fc-back { position: absolute; inset: 0; border-radius: var(--radius); padding: 1.5rem; display: flex; align-items: center; justify-content: center; text-align: center; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+    .fc-front { background: var(--surface-2); border: 1px solid var(--primary-border); }
+    .fc-front .fc-label { font-size: 0.75rem; color: var(--primary); text-transform: uppercase; letter-spacing: 0.1em; position: absolute; top: 0.8rem; left: 1rem; }
+    .fc-front .fc-q { font-family: var(--font-head); font-size: 1.1rem; color: var(--text); line-height: 1.4; }
+    .fc-back { background: linear-gradient(135deg, var(--surface-3), var(--surface-2)); border: 1px solid var(--accent-border); transform: rotateY(180deg); }
+    .fc-back .fc-label { font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; position: absolute; top: 0.8rem; left: 1rem; }
+    .fc-back .fc-a { font-size: 0.95rem; color: var(--text); line-height: 1.6; }
+    .fc-hint { font-size: 0.75rem; color: var(--text-faint); text-align: center; margin-top: 0.3rem; }
+
+    .btn { padding: 0.5rem 1.2rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface-2); color: var(--text-dim); cursor: pointer; font-family: var(--font-body); font-size: 0.88rem; transition: all 0.2s; }
+    .btn:hover { color: var(--text); border-color: var(--primary-border); }
+    .btn-primary { background: var(--primary-dim); border-color: var(--primary-border); color: var(--primary); }
+    .btn-primary:hover { background: rgba(56,189,248,0.2); }
+
+    .fill-item { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem 1.5rem; margin-bottom: 1rem; }
+    .fill-item .fill-q { margin-bottom: 0.8rem; font-size: 0.95rem; }
+    .fill-input-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+    .fill-input { flex: 1; min-width: 180px; background: var(--surface-3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.5rem 0.8rem; color: var(--text); font-family: var(--font-body); font-size: 0.9rem; outline: none; transition: border-color 0.2s; }
+    .fill-input:focus { border-color: var(--primary-border); }
+    .fill-input.correct { border-color: var(--success-border); background: var(--success-dim); }
+    .fill-input.incorrect { border-color: var(--error-border); background: var(--error-dim); }
+    .fill-feedback { font-size: 0.85rem; margin-top: 0.5rem; display: none; }
+    .fill-feedback.show { display: block; }
+    .fill-feedback.ok { color: var(--success); }
+    .fill-feedback.bad { color: var(--error); }
+
+    .mc-item { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.4rem; margin-bottom: 1.2rem; }
+    .mc-q { font-size: 0.95rem; margin-bottom: 1rem; }
+    .mc-options { display: flex; flex-direction: column; gap: 0.5rem; }
+    .mc-option { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.7rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; font-size: 0.9rem; }
+    .mc-option:hover { border-color: var(--primary-border); background: var(--primary-dim); }
+    .mc-option.selected-correct { border-color: var(--success-border); background: var(--success-dim); color: var(--success); }
+    .mc-option.selected-wrong { border-color: var(--error-border); background: var(--error-dim); color: var(--error); }
+    .mc-option.show-correct { border-color: var(--success-border); background: var(--success-dim); }
+    .mc-letter { font-weight: bold; color: var(--primary); flex-shrink: 0; }
+    .mc-explanation { font-size: 0.85rem; color: var(--text-dim); margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid var(--border-soft); display: none; }
+    .mc-explanation.show { display: block; }
+  </style>
+</head>
+<body>
+<div class="atmosphere">
+  <div class="atm-glow atm-glow-1"></div>
+  <div class="atm-glow atm-glow-2"></div>
+</div>
+
+<a class="back-btn" href="../../../index.html">← Inicio</a>
+
+<div class="container">
+  <header>
+    <span class="unit-badge">Matemática 1 · Unidad 6</span>
+    <h1><em>Ejercicios de Relaciones</em></h1>
+    <p class="subtitle">Inversas, composición, clasificación y clases de equivalencia</p>
+  </header>
+
+  <div class="material-bar">
+    <a class="material-link" href="../material/Ejercicios-Clase-6-Relaciones.pdf" target="_blank">Ejercicios-Clase-6-Relaciones.pdf</a>
+    <a class="material-link" href="../material/PRACTICO-RELACIONES.pdf" target="_blank">PRACTICO-RELACIONES.pdf</a>
+  </div>
+
+  <nav class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('resumen', this)">Resumen</button>
+    <button class="tab-btn" onclick="switchTab('conceptos', this)">Conceptos Clave</button>
+    <button class="tab-btn" onclick="switchTab('detalle', this)">Explicación</button>
+    <button class="tab-btn" onclick="switchTab('flashcards', this)">Flashcards</button>
+    <button class="tab-btn" onclick="switchTab('completar', this)">Completar</button>
+    <button class="tab-btn" onclick="switchTab('mc', this)">Multiple Choice</button>
+  </nav>
+
+  <!-- RESUMEN -->
+  <div class="tab-panel active" id="tab-resumen">
+    <h2>Resumen General</h2>
+    <div class="overview-box">
+      <p>La Unidad 6 aplica la teoría de relaciones mediante ejercicios prácticos que cubren cuatro grandes áreas: definición de relaciones por extensión y comprensión, cálculo de la relación inversa, representación gráfica en dígrafos y planos cartesianos, composición de relaciones (R₂∘R₁), y análisis de propiedades para clasificar relaciones y calcular clases de equivalencia y particiones.</p>
+    </div>
+
+    <h2>Tipos de Ejercicios</h2>
+    <ul>
+      <li><strong>Definición por extensión</strong>: listar todos los pares ordenados explícitamente.</li>
+      <li><strong>Definición por comprensión</strong>: usar una propiedad lógica o aritmética.</li>
+      <li><strong>Relación inversa (R⁻¹)</strong>: intercambiar el orden de cada par.</li>
+      <li><strong>Representación gráfica</strong>: diagramas de flechas, dígrafos, plano cartesiano.</li>
+      <li><strong>Composición (R₂∘R₁)</strong>: combinar dos relaciones a través de un elemento intermedio.</li>
+      <li><strong>Clasificación</strong>: verificar reflexividad, simetría, antisimetría y transitividad.</li>
+      <li><strong>Clases de equivalencia</strong>: calcular [x] y particiones asociadas.</li>
+    </ul>
+  </div>
+
+  <!-- CONCEPTOS -->
+  <div class="tab-panel" id="tab-conceptos">
+    <h2>Conceptos Clave</h2>
+    <div class="concept-grid">
+      <div class="concept-card">
+        <span class="term">Definición por Extensión</span>
+        <span class="def">Listar explícitamente todos los pares ordenados de la relación. Ej: R = {(1,3),(2,4)}.</span>
+      </div>
+      <div class="concept-card">
+        <span class="term">Definición por Comprensión</span>
+        <span class="def">Usar una propiedad lógica o aritmética. Ej: (a,b)∈R ⟺ b es múltiplo de a.</span>
+      </div>
+      <div class="concept-card">
+        <span class="term">Partición</span>
+        <span class="def">División de un conjunto en subconjuntos no vacíos, disjuntos entre sí, cuya unión es el conjunto total. Toda partición genera una relación de equivalencia.</span>
+      </div>
+      <div class="concept-card">
+        <span class="term">Relación Inversa (R⁻¹)</span>
+        <span class="def">Se obtiene intercambiando el orden de cada par: (a,b)∈R ⟺ (b,a)∈R⁻¹.</span>
+      </div>
+      <div class="concept-card">
+        <span class="term">Composición (R₂∘R₁)</span>
+        <span class="def">(x,z)∈R₂∘R₁ si existe y tal que (x,y)∈R₁ y (y,z)∈R₂. Conecta el inicio con el final sin el intermedio.</span>
+      </div>
+      <div class="concept-card">
+        <span class="term">Dígrafo</span>
+        <span class="def">Representación visual de una relación con nodos (elementos) y flechas dirigidas (pares ordenados).</span>
+      </div>
+      <div class="concept-card">
+        <span class="term">Clase de Equivalencia [x]</span>
+        <span class="def">Conjunto de todos los y∈A tales que (x,y)∈R. Se denota [x] o x̄.</span>
+      </div>
+      <div class="concept-card">
+        <span class="term">Antisimétrica</span>
+        <span class="def">(a,b)∈R ∧ (b,a)∈R ⟹ a=b. No existen flechas dobles entre nodos distintos en el dígrafo.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETALLE -->
+  <div class="tab-panel" id="tab-detalle">
+    <h2>Explicación Detallada</h2>
+
+    <div class="detail-section">
+      <h3>Formas de Definir una Relación</h3>
+      <p><strong>Por extensión:</strong> se listan todos los pares. Útil cuando el conjunto es pequeño.</p>
+      <p><strong>Por comprensión:</strong> se da una fórmula o condición. Más compacto para conjuntos grandes.</p>
+      <div class="example-box">
+        <strong>Ejemplo:</strong> Sean A={1,2,3}, B={2,4,6}. Relación: "b es múltiplo de a"<br><br>
+        Para a=1: (1,2),(1,4),(1,6)<br>
+        Para a=2: (2,2),(2,4),(2,6)<br>
+        Para a=3: (3,6)<br><br>
+        R = {(1,2),(1,4),(1,6),(2,2),(2,4),(2,6),(3,6)}
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h3>Cómo Determinar Propiedades desde un Grafo</h3>
+      <table class="prop-table">
+        <thead>
+          <tr><th>Propiedad</th><th>Qué mirar en el dígrafo</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Reflexividad</strong></td><td>¿Todos los nodos tienen bucle?</td></tr>
+          <tr><td><strong>Simetría</strong></td><td>¿Todas las flechas entre nodos distintos van en ambas direcciones?</td></tr>
+          <tr><td><strong>Antisimetría</strong></td><td>¿No hay flechas dobles entre nodos distintos?</td></tr>
+          <tr><td><strong>Transitividad</strong></td><td>Buscar cadenas a→b→c y verificar que exista a→c.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="detail-section">
+      <h3>Cálculo de Clases de Equivalencia</h3>
+      <ol class="step-list">
+        <li>Elegir un elemento x∈A.</li>
+        <li>Buscar todos los y∈A tales que (x,y)∈R.</li>
+        <li>Agrupar esos elementos en el conjunto [x].</li>
+        <li>Repetir para cada elemento. Los grupos no se solapan (son una partición).</li>
+      </ol>
+      <div class="example-box">
+        <strong>Ejemplo con partición:</strong> Sea A={1,2,3} con partición P={{1,3},{2}}.<br>
+        La relación de equivalencia asociada es: R = {(1,1),(1,3),(3,1),(3,3),(2,2)}<br>
+        Clases: [1]=[3]={1,3} y [2]={2}
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h3>Composición de Relaciones</h3>
+      <p>La composición R₂∘R₁ crea una nueva relación conectando el conjunto inicial con el final, eliminando el intermedio.</p>
+      <p>Fórmula: (x,z)∈R₂∘R₁ si existe y tal que (x,y)∈R₁ <strong>y</strong> (y,z)∈R₂.</p>
+      <div class="example-box">
+        <strong>Ejemplo:</strong> R₁={(1,2),(2,3)}, R₂={(2,4),(3,6)}<br><br>
+        (1,2)∈R₁ y (2,4)∈R₂ → (1,4)∈R₂∘R₁<br>
+        (2,3)∈R₁ y (3,6)∈R₂ → (2,6)∈R₂∘R₁<br><br>
+        R₂∘R₁ = {(1,4),(2,6)}
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h3>Completar para una Propiedad</h3>
+      <div class="example-box">
+        <strong>Ejemplo:</strong> A={1,2,3}, R={(1,1),(1,2),(2,3)}. ¿Qué falta para ser reflexiva?<br>
+        Para ser reflexiva se necesitan (1,1),(2,2),(3,3). Ya tiene (1,1).<br>
+        <strong>Faltantes:</strong> (2,2) y (3,3)
+      </div>
+    </div>
+  </div>
+
+  <!-- FLASHCARDS -->
+  <div class="tab-panel" id="tab-flashcards">
+    <h2>Flashcards</h2>
+    <div class="flashcards-controls">
+      <button class="btn" onclick="prevCard()">← Anterior</button>
+      <button class="btn btn-primary" onclick="flipCard()">Dar vuelta</button>
+      <button class="btn" onclick="nextCard()">Siguiente →</button>
+      <span class="fc-progress" id="fc-progress">1 / 12</span>
+    </div>
+    <div class="flashcard-wrapper" onclick="flipCard()">
+      <div class="flashcard" id="flashcard">
+        <div class="fc-front">
+          <span class="fc-label">Pregunta</span>
+          <span class="fc-q" id="fc-question"></span>
+        </div>
+        <div class="fc-back">
+          <span class="fc-label">Respuesta</span>
+          <span class="fc-a" id="fc-answer"></span>
+        </div>
+      </div>
+    </div>
+    <p class="fc-hint">Hacé click en la carta para ver la respuesta</p>
+  </div>
+
+  <!-- COMPLETAR -->
+  <div class="tab-panel" id="tab-completar">
+    <h2>Completar el Espacio</h2>
+    <p style="color:var(--text-dim);font-size:0.9rem;margin-bottom:1.5rem;">Escribí la respuesta y presioná Enter o el botón para verificar.</p>
+    <div id="fill-container"></div>
+  </div>
+
+  <!-- MULTIPLE CHOICE -->
+  <div class="tab-panel" id="tab-mc">
+    <h2>Multiple Choice</h2>
+    <div id="mc-container"></div>
+  </div>
+</div>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+const flashcards = [
+  { q: "¿Cuántas formas hay de definir una relación?", a: "Tres: por extensión (listar pares), por comprensión (propiedad lógica), y por partición." },
+  { q: "¿Qué significa definir una relación por EXTENSIÓN?", a: "Listar todos los pares ordenados explícitamente. Ejemplo: R = {(1,3),(2,4)}." },
+  { q: "¿Qué significa definir una relación por COMPRENSIÓN?", a: "Usar una propiedad lógica o aritmética. Ejemplo: (a,b)∈R ⟺ b es múltiplo de a." },
+  { q: "¿Qué es una PARTICIÓN de un conjunto?", a: "Colección de subconjuntos no vacíos, disjuntos entre sí, cuya unión es el conjunto total." },
+  { q: "¿Cómo se calcula la RELACIÓN INVERSA R⁻¹?", a: "Intercambiando el orden de cada par: si (a,b)∈R entonces (b,a)∈R⁻¹." },
+  { q: "¿Cómo verificar REFLEXIVIDAD en un dígrafo?", a: "Todos los nodos deben tener un bucle (lazo sobre sí mismos)." },
+  { q: "¿Cómo verificar SIMETRÍA en un dígrafo?", a: "Todas las flechas entre nodos distintos deben ir en ambas direcciones (ida y vuelta)." },
+  { q: "¿Cómo verificar ANTISIMETRÍA en un dígrafo?", a: "No debe haber flechas dobles entre nodos distintos (solo se permiten bucles)." },
+  { q: "¿Cómo verificar TRANSITIVIDAD en un dígrafo?", a: "Buscar cadenas a→b→c y comprobar que exista la flecha directa a→c." },
+  { q: "¿Cómo calcular la CLASE DE EQUIVALENCIA [x]?", a: "Buscar todos los y∈A tales que (x,y)∈R y agruparlos: [x] = { y∈A | xRy }." },
+  { q: "¿Qué es la COMPOSICIÓN R₂∘R₁?", a: "(x,z)∈R₂∘R₁ si existe y tal que (x,y)∈R₁ y (y,z)∈R₂. Conecta inicio con final." },
+  { q: "¿Qué es un DÍGRAFO?", a: "Representación visual de una relación: puntos (nodos) para elementos y flechas dirigidas para pares ordenados." }
+];
+
+let currentCard = 0;
+function renderCard() {
+  const card = flashcards[currentCard];
+  document.getElementById('fc-question').textContent = card.q;
+  document.getElementById('fc-answer').textContent = card.a;
+  document.getElementById('fc-progress').textContent = (currentCard + 1) + ' / ' + flashcards.length;
+  document.getElementById('flashcard').classList.remove('flipped');
+}
+function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+function nextCard() { currentCard = (currentCard + 1) % flashcards.length; renderCard(); }
+function prevCard() { currentCard = (currentCard - 1 + flashcards.length) % flashcards.length; renderCard(); }
+renderCard();
+
+const fillItems = [
+  { q: "Definir una relación listando todos sus pares se llama definición por _____.", answers: ["extensión", "extension"], explanation: "Por extensión se listan explícitamente todos los pares: R = {(1,2),(3,4),...}." },
+  { q: "Definir una relación con una propiedad lógica se llama definición por _____.", answers: ["comprensión", "comprension"], explanation: "Por comprensión se usa una fórmula: (a,b)∈R ⟺ b es múltiplo de a." },
+  { q: "Una _____ es una división del conjunto en bloques disjuntos cuya unión es el total.", answers: ["partición", "particion"], explanation: "Toda partición define una relación de equivalencia y viceversa." },
+  { q: "En la relación inversa, el par (a,b) de R se convierte en _____.", answers: ["(b,a)"], explanation: "R⁻¹ = {(b,a) | (a,b)∈R}. Se intercambia el orden de cada par." },
+  { q: "Para verificar reflexividad en un dígrafo, todos los nodos deben tener un _____.", answers: ["bucle", "lazo"], explanation: "El bucle indica que (a,a)∈R, es decir, el elemento se relaciona consigo mismo." },
+  { q: "Para verificar simetría, las flechas entre nodos distintos deben ir en ambas _____.", answers: ["direcciones"], explanation: "Ida y vuelta: si hay flecha de a a b, debe haber de b a a." },
+  { q: "Si existe la cadena a→b→c pero no la flecha a→c, la relación NO es _____.", answers: ["transitiva"], explanation: "La transitividad exige que toda cadena a→b→c tenga el atajo directo a→c." },
+  { q: "Si (a,b)∈R y (b,a)∈R con a≠b, la relación NO es _____.", answers: ["antisimétrica"], explanation: "La antisimetría prohíbe flechas dobles entre nodos distintos." },
+  { q: "La composición R₂∘R₁ conecta el conjunto inicial con el _____ sin mostrar el intermedio.", answers: ["final"], explanation: "R₂∘R₁ elimina el conjunto X intermedio y conecta directamente Z con Y." },
+  { q: "El conjunto [x] formado por todos los y relacionados con x se llama clase de _____.", answers: ["equivalencia"], explanation: "[x] = { y∈A | xRy }. Los elementos de una misma clase son 'equivalentes'." }
+];
+
+const fillContainer = document.getElementById('fill-container');
+fillItems.forEach((item, i) => {
+  const div = document.createElement('div');
+  div.className = 'fill-item';
+  div.innerHTML = `
+    <p class="fill-q"><strong>${i+1}.</strong> ${item.q}</p>
+    <div class="fill-input-row">
+      <input class="fill-input" id="fi-${i}" type="text" placeholder="Escribí tu respuesta..." onkeydown="if(event.key==='Enter') checkFill(${i})">
+      <button class="btn btn-primary" onclick="checkFill(${i})">Verificar</button>
+    </div>
+    <div class="fill-feedback" id="ff-${i}"></div>
+  `;
+  fillContainer.appendChild(div);
+});
+
+function checkFill(i) {
+  const input = document.getElementById('fi-' + i);
+  const feedback = document.getElementById('ff-' + i);
+  const val = input.value.trim().toLowerCase();
+  const ok = fillItems[i].answers.some(a => val === a.toLowerCase() || val.includes(a.toLowerCase()));
+  input.className = 'fill-input ' + (ok ? 'correct' : 'incorrect');
+  feedback.className = 'fill-feedback show ' + (ok ? 'ok' : 'bad');
+  feedback.innerHTML = ok
+    ? '✓ Correcto. ' + fillItems[i].explanation
+    : '✗ Respuesta correcta: <strong>' + fillItems[i].answers[0] + '</strong>. ' + fillItems[i].explanation;
+}
+
+const mcItems = [
+  {
+    q: "Dados A={1,2,3} y B={2,4,6}, con R = {(a,b): b es múltiplo de a}. ¿Cuál de estos pares NO pertenece a R?",
+    options: ["(1,4)", "(2,6)", "(3,4)", "(3,6)"],
+    correct: 2,
+    explanation: "4 no es múltiplo de 3 (3×1=3, 3×2=6). Por lo tanto (3,4)∉R."
+  },
+  {
+    q: "Si R = {(1,2),(2,3),(3,1)}, ¿cuál es R⁻¹?",
+    options: ["{(2,1),(3,2),(1,3)}", "{(1,2),(2,3),(3,1)}", "{(1,3),(3,2),(2,1)}", "{(2,1),(1,3),(3,2)}"],
+    correct: 0,
+    explanation: "R⁻¹ invierte cada par: (1,2)→(2,1), (2,3)→(3,2), (3,1)→(1,3). Resultado: {(2,1),(3,2),(1,3)}."
+  },
+  {
+    q: "Para que una relación sea de equivalencia, ¿qué propiedades debe cumplir?",
+    options: ["Reflexiva, simétrica y transitiva", "Reflexiva, antisimétrica y transitiva", "Solo simétrica y transitiva", "Reflexiva y antisimétrica"],
+    correct: 0,
+    explanation: "Las tres propiedades juntas (reflexiva + simétrica + transitiva) definen la equivalencia."
+  },
+  {
+    q: "Dada la partición P={{1,3},{2}} del conjunto A={1,2,3}, ¿cuáles son los pares de la relación de equivalencia asociada?",
+    options: ["{(1,1),(1,3),(3,1),(3,3),(2,2)}", "{(1,3),(3,1),(2,2)}", "{(1,1),(3,3),(2,2)}", "{(1,3),(2,2)}"],
+    correct: 0,
+    explanation: "Cada bloque {1,3} genera los pares (1,1),(1,3),(3,1),(3,3) y {2} genera (2,2)."
+  },
+  {
+    q: "Si R₁={(1,2),(2,3)} y R₂={(2,4),(3,6)}, ¿cuál es R₂∘R₁?",
+    options: ["{(1,4),(2,6)}", "{(1,2),(2,3),(2,4),(3,6)}", "{(2,4),(3,6)}", "{(1,6),(2,4)}"],
+    correct: 0,
+    explanation: "(1,2)∈R₁ y (2,4)∈R₂ → (1,4). (2,3)∈R₁ y (3,6)∈R₂ → (2,6). Resultado: {(1,4),(2,6)}."
+  }
+];
+
+const mcContainer = document.getElementById('mc-container');
+mcItems.forEach((item, i) => {
+  const div = document.createElement('div');
+  div.className = 'mc-item';
+  const letters = ['A','B','C','D'];
+  let optionsHtml = item.options.map((opt, j) =>
+    `<div class="mc-option" id="mc-${i}-${j}" onclick="selectOption(${i},${j})">
+      <span class="mc-letter">${letters[j]}.</span> ${opt}
+    </div>`
+  ).join('');
+  div.innerHTML = `<p class="mc-q"><strong>${i+1}.</strong> ${item.q}</p><div class="mc-options">${optionsHtml}</div><div class="mc-explanation" id="mc-exp-${i}"></div>`;
+  mcContainer.appendChild(div);
+});
+
+function selectOption(qi, oi) {
+  const item = mcItems[qi];
+  document.querySelectorAll(`[id^="mc-${qi}-"]`).forEach(o => o.style.pointerEvents = 'none');
+  const selected = document.getElementById(`mc-${qi}-${oi}`);
+  selected.classList.add(oi === item.correct ? 'selected-correct' : 'selected-wrong');
+  if (oi !== item.correct) document.getElementById(`mc-${qi}-${item.correct}`).classList.add('show-correct');
+  const exp = document.getElementById(`mc-exp-${qi}`);
+  exp.textContent = item.explanation;
+  exp.classList.add('show');
+}
+</script>
+</body>
+</html>

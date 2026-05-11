@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Org. Empresarial · Unidad 5: Actividades Económicas y Variaciones Patrimoniales</title>
+  <style>
+    :root {
+      --bg: #050e10;
+      --surface: #091418;
+      --surface-2: #0e1c22;
+      --surface-3: #13242c;
+      --border: #1a3340;
+      --border-soft: #142830;
+      --teal: #14b8a6;
+      --teal-bright: #2dd4bf;
+      --teal-dim: rgba(20,184,166,0.1);
+      --teal-border: rgba(20,184,166,0.25);
+      --sky: #38bdf8;
+      --sky-dim: rgba(56,189,248,0.09);
+      --sky-border: rgba(56,189,248,0.25);
+      --amber: #f59e0b;
+      --amber-dim: rgba(245,158,11,0.1);
+      --amber-border: rgba(245,158,11,0.3);
+      --emerald: #10b981;
+      --emerald-dim: rgba(16,185,129,0.1);
+      --violet: #8b5cf6;
+      --violet-dim: rgba(139,92,246,0.1);
+      --violet-border: rgba(139,92,246,0.3);
+      --text: #cce8ea;
+      --text-dim: #5a8a90;
+      --text-faint: #1e3d45;
+      --success: #22c55e;
+      --success-dim: rgba(34,197,94,0.12);
+      --success-border: rgba(34,197,94,0.35);
+      --error: #f43f5e;
+      --error-dim: rgba(244,63,94,0.12);
+      --error-border: rgba(244,63,94,0.35);
+      --font-head: 'Trebuchet MS', 'Gill Sans', Calibri, sans-serif;
+      --font-body: Georgia, 'Times New Roman', Times, serif;
+      --font-mono: 'Courier New', 'Lucida Console', monospace;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); line-height: 1.75; min-height: 100vh; overflow-x: hidden; }
+
+    /* ─── ATMOSPHERE ─── */
+    .atmosphere { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .atm-glow-1 { position: absolute; width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(20,184,166,0.06) 0%, transparent 70%); top: -200px; left: -200px; filter: blur(100px); }
+    .atm-glow-2 { position: absolute; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(56,189,248,0.04) 0%, transparent 70%); bottom: -100px; right: -100px; filter: blur(80px); }
+    .atm-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(20,184,166,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(20,184,166,0.015) 1px, transparent 1px); background-size: 64px 64px; }
+
+    /* ─── BACK ─── */
+    .back-btn { position: fixed; top: 1rem; left: 1rem; z-index: 200; font-family: var(--font-mono); font-size: .6rem; letter-spacing: .14em; text-transform: uppercase; color: var(--text-dim); text-decoration: none; padding: .38rem .72rem; border: 1px solid var(--border); background: rgba(5,14,16,.88); backdrop-filter: blur(10px); transition: color .2s, border-color .2s; white-space: nowrap; }
+    .back-btn:hover { color: var(--teal); border-color: var(--teal-border); }
+
+    /* ─── MATERIAL BAR ─── */
+    .material-bar { position: relative; z-index: 1; background: rgba(20,184,166,.04); border-bottom: 1px solid var(--border); padding: .55rem 2rem; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+    .material-lbl { font-family: var(--font-mono); font-size: .6rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: .14em; }
+    .material-link { font-family: var(--font-mono); font-size: .64rem; color: var(--teal); text-decoration: none; padding: .2rem .6rem; border: 1px solid rgba(20,184,166,.22); border-radius: 4px; transition: background .2s, border-color .2s; white-space: nowrap; }
+    .material-link:hover { background: var(--teal-dim); border-color: rgba(20,184,166,.45); }
+
+    /* ─── HEADER ─── */
+    .header { position: relative; z-index: 1; padding: 64px 48px 52px; max-width: 1280px; margin: 0 auto; }
+    .header-eyebrow { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+    .eyebrow-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--teal-dim); border: 1px solid var(--teal-border); color: var(--teal); font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; padding: 5px 14px; border-radius: 20px; }
+    .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .5; transform: scale(.8); } }
+    .eyebrow-nlm { background: var(--sky-dim); border: 1px solid var(--sky-border); color: var(--sky); font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; padding: 5px 14px; border-radius: 20px; }
+    .header-title { font-family: var(--font-head); font-size: clamp(2.4rem, 6vw, 4.5rem); font-weight: 700; color: #fff; line-height: 1.05; letter-spacing: -.02em; margin-bottom: 14px; }
+    .header-title .accent { color: var(--teal); }
+    .header-title .line2 { display: block; color: rgba(255,255,255,.5); font-size: .52em; margin-top: 6px; font-weight: 400; }
+    .header-meta { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-top: 16px; }
+    .header-meta-item { font-size: .85rem; color: var(--text-dim); }
+
+    /* ─── SECTOR CARDS (hero) ─── */
+    .sectors-hero { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin: 32px 0; }
+    .sector-card { border-radius: var(--radius); padding: 28px 24px; border: 1px solid; position: relative; overflow: hidden; transition: transform .2s; }
+    .sector-card:hover { transform: translateY(-3px); }
+    .sector-card .sec-num { font-family: var(--font-mono); font-size: .65rem; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 12px; }
+    .sector-card h3 { font-family: var(--font-head); font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+    .sector-card p { font-size: .83rem; line-height: 1.6; }
+    .sector-card ul { padding-left: 1rem; margin-top: 10px; }
+    .sector-card li { font-size: .78rem; line-height: 1.6; }
+    .s-primario { background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(16,185,129,0.04)); border-color: rgba(16,185,129,0.3); }
+    .s-primario .sec-num, .s-primario h3 { color: var(--emerald); }
+    .s-secundario { background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(245,158,11,0.04)); border-color: rgba(245,158,11,0.3); }
+    .s-secundario .sec-num, .s-secundario h3 { color: var(--amber); }
+    .s-terciario { background: linear-gradient(135deg, rgba(56,189,248,0.1), rgba(56,189,248,0.04)); border-color: rgba(56,189,248,0.3); }
+    .s-terciario .sec-num, .s-terciario h3 { color: var(--sky); }
+    .s-cuaternario { background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(139,92,246,0.04)); border-color: rgba(139,92,246,0.3); }
+    .s-cuaternario .sec-num, .s-cuaternario h3 { color: var(--violet); }
+
+    /* ─── TABS ─── */
+    .tabs-shell { position: sticky; top: 0; z-index: 100; background: rgba(5,14,16,.95); backdrop-filter: blur(20px) saturate(1.5); border-bottom: 1px solid var(--border-soft); }
+    .tabs { max-width: 1280px; margin: 0 auto; display: flex; padding: 0 48px; overflow-x: auto; scrollbar-width: none; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab-btn { background: none; border: none; color: var(--text-dim); font-family: var(--font-head); font-size: .88rem; font-weight: 600; padding: 15px 22px; cursor: pointer; position: relative; white-space: nowrap; transition: color .22s; letter-spacing: .03em; }
+    .tab-btn::after { content: ''; position: absolute; bottom: 0; left: 50%; right: 50%; height: 2px; background: linear-gradient(90deg, var(--teal), var(--teal-bright)); transition: left .3s cubic-bezier(.4,0,.2,1), right .3s cubic-bezier(.4,0,.2,1); border-radius: 2px 2px 0 0; }
+    .tab-btn.active { color: var(--teal-bright); }
+    .tab-btn.active::after { left: 14px; right: 14px; }
+
+    /* ─── SECTIONS ─── */
+    .section { display: none; position: relative; z-index: 1; }
+    .section.active { display: block; }
+    .content-wrap { max-width: 1000px; margin: 0 auto; padding: 52px 48px; }
+    @media (max-width: 700px) { .content-wrap { padding: 32px 20px; } .header { padding: 48px 20px 36px; } .tabs { padding: 0 12px; } }
+
+    /* ─── TITLES ─── */
+    .section-title { font-family: var(--font-head); font-size: 1.8rem; font-weight: 700; color: #fff; letter-spacing: -.02em; margin-bottom: 8px; }
+    .section-title .acc { color: var(--teal); }
+    .section-sub { font-size: .9rem; color: var(--text-dim); margin-bottom: 36px; }
+    .divider { height: 1px; background: linear-gradient(90deg, var(--teal-border), transparent); margin: 36px 0; }
+
+    /* ─── OVERVIEW ─── */
+    .overview-card { background: var(--surface-2); border: 1px solid var(--border); border-left: 3px solid var(--teal); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 32px; }
+    .overview-card p { font-size: .98rem; line-height: 1.8; }
+
+    /* ─── CONCEPTS GRID ─── */
+    .concepts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 16px; }
+    .concept-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; transition: border-color .2s, transform .2s; }
+    .concept-card:hover { border-color: var(--teal-border); transform: translateY(-2px); }
+    .concept-term { font-family: var(--font-head); font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); margin-bottom: 8px; }
+    .concept-def { font-size: .9rem; color: var(--text); line-height: 1.65; }
+
+    /* ─── EXPLAIN ─── */
+    .explain-block { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 24px; }
+    .explain-h3 { font-family: var(--font-head); font-size: 1.1rem; font-weight: 700; color: var(--teal-bright); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+    .explain-h3 .num { font-family: var(--font-mono); font-size: .7rem; background: var(--teal-dim); border: 1px solid var(--teal-border); color: var(--teal); padding: 3px 8px; border-radius: 4px; }
+    .explain-block p { font-size: .93rem; line-height: 1.75; margin-bottom: 12px; }
+    .explain-block ul { padding-left: 1.4rem; margin-bottom: 12px; }
+    .explain-block li { font-size: .9rem; line-height: 1.7; margin-bottom: 6px; }
+    .highlight { color: var(--teal-bright); font-weight: 600; }
+
+    /* ─── OPERATIONS TABLE ─── */
+    .ops-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: .86rem; }
+    .ops-table th { background: var(--teal-dim); color: var(--teal); font-family: var(--font-head); font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; padding: 10px 14px; border: 1px solid var(--teal-border); text-align: left; }
+    .ops-table td { padding: 10px 14px; border: 1px solid var(--border); color: var(--text); vertical-align: top; }
+    .ops-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+    .badge-perm { background: var(--sky-dim); border: 1px solid var(--sky-border); color: var(--sky); font-family: var(--font-mono); font-size: .68rem; padding: 2px 7px; border-radius: 4px; white-space: nowrap; }
+    .badge-mod { background: var(--teal-dim); border: 1px solid var(--teal-border); color: var(--teal); font-family: var(--font-mono); font-size: .68rem; padding: 2px 7px; border-radius: 4px; white-space: nowrap; }
+
+    /* ─── FLASHCARDS ─── */
+    .flashcard-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .fc-counter { font-family: var(--font-mono); font-size: .85rem; color: var(--text-dim); }
+    .fc-progress { flex: 1; height: 3px; background: var(--border); margin: 0 16px; border-radius: 99px; overflow: hidden; }
+    .fc-bar { height: 100%; background: linear-gradient(90deg, var(--teal), var(--teal-bright)); border-radius: 99px; transition: width .4s cubic-bezier(.4,0,.2,1); }
+    .flashcard-area { perspective: 1200px; margin-bottom: 28px; }
+    .fc-inner { width: 100%; min-height: 220px; position: relative; transform-style: preserve-3d; transition: transform .55s cubic-bezier(.4,0,.2,1); cursor: pointer; }
+    .fc-inner.flipped { transform: rotateY(180deg); }
+    .fc-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: var(--radius); padding: 36px 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 1px solid var(--border); }
+    .fc-front { background: var(--surface-2); }
+    .fc-back { background: linear-gradient(135deg, var(--surface-2), var(--surface-3)); transform: rotateY(180deg); border-color: var(--teal-border); }
+    .fc-label { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 16px; }
+    .fc-front .fc-label { color: var(--text-dim); }
+    .fc-back .fc-label { color: var(--teal); }
+    .fc-text { font-family: var(--font-head); font-size: 1.1rem; color: #fff; line-height: 1.55; }
+    .fc-back .fc-text { font-size: 1rem; color: var(--text); }
+    .fc-hint { font-size: .72rem; color: var(--text-faint); margin-top: 12px; font-family: var(--font-mono); }
+    .fc-controls { display: flex; justify-content: center; gap: 16px; }
+    .fc-btn { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim); font-family: var(--font-head); font-size: .85rem; font-weight: 600; padding: 10px 28px; border-radius: var(--radius-sm); cursor: pointer; transition: all .2s; }
+    .fc-btn:hover { border-color: var(--teal-border); color: var(--teal); background: var(--teal-dim); }
+    .fc-btn:disabled { opacity: .3; cursor: not-allowed; }
+
+    /* ─── BLANKS ─── */
+    .blank-item { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 16px; transition: border-color .2s; }
+    .blank-item.correct { border-color: var(--success-border); background: var(--success-dim); }
+    .blank-item.incorrect { border-color: var(--error-border); background: var(--error-dim); }
+    .blank-num { font-family: var(--font-mono); font-size: .7rem; color: var(--text-dim); margin-bottom: 8px; }
+    .blank-q { font-family: var(--font-head); font-size: .95rem; color: var(--text); margin-bottom: 14px; line-height: 1.6; }
+    .blank-input-row { display: flex; gap: 10px; align-items: center; }
+    .blank-input { background: var(--surface); border: 1px solid var(--border); color: var(--text); font-family: var(--font-body); font-size: .9rem; padding: 8px 14px; border-radius: var(--radius-sm); flex: 1; outline: none; transition: border-color .2s; }
+    .blank-input:focus { border-color: var(--teal-border); }
+    .blank-input:disabled { opacity: .7; }
+    .blank-verify { background: var(--teal-dim); border: 1px solid var(--teal-border); color: var(--teal); font-family: var(--font-head); font-size: .8rem; font-weight: 600; padding: 8px 18px; border-radius: var(--radius-sm); cursor: pointer; transition: all .2s; white-space: nowrap; }
+    .blank-verify:hover { background: rgba(20,184,166,.2); }
+    .blank-verify:disabled { opacity: .4; cursor: not-allowed; }
+    .blank-feedback { margin-top: 12px; font-size: .88rem; padding: 10px 14px; border-radius: var(--radius-sm); display: none; }
+    .blank-feedback.show { display: block; }
+    .blank-feedback.ok { background: var(--success-dim); border: 1px solid var(--success-border); color: var(--success); }
+    .blank-feedback.fail { background: var(--error-dim); border: 1px solid var(--error-border); color: var(--error); }
+    .blank-score { font-family: var(--font-mono); font-size: .85rem; color: var(--text-dim); text-align: center; margin-bottom: 24px; }
+    .blank-score span { color: var(--teal); font-weight: 700; }
+
+    /* ─── MC ─── */
+    .mc-item { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; }
+    .mc-num { font-family: var(--font-mono); font-size: .7rem; color: var(--text-dim); margin-bottom: 10px; }
+    .mc-q { font-family: var(--font-head); font-size: 1rem; color: #fff; margin-bottom: 18px; line-height: 1.55; }
+    .mc-options { display: flex; flex-direction: column; gap: 10px; }
+    .mc-opt { background: var(--surface); border: 1px solid var(--border); color: var(--text); font-family: var(--font-body); font-size: .9rem; padding: 10px 16px; border-radius: var(--radius-sm); cursor: pointer; display: flex; gap: 12px; align-items: flex-start; transition: all .2s; text-align: left; width: 100%; }
+    .mc-opt:hover:not(:disabled) { border-color: var(--teal-border); background: var(--teal-dim); }
+    .mc-opt.correct { border-color: var(--success-border) !important; background: var(--success-dim) !important; color: var(--success) !important; }
+    .mc-opt.incorrect { border-color: var(--error-border) !important; background: var(--error-dim) !important; color: var(--error) !important; }
+    .mc-opt.reveal-correct { border-color: var(--success-border) !important; background: rgba(34,197,94,0.06) !important; }
+    .mc-opt:disabled { cursor: default; }
+    .opt-letter { font-family: var(--font-mono); font-size: .75rem; color: var(--teal); flex-shrink: 0; padding-top: 2px; }
+    .mc-explanation { margin-top: 14px; font-size: .88rem; padding: 12px 16px; border-radius: var(--radius-sm); display: none; background: rgba(20,184,166,.08); border: 1px solid var(--teal-border); color: var(--text-dim); }
+    .mc-explanation.show { display: block; }
+  </style>
+</head>
+<body>
+<div class="atmosphere">
+  <div class="atm-glow-1"></div>
+  <div class="atm-glow-2"></div>
+  <div class="atm-grid"></div>
+</div>
+
+<a class="back-btn" href="../../../index.html">&#8592; Inicio</a>
+
+<div class="material-bar">
+  <span class="material-lbl">📎 Material</span>
+  <a class="material-link" href="../material/Actividades_economicas.pdf" target="_blank">Actividades Económicas</a>
+  <a class="material-link" href="../material/PRACTICO_REVISI%C3%92N_______23___04___2026_%281%29.docx" target="_blank">Práctico Revisión</a>
+  <a class="material-link" href="../material/PRACTICO_REVISI%C3%92N______23___04___2026_RESULTADOS.docx" target="_blank">Práctico (Resultados)</a>
+</div>
+
+<div class="header">
+  <div class="header-eyebrow">
+    <span class="eyebrow-badge"><span class="eyebrow-dot"></span> Org. Empresarial · Unidad 5</span>
+    <span class="eyebrow-nlm">NotebookLM</span>
+  </div>
+  <h1 class="header-title">
+    <span class="accent">Actividades Económicas</span>
+    <span class="line2">Sectores · Repaso de Variaciones Patrimoniales</span>
+  </h1>
+  <div class="header-meta">
+    <span class="header-meta-item">Tecnicatura Universitaria en Programación</span>
+  </div>
+</div>
+
+<!-- Sector hero en el header -->
+<div style="position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:0 48px 0;display:none" id="header-sectors"></div>
+
+<div class="tabs-shell">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('resumen', this)">Resumen</button>
+    <button class="tab-btn" onclick="showTab('conceptos', this)">Conceptos Clave</button>
+    <button class="tab-btn" onclick="showTab('detalle', this)">Explicación</button>
+    <button class="tab-btn" onclick="showTab('flashcards', this)">Flashcards</button>
+    <button class="tab-btn" onclick="showTab('blanks', this)">Completar</button>
+    <button class="tab-btn" onclick="showTab('mc', this)">Multiple Choice</button>
+  </div>
+</div>
+
+<!-- ══════════ RESUMEN ══════════ -->
+<div class="section active" id="sec-resumen">
+  <div class="content-wrap">
+    <div class="section-title"><span class="acc">Resumen</span> General</div>
+    <div class="section-sub">¿De qué trata la Unidad 5?</div>
+    <div class="overview-card">
+      <p>La Unidad 5 tiene dos ejes principales. El primero es la clasificación de las <strong>actividades económicas en 4 sectores</strong>: Primario (extracción directa de la naturaleza), Secundario (transformación industrial), Terciario (servicios y comercio) y Cuaternario (conocimiento e I+D). El segundo eje es un <strong>repaso práctico de variaciones patrimoniales</strong> a través de una empresa de confección de prendas, donde se identifica para cada operación el tipo de variación (permutativa o modificativa) y las cuentas involucradas.</p>
+    </div>
+    <div class="sectors-hero">
+      <div class="sector-card s-primario">
+        <div class="sec-num">Sector I · Primario</div>
+        <h3>Extracción</h3>
+        <p>Recursos directamente de la naturaleza, sin transformación.</p>
+        <ul><li>Ganadería · Agricultura</li><li>Minería · Pesca</li><li>Silvicultura · Apicultura</li></ul>
+      </div>
+      <div class="sector-card s-secundario">
+        <div class="sec-num">Sector II · Secundario</div>
+        <h3>Industria</h3>
+        <p>Transformación de materias primas en productos elaborados.</p>
+        <ul><li>Automotriz · Textil</li><li>Alimentos · Construcción</li><li>Farmacéutica · Electrónica</li></ul>
+      </div>
+      <div class="sector-card s-terciario">
+        <div class="sec-num">Sector III · Terciario</div>
+        <h3>Servicios</h3>
+        <p>Servicios, comercio y sector financiero para personas y empresas.</p>
+        <ul><li>Banca · Transporte</li><li>Salud · Turismo</li><li>Telefonía · Seguros</li></ul>
+      </div>
+      <div class="sector-card s-cuaternario">
+        <div class="sec-num">Sector IV · Cuaternario</div>
+        <h3>Conocimiento</h3>
+        <p>I+D, tecnología y ciencia. Transversal a todos los sectores.</p>
+        <ul><li>Tecnología · Educación</li><li>Investigación científica</li><li>Consultoría · Diseño</li></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ CONCEPTOS ══════════ -->
+<div class="section" id="sec-conceptos">
+  <div class="content-wrap">
+    <div class="section-title"><span class="acc">Conceptos</span> Clave</div>
+    <div class="section-sub">Definiciones fundamentales del material</div>
+    <div class="concepts-grid">
+      <div class="concept-card"><div class="concept-term">Sector Primario</div><div class="concept-def">Actividades extractivas directas de la naturaleza sin transformación. Ej: agricultura, ganadería, minería, pesca.</div></div>
+      <div class="concept-card"><div class="concept-term">Sector Secundario</div><div class="concept-def">Industria y construcción. Transforma alimentos y materias primas mediante un proceso productivo.</div></div>
+      <div class="concept-card"><div class="concept-term">Sector Terciario</div><div class="concept-def">Servicios, comercio y finanzas. Satisface demandas específicas de la población y empresas.</div></div>
+      <div class="concept-card"><div class="concept-term">Sector Cuaternario</div><div class="concept-def">Conocimiento e I+D. Se aplica transversalmente a todos los sectores. Incluye tecnología, educación, investigación.</div></div>
+      <div class="concept-card"><div class="concept-term">Variación Permutativa</div><div class="concept-def">Cambia la composición del patrimonio SIN alterar el Patrimonio Neto. No toca cuentas de Resultados.</div></div>
+      <div class="concept-card"><div class="concept-term">Variación Modificativa</div><div class="concept-def">Cambia la composición Y altera el valor del PN. Involucra siempre una cuenta de Resultados (+R o −R).</div></div>
+      <div class="concept-card"><div class="concept-term">Cuenta de Resultado (+)</div><div class="concept-def">Ingresos / ganancias: aumentan el PN. Ej: Ventas, Comisiones Ganadas, Intereses Ganados.</div></div>
+      <div class="concept-card"><div class="concept-term">Cuenta de Resultado (−)</div><div class="concept-def">Gastos / pérdidas: disminuyen el PN. Ej: Sueldos, Alquileres, Servicios, Honorarios, Gtos. Generales.</div></div>
+      <div class="concept-card"><div class="concept-term">Materia Prima</div><div class="concept-def">Bien adquirido para ser transformado en el proceso productivo. Cuenta de Activo.</div></div>
+      <div class="concept-card"><div class="concept-term">Documentos a Pagar</div><div class="concept-def">Pasivo. Deuda formalizada con pagaré u otro documento.</div></div>
+      <div class="concept-card"><div class="concept-term">Ds. x Ventas</div><div class="concept-def">Documentos / Deudas por Ventas. Activo. Crédito a cobrar por ventas realizadas en cuenta corriente.</div></div>
+      <div class="concept-card"><div class="concept-term">I+D (Investigación y Desarrollo)</div><div class="concept-def">Actividades del Sector Cuaternario orientadas a crear nuevos conocimientos o tecnologías.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ DETALLE ══════════ -->
+<div class="section" id="sec-detalle">
+  <div class="content-wrap">
+    <div class="section-title"><span class="acc">Explicación</span> Detallada</div>
+    <div class="section-sub">Sectores económicos y repaso de variaciones</div>
+
+    <div class="explain-block">
+      <div class="explain-h3"><span class="num">01</span> Los 4 Sectores Económicos</div>
+      <div class="sectors-hero" style="margin-top:4px;">
+        <div class="sector-card s-primario">
+          <div class="sec-num">Primario</div>
+          <h3>Extracción</h3>
+          <p>Sin transformación de materias primas.</p>
+          <ul><li>Ganadería, apicultura</li><li>Pesca, acuicultura, caza</li><li>Silvicultura, agricultura</li><li>Minería, piscicultura</li></ul>
+        </div>
+        <div class="sector-card s-secundario">
+          <div class="sec-num">Secundario</div>
+          <h3>Transformación</h3>
+          <p>Proceso productivo sobre materias primas.</p>
+          <ul><li>Industria automotriz</li><li>Textil, alimentos</li><li>Construcción, farmacéutica</li><li>Electrodomésticos, juguetes</li></ul>
+        </div>
+        <div class="sector-card s-terciario">
+          <div class="sec-num">Terciario</div>
+          <h3>Servicios</h3>
+          <p>Equipos y trabajo humano para la demanda.</p>
+          <ul><li>Agua, telefonía, TV</li><li>Hoteles, restaurantes</li><li>Banca, transporte</li><li>Salud, aseguradoras</li></ul>
+        </div>
+        <div class="sector-card s-cuaternario">
+          <div class="sec-num">Cuaternario</div>
+          <h3>Conocimiento</h3>
+          <p>Transversal. Innovación en todos los sectores.</p>
+          <ul><li>Medios, consultoría</li><li>Tecnología, educación</li><li>Investigación científica</li><li>I+D, diseño</li></ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="explain-block">
+      <div class="explain-h3"><span class="num">02</span> Repaso Práctico — Empresa de Confección de Prendas</div>
+      <p>Análisis completo de 10 operaciones. <span class="highlight">Regla rápida:</span> si toca Resultados → Modificativa. Si no → Permutativa.</p>
+      <table class="ops-table">
+        <thead>
+          <tr><th>#</th><th>Operación</th><th>Cuentas involucradas</th><th>Tipo</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Compra 50m tela (50% efectivo, 50% transferencia)</td><td>MAT. PRIMA (+A) / CAJA (−A) / BANCO (−A)</td><td><span class="badge-perm">Permutativa</span></td></tr>
+          <tr><td>2</td><td>Venta 30 prendas $1.500.000 (30% efectivo, resto cta. cte.)</td><td>VENTAS (+R) / CAJA (+A) / DS. X VENTAS (+A)</td><td><span class="badge-mod">Modificativa</span></td></tr>
+          <tr><td>3</td><td>Pago facturas luz e internet por transferencia</td><td>SERVICIOS (−R) / BANCO (−A)</td><td><span class="badge-mod">Modificativa</span></td></tr>
+          <tr><td>4</td><td>Apertura cuenta Banco Macro SA $3.000 en efectivo</td><td>Banco Macro SA (+A) / CAJA (−A)</td><td><span class="badge-perm">Permutativa</span></td></tr>
+          <tr><td>5</td><td>Pago sueldos Producción $12.000.000 por transferencia</td><td>SUELDOS (−R) / BANCO (−A)</td><td><span class="badge-mod">Modificativa</span></td></tr>
+          <tr><td>6</td><td>Compra máquina de coser (parte efectivo + pagaré)</td><td>MAQUINARIA (+A) / CAJA (−A) / DOC. A PAGAR (+P)</td><td><span class="badge-perm">Permutativa</span></td></tr>
+          <tr><td>7</td><td>Artículos de librería y embalaje $80.000 en efectivo</td><td>GTOS. GENERALES (−R) / CAJA (−A)</td><td><span class="badge-mod">Modificativa</span></td></tr>
+          <tr><td>8</td><td>Herramientas (tijeras, planchas, agujas) con cheque</td><td>HERRAMIENTAS (+A) / BANCO (−A)</td><td><span class="badge-perm">Permutativa</span></td></tr>
+          <tr><td>9</td><td>Registro deuda por alquiler mensual</td><td>ALQUILERES (−R) / ALQUILERES A PAGAR (+P)</td><td><span class="badge-mod">Modificativa</span></td></tr>
+          <tr><td>10</td><td>Honorarios diseñador nueva colección</td><td>HONORARIOS DISEÑADOR (−R) / HONORARIOS DISEÑADOR A PAGAR (+P)</td><td><span class="badge-mod">Modificativa</span></td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:12px;font-size:.85rem;color:var(--text-dim);">Resultado: 4 Permutativas (1, 4, 6, 8) y 6 Modificativas (2, 3, 5, 7, 9, 10).</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ FLASHCARDS ══════════ -->
+<div class="section" id="sec-flashcards">
+  <div class="content-wrap">
+    <div class="section-title"><span class="acc">Flash</span>cards</div>
+    <div class="section-sub">Clickeá la carta para darla vuelta</div>
+    <div class="flashcard-nav">
+      <button class="fc-btn" id="fc-prev" onclick="fcNav(-1)">← Anterior</button>
+      <div style="display:flex;align-items:center;flex:1;gap:16px;margin:0 8px;">
+        <div class="fc-progress"><div class="fc-bar" id="fc-bar"></div></div>
+        <div class="fc-counter" id="fc-counter">1 / 12</div>
+      </div>
+      <button class="fc-btn" id="fc-next" onclick="fcNav(1)">Siguiente →</button>
+    </div>
+    <div class="flashcard-area" onclick="fcFlip()">
+      <div class="fc-inner" id="fc-inner">
+        <div class="fc-face fc-front">
+          <div class="fc-label">Pregunta</div>
+          <div class="fc-text" id="fc-q"></div>
+          <div class="fc-hint">click para ver la respuesta</div>
+        </div>
+        <div class="fc-face fc-back">
+          <div class="fc-label">Respuesta</div>
+          <div class="fc-text" id="fc-a"></div>
+        </div>
+      </div>
+    </div>
+    <div class="fc-controls" style="margin-top:16px;">
+      <button class="fc-btn" onclick="fcShuffle()" style="font-size:.8rem;">🔀 Mezclar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ COMPLETAR ══════════ -->
+<div class="section" id="sec-blanks">
+  <div class="content-wrap">
+    <div class="section-title"><span class="acc">Completar</span> el Espacio</div>
+    <div class="section-sub">Escribí la respuesta y presioná Enter o "Verificar"</div>
+    <div class="blank-score">Correctas: <span id="blank-score">0</span> / 10</div>
+    <div id="blanks-container"></div>
+  </div>
+</div>
+
+<!-- ══════════ MULTIPLE CHOICE ══════════ -->
+<div class="section" id="sec-mc">
+  <div class="content-wrap">
+    <div class="section-title"><span class="acc">Multiple</span> Choice</div>
+    <div class="section-sub">Seleccioná la opción correcta</div>
+    <div id="mc-container"></div>
+  </div>
+</div>
+
+<script>
+// ── TABS ──
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── FLASHCARDS ──
+const flashcards = [
+  { q: "¿Qué es el Sector Primario de la economía?", a: "Agrupa actividades extractivas directas de la naturaleza SIN transformación. Ejemplos: ganadería, agricultura, minería, pesca, silvicultura." },
+  { q: "¿Qué es el Sector Secundario?", a: "Industria y construcción: transforman alimentos y materias primas a través de un proceso productivo. Ej: automotriz, textil, alimentos, farmacéutica." },
+  { q: "¿Qué es el Sector Terciario?", a: "Servicios, comercio y finanzas. Satisfacen demandas específicas usando equipos y trabajo humano. Ej: banca, salud, transporte, turismo." },
+  { q: "¿Qué es el Sector Cuaternario?", a: "Desarrollo e investigación de nuevas tecnologías y ciencia. Es transversal a todos los demás sectores. Ej: I+D, educación, tecnología, consultoría." },
+  { q: "La operación N°2 de la empresa de prendas (venta de 30 prendas) es ¿qué tipo de variación?", a: "Modificativa Positiva. Se registra VENTAS (+R) — una cuenta de resultado que aumenta el PN." },
+  { q: "La apertura de cuenta bancaria depositando $3.000 en efectivo es ¿qué tipo de variación?", a: "Permutativa: Banco Macro SA (+A) / Caja (−A). Solo cambia la composición del Activo, el PN no varía." },
+  { q: "El pago de sueldos por transferencia es ¿qué tipo de variación y por qué?", a: "Modificativa Negativa: SUELDOS (−R) / BANCO (−A). Registra una pérdida (gasto) que reduce el PN." },
+  { q: "¿Cuántas de las 10 operaciones de la empresa de prendas son Permutativas?", a: "4 son Permutativas: #1 (compra tela), #4 (apertura cuenta banco), #6 (compra máquina), #8 (herramientas)." },
+  { q: "Dá 3 ejemplos de actividades del Sector Cuaternario", a: "Investigación científica, consultoría, tecnología, educación, generación de información, I+D, planificación financiera, diseño." },
+  { q: "La compra de materia prima pagando parte en efectivo y parte por transferencia es ¿qué tipo de variación?", a: "Permutativa: MAT. PRIMA (+A) / CAJA (−A) / BANCO (−A). Intercambia activos sin tocar resultados." },
+  { q: "¿Qué tienen en común las operaciones #9 y #10 de la empresa de prendas?", a: "Ambas son Modificativas Negativas donde se registra una pérdida (gasto) y un Pasivo a pagar: Alquileres a Pagar / Honorarios a Pagar." },
+  { q: "¿Por qué el Sector Cuaternario es 'transversal'?", a: "Porque la investigación, tecnología e innovación se aplican a TODOS los demás sectores, impulsando la innovación en cada uno de ellos." }
+];
+
+let fcIdx = 0;
+let fcOrder = [...flashcards.keys()];
+
+function fcRender() {
+  const card = flashcards[fcOrder[fcIdx]];
+  document.getElementById('fc-q').textContent = card.q;
+  document.getElementById('fc-a').textContent = card.a;
+  document.getElementById('fc-counter').textContent = (fcIdx + 1) + ' / ' + fcOrder.length;
+  const pct = ((fcIdx + 1) / fcOrder.length * 100).toFixed(1);
+  document.getElementById('fc-bar').style.width = pct + '%';
+  document.getElementById('fc-inner').classList.remove('flipped');
+  document.getElementById('fc-prev').disabled = fcIdx === 0;
+  document.getElementById('fc-next').disabled = fcIdx === fcOrder.length - 1;
+}
+
+function fcFlip() { document.getElementById('fc-inner').classList.toggle('flipped'); }
+function fcNav(dir) { fcIdx = Math.max(0, Math.min(fcOrder.length - 1, fcIdx + dir)); fcRender(); }
+function fcShuffle() {
+  for (let i = fcOrder.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [fcOrder[i], fcOrder[j]] = [fcOrder[j], fcOrder[i]]; }
+  fcIdx = 0; fcRender();
+}
+fcRender();
+
+// ── BLANKS ──
+const blanksData = [
+  { sentence: "El sector que extrae recursos directamente de la naturaleza sin transformarlos es el sector ___.", answer: "primario", explanation: "Ejemplos: agricultura, ganadería, minería, pesca. No hay proceso de transformación." },
+  { sentence: "La industria automotriz y la industria textil pertenecen al sector ___.", answer: "secundario", explanation: "El Sector Secundario transforma materias primas en productos elaborados a través de un proceso industrial." },
+  { sentence: "Los servicios bancarios, de salud y turismo pertenecen al sector ___.", answer: "terciario", explanation: "El Sector Terciario agrupa servicios, comercio y finanzas que satisfacen demandas de personas y empresas." },
+  { sentence: "La investigación y desarrollo (I+D) y la tecnología pertenecen al sector ___, que es transversal a todos los demás.", answer: "cuaternario", explanation: "El Sector Cuaternario aplica conocimiento e innovación a todos los sectores de la economía." },
+  { sentence: "La operación de pagar sueldos es una variación ___ porque registra una pérdida.", answer: "modificativa", explanation: "SUELDOS (−R) / BANCO (−A): toca una cuenta de Resultado negativo, por lo tanto reduce el PN." },
+  { sentence: "La operación de comprar herramientas pagando con cheque es ___ porque solo cambia activos.", answer: "permutativa", explanation: "HERRAMIENTAS (+A) / BANCO (−A): intercambia activos sin tocar Resultados, el PN no varía." },
+  { sentence: "La venta de mercaderías genera una variación ___ positiva porque aumenta el PN.", answer: "modificativa", explanation: "VENTAS (+R): cuenta de resultado positivo que incrementa el Patrimonio Neto." },
+  { sentence: "La apertura de una cuenta bancaria depositando efectivo es una variación ___ de tipo Activo por Activo.", answer: "permutativa", explanation: "Banco (+A) / Caja (−A): solo cambia la forma en que se mantiene el activo." },
+  { sentence: "El registro del alquiler mensual sin pagar todavía es una variación ___ negativa.", answer: "modificativa", explanation: "ALQUILERES (−R) / ALQUILERES A PAGAR (+P): se registra un gasto y un pasivo, reduciendo el PN." },
+  { sentence: "La piscicultura y la acuicultura son actividades del sector ___.", answer: "primario", explanation: "Son actividades de cría de peces y otros organismos acuáticos. Extraen o producen directamente de la naturaleza → Sector Primario." }
+];
+
+let blankScore = 0;
+const bContainer = document.getElementById('blanks-container');
+blanksData.forEach((item, i) => {
+  const el = document.createElement('div');
+  el.className = 'blank-item';
+  el.innerHTML = `
+    <div class="blank-num">Pregunta ${i + 1} / ${blanksData.length}</div>
+    <div class="blank-q">${item.sentence.replace('___', '<em style="border-bottom:2px solid var(--teal);padding:0 16px;font-style:normal;">___</em>')}</div>
+    <div class="blank-input-row">
+      <input class="blank-input" id="bi-${i}" type="text" placeholder="Tu respuesta..." onkeydown="if(event.key==='Enter') verifyBlank(${i})">
+      <button class="blank-verify" onclick="verifyBlank(${i})">Verificar</button>
+    </div>
+    <div class="blank-feedback" id="bf-${i}"></div>
+  `;
+  bContainer.appendChild(el);
+});
+
+function verifyBlank(i) {
+  const input = document.getElementById('bi-' + i);
+  const fb = document.getElementById('bf-' + i);
+  const item = blanksData[i];
+  const val = input.value.trim().toLowerCase();
+  const answers = item.answer.toLowerCase().split('|');
+  const correct = answers.some(a => val === a || val.includes(a));
+  const el = input.closest('.blank-item');
+  input.disabled = true; input.nextElementSibling.disabled = true;
+  if (correct) {
+    el.classList.add('correct');
+    fb.className = 'blank-feedback show ok';
+    fb.innerHTML = '✓ ¡Correcto! — ' + item.explanation;
+    blankScore++;
+    document.getElementById('blank-score').textContent = blankScore;
+  } else {
+    el.classList.add('incorrect');
+    fb.className = 'blank-feedback show fail';
+    fb.innerHTML = '✗ Respuesta: <strong>' + item.answer + '</strong> — ' + item.explanation;
+  }
+}
+
+// ── MULTIPLE CHOICE ──
+const mcData = [
+  {
+    q: "¿A qué sector económico pertenece una empresa que fabrica cerveza?",
+    opts: ["Sector Primario", "Sector Secundario", "Sector Terciario", "Sector Cuaternario"],
+    correct: 1,
+    exp: "La fabricación de cerveza transforma materias primas (malta, lúpulo) en un producto elaborado → Sector Secundario (industria)."
+  },
+  {
+    q: "La operación de pagar el alquiler del local sin haberlo pagado antes (solo registrar la deuda) genera:",
+    opts: ["Una variación Permutativa (Activo y Pasivo bajan)", "Una variación Modificativa Positiva (ganancia)", "Una variación Modificativa Negativa (pérdida)", "Una variación Permutativa (Pasivo por Pasivo)"],
+    correct: 2,
+    exp: "ALQUILERES (−R) / ALQUILERES A PAGAR (+P). Se registra un gasto que reduce el PN → Modificativa Negativa."
+  },
+  {
+    q: "¿Cuál de los siguientes es un ejemplo del Sector Cuaternario?",
+    opts: ["Una empresa minera", "Un laboratorio farmacéutico que vende medicamentos", "Un instituto de investigación científica", "Un supermercado"],
+    correct: 2,
+    exp: "La investigación científica es actividad cuaternaria: genera conocimiento nuevo y se aplica a todos los demás sectores."
+  },
+  {
+    q: "La compra de una máquina de coser pagando parte en efectivo y el resto con pagaré es:",
+    opts: ["Modificativa Negativa (genera pérdida)", "Permutativa (Activo sube, Pasivo sube)", "Permutativa (Activo por Activo)", "Modificativa Positiva (genera ganancia)"],
+    correct: 1,
+    exp: "MAQUINARIA (+A) / CAJA (−A) / DOC. A PAGAR (+P): hay un activo que sube, otro que baja, y un pasivo que sube. No toca Resultados → Permutativa."
+  },
+  {
+    q: "¿Cuántas de las 10 operaciones de la empresa de prendas son Modificativas?",
+    opts: ["3", "4", "6", "8"],
+    correct: 2,
+    exp: "Son 6 Modificativas: #2 (venta), #3 (servicios), #5 (sueldos), #7 (gtos. generales), #9 (alquiler), #10 (honorarios). Todas tocan cuentas de Resultado."
+  },
+  {
+    q: "La pesca y la acuicultura pertenecen al Sector:",
+    opts: ["Secundario, porque procesan el pescado", "Cuaternario, porque usan tecnología", "Primario, porque extraen de la naturaleza", "Terciario, porque es un servicio alimentario"],
+    correct: 2,
+    exp: "La pesca y la acuicultura extraen recursos directamente de la naturaleza sin transformarlos → Sector Primario."
+  }
+];
+
+const mcContainer = document.getElementById('mc-container');
+mcData.forEach((item, qi) => {
+  const div = document.createElement('div');
+  div.className = 'mc-item';
+  const letters = ['A', 'B', 'C', 'D'];
+  const opts = item.opts.map((o, i) => `
+    <button class="mc-opt" onclick="answerMC(${qi}, ${i})" data-qi="${qi}" data-i="${i}">
+      <span class="opt-letter">${letters[i]}</span> ${o}
+    </button>
+  `).join('');
+  div.innerHTML = `
+    <div class="mc-num">Pregunta ${qi + 1} / ${mcData.length}</div>
+    <div class="mc-q">${item.q}</div>
+    <div class="mc-options">${opts}</div>
+    <div class="mc-explanation" id="mc-exp-${qi}">${item.exp}</div>
+  `;
+  mcContainer.appendChild(div);
+});
+
+function answerMC(qi, chosen) {
+  const item = mcData[qi];
+  const btns = document.querySelectorAll(`[data-qi="${qi}"]`);
+  btns.forEach(b => { b.disabled = true; });
+  btns[chosen].classList.add(chosen === item.correct ? 'correct' : 'incorrect');
+  if (chosen !== item.correct) btns[item.correct].classList.add('reveal-correct');
+  document.getElementById('mc-exp-' + qi).classList.add('show');
+}
+</script>
+</body>
+</html>
